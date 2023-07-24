@@ -177,7 +177,50 @@ function enableCam(event) {
 
 }
 
+function isInside(palm, tips) {
+    // 손바닥 사각형의 좌표와 손가락 끝 좌표를 입력받아 주먹을 쥐었는지 판별하는 함수
+    // 레이 캐스팅(Ray Casting) 알고리즘
+    const n = 4; // 손바닥을 사각형으로 인식
+    let count = 0; // 손바닥에 들어온 손가락의 개수
 
+    tips.forEach(element => { // 손가락 끝들을 반복
+        let x = element.x; // 손가락 끝의 좌표
+        let y = element.y;
+        let inside = false;
+
+        for(let i = 0; i < 4; i++) {
+            let x1 = palm[i].x; // 손바닥 사각형의 꼭짓점 좌표
+            let y1 = palm[i].y;
+            let x2 = palm[(i+1)%4].x; // 다음 손바닥 사각형의 꼭짓점 좌표
+            let y2 = palm[(i+1)%4].y;
+
+            if(y == y1 && y == y2 && x >= Math.min(x1, x2)  && x <= Math.max(x1, x2)) {
+                // 손바닥 사각형의 선분 위에 있다 => 들어왔다
+                count++;
+                break;
+            }
+
+            if(y > Math.min(y1, y2) && y <= Math.max(y1, y2) && x <= Math.max(x1, x2) && y1 != y2) {
+                // 손가락 끝이 손바닥 사각형의 선분과 교차하는 경우
+                let x_intersect = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+                if(x <= x_intersect) {
+                    inside = !inside;
+                }
+            }
+        }
+
+        if(inside) {
+            // 손가락 끝이 홀수 번 교차하면 다각형 안에 점이 들어왔다
+            count++;
+        }
+    });
+    
+    // 손바닥에 손가락이 2개 이상 들어왔는지 반환
+    return count >= 2;
+}
+
+let prevInside = false;
+let inside = false;
 
 // 영상이 로드될때마다 실행되는 함수
 async function predictWebcam() {
@@ -223,7 +266,19 @@ async function predictWebcam() {
             let top = results.landmarks[i][12];
             // 중지 뿌리 좌표
             let mid = results.landmarks[i][9];
-            if(top.y>mid.y){
+            // 손바닥 좌표
+            let palm = [results.landmarks[0][2], results.landmarks[0][5], results.landmarks[0][17], results.landmarks[0][0]];
+            // 엄지를 제외한 손가락 끝의 좌표
+            let tips = [results.landmarks[0][8], results.landmarks[0][12], results.landmarks[0][16], results.landmarks[0][20]];
+
+            // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
+            inside = isInside(palm, tips);
+
+            // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
+            if(prevInside != inside){
+                
+                // 기존 주먹 여부 변경
+                prevInside = inside;
 
                 // 목표물 배열 순회하며 캐치 판정하기
                 targets.forEach(function(obj,i){
