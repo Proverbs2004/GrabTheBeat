@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.2",
+    "typescript": "^5.1.6"
+  },
+  "name": "nodejabatest",
+  "version": "1.0.0",
+  "main": "main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
