@@ -267,9 +267,9 @@ async function predictWebcam() {
             // 중지 뿌리 좌표
             let mid = results.landmarks[i][9];
             // 손바닥 좌표
-            let palm = [results.landmarks[0][2], results.landmarks[0][5], results.landmarks[0][17], results.landmarks[0][0]];
+            let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
             // 엄지를 제외한 손가락 끝의 좌표
-            let tips = [results.landmarks[0][8], results.landmarks[0][12], results.landmarks[0][16], results.landmarks[0][20]];
+            let tips = [results.landmarks[i][8], results.landmarks[i][12], results.landmarks[i][16], results.landmarks[i][20]];
 
             // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
             inside = isInside(palm, tips);
