@@ -3,37 +3,6 @@ import {
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
-// json으로 데이터 가져오기
-// OSU! 에서 가져온 DATA파일을 가져와 사용하기 위한 작업
-// JSON 파일 경로
-const startTimeArray = [];
-const positionArray = [];
-
-// fetch사용하여서 data.json 파일 가져오기
-fetch('/data.json')
-  .then(response => response.json())
-  .then(jsonData => {
-// 데이터를 배열에 담기
-    const hitObjects = jsonData.hitObjects;
-
-// for문 사용하여 data json에 있는 hitObjects의 데이터들을 하나하나 가져온다 
-    for (const obj of hitObjects) {
-      const startTime = obj.startTime;
-      const position = obj.position;
-    
-// 시작 시간과 위치만 배열에 담기, 나머지 자료들은 필요하면 배열로 추가하면 됨 
-      startTimeArray.push(startTime - 500);
-      positionArray.push(position);
-    }
-    // console에 배열 출력, 확인용 나중에 지워야 함 
-    console.log("startTimeArray:", startTimeArray);
-    console.log("positionArray:", positionArray);
-
-  })
-  .catch(error => console.error("Error fetching JSON:", error));
-// data.JSON 가져오기 끝
-
-
 // 섹션
 const demosSection = document.getElementById("demos");
 
@@ -90,56 +59,77 @@ const badElem = new Image();
 badElem.src = 'img/bad.png';
 
 // 4초마다 타깃 생성에서 배열에 집어넣기
-// 예시라서 주석처리 일단 해 둠 
 // setInterval(() => {
 //     targets.push({name:'circle',createdTime:Date.now(), curSize:0, status:'yet', x:Math.random()/2 +0.25, y:Math.random()/2 +0.25})}
 // , 2000);
 
 
-// 노래 맞춰 이벤트 생성 하기 시작 
+// json으로 데이터 가져오기
+// JSON 파일 경로
+const startTimeArray = [];
+const positionArray = [];
+
+fetch('./data.json')
+  .then(response => response.json())
+  .then(jsonData => {
+    // 데이터를 배열에 담기
+    const hitObjects = jsonData.hitObjects;
+
+    for (const obj of hitObjects) {
+      const startTime = obj.startTime;
+      const position = obj.position;
+      // 시작 시간과 위치만 배열에 담기 
+      startTimeArray.push(startTime - 500);
+      positionArray.push(position);
+    }
+    // 배열 출력
+    console.log("startTimeArray:", startTimeArray);
+    console.log("positionArray:", positionArray);
+
+  })
+  .catch(error => console.error("Error fetching JSON:", error));
+
+
+// 게임 시작 시간 찍기
+
+// 버튼을 눌렀을 때 음악 재생 및 노트 생성
+// 음악 재생
 // 시간 파악을 위한 변수
-let startTime=null; // 게임 시작 시간
-let positionArrayIdx=0; // 노트에 해당하는 원 생성 위치를 위한 배열 인덱스
-let audio = new Audio('/Dusty_Road.mp3'); // 실행할 오디오 파일
-// 시작 버튼 
+let startTime=null;
+let positionArrayIdx=0;
+let audio = new Audio('./Dusty_Road.mp3');
 document.querySelector(".btn1").addEventListener("click", function () {
     audio.loop = false; // 반복재생하지 않음
     audio.volume = 0.5; // 음량 설정
     audio.play(); // sound1.mp3 재생
-    startTime = performance.now(); // 버튼을 누르면 동시에 시작 시간 체크
-    positionArrayIdx=0; // 버튼을 누르면 동시에 인덱스 초기화 
+    startTime = performance.now();
+    positionArrayIdx=0;
   });
 
-  // pause 버튼
   document.querySelector(".btn2").addEventListener("click", function () {
     audio.pause(); // sound1.mp3 재생
   });
 
-
-  // restart 버튼 
   document.querySelector(".btn3").addEventListener("click", function () {
     audio.play(); // sound1.mp3 재생
   });
 
 // 타겟들 상태에 따른 처리
-// 매시간 확인하는 setInterval을 사용하여 필요한 동작을 수행함 
 setInterval(function() {
-    const nowTime = performance.now(); // 게임플레이 중 그 순간 시간을 확인 
+    const nowTime = performance.now();
 
     // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
-    for (const time of startTimeArray) { // 노트 시간이 찍혀있는 배열을 순회하면서 확인한다 
-        if (startTime + time <= nowTime + 2 && startTime + time >= nowTime - 2) { // 게임 진행 중 지금 시간을 기준으로 +-2밀리 세컨드 안에 노트가 찍힌 시간이 있으면 동작
+    for (const time of startTimeArray) {
+        if (startTime + time <= nowTime + 2 && startTime + time >= nowTime - 2) {
             
-            // 도형 만들기 
             targets.push({
-                name: 'circle', // 도형 모양 
-                createdTime: nowTime, // 생성할 시간, 위에서 진행 중인 현재 시간으로 함
+                name: 'circle',
+                createdTime: nowTime,
                 curSize: 0,
-                status: 'yet', // 단계 - yet 
-                x: positionArray[positionArrayIdx][0] / 500, // x 축, data에서 뽑아낸 정보에서 0~1사이의 수로 정해놈 항상 일정하게 나타난다
-                y: positionArray[positionArrayIdx][1] / 500 // y 축, data에서 뽑아낸 정보에서 0~1사이의 수로 정해놈 항상 일정하게 나타난다
+                status: 'yet',
+                x: positionArray[positionArrayIdx][0] / 500,
+                y: positionArray[positionArrayIdx][1] / 500
             });
-            // 확인을 위해 찍어보기 
             positionArrayIdx++;
             console.log(positionArrayIdx);
             console.log(time);
@@ -150,26 +140,21 @@ setInterval(function() {
 
     }
 
-
-
-// 타겟들 상태에 따른 처리
-setInterval(function(){
-    targets.forEach((obj)=>{
-        
+    // 타겟들 상태에 따른 처리 로직은 별도의 setInterval 함수 안에 있을 필요 없이 한 곳에서 처리하면 됩니다.
+    targets.forEach((obj) => {
         // 상태가 done이 아닌 타겟들만 그리기
-        if(obj.status!=='done'){
-            obj.curSize = (Date.now() - obj.createdTime)/50;
+        if (obj.status !== 'done') {
+            obj.curSize = (nowTime - obj.createdTime) / 50;
             drawObjects();
 
             // 타겟이 일정 크기 이상 커지면 자동 비활성화
-            if(obj.status === 'yet' && obj.curSize > objSize + 5){
+            if (obj.status === 'yet' && obj.curSize > objSize + 5) {
                 obj.status = 'failed';
-                setTimeout(()=>{obj.status = 'done'},500);
+                setTimeout(() => { obj.status = 'done' }, 500);
             }
-
         }
-    })  
-},0);
+    });
+}, 0);    
 
 // 웹캠 실행 가능한지 검사 (getUserMedia() 있는지 확인)
 const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
@@ -266,7 +251,50 @@ function enableCam(event) {
 
 }
 
+function isInside(palm, tips) {
+    // 손바닥 사각형의 좌표와 손가락 끝 좌표를 입력받아 주먹을 쥐었는지 판별하는 함수
+    // 레이 캐스팅(Ray Casting) 알고리즘
+    const n = 4; // 손바닥을 사각형으로 인식
+    let count = 0; // 손바닥에 들어온 손가락의 개수
 
+    tips.forEach(element => { // 손가락 끝들을 반복
+        let x = element.x; // 손가락 끝의 좌표
+        let y = element.y;
+        let inside = false;
+
+        for(let i = 0; i < 4; i++) {
+            let x1 = palm[i].x; // 손바닥 사각형의 꼭짓점 좌표
+            let y1 = palm[i].y;
+            let x2 = palm[(i+1)%4].x; // 다음 손바닥 사각형의 꼭짓점 좌표
+            let y2 = palm[(i+1)%4].y;
+
+            if(y == y1 && y == y2 && x >= Math.min(x1, x2)  && x <= Math.max(x1, x2)) {
+                // 손바닥 사각형의 선분 위에 있다 => 들어왔다
+                count++;
+                break;
+            }
+
+            if(y > Math.min(y1, y2) && y <= Math.max(y1, y2) && x <= Math.max(x1, x2) && y1 != y2) {
+                // 손가락 끝이 손바닥 사각형의 선분과 교차하는 경우
+                let x_intersect = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+                if(x <= x_intersect) {
+                    inside = !inside;
+                }
+            }
+        }
+
+        if(inside) {
+            // 손가락 끝이 홀수 번 교차하면 다각형 안에 점이 들어왔다
+            count++;
+        }
+    });
+    
+    // 손바닥에 손가락이 2개 이상 들어왔는지 반환
+    return count >= 2;
+}
+
+let prevInside = false;
+let inside = false;
 
 // 영상이 로드될때마다 실행되는 함수
 async function predictWebcam() {
@@ -312,7 +340,19 @@ async function predictWebcam() {
             let top = results.landmarks[i][12];
             // 중지 뿌리 좌표
             let mid = results.landmarks[i][9];
-            if(top.y>mid.y){
+            // 손바닥 좌표
+            let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
+            // 엄지를 제외한 손가락 끝의 좌표
+            let tips = [results.landmarks[i][8], results.landmarks[i][12], results.landmarks[i][16], results.landmarks[i][20]];
+
+            // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
+            inside = isInside(palm, tips);
+
+            // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
+            if(prevInside != inside){
+                
+                // 기존 주먹 여부 변경
+                prevInside = inside;
 
                 // 목표물 배열 순회하며 캐치 판정하기
                 targets.forEach(function(obj,i){
@@ -340,8 +380,8 @@ async function predictWebcam() {
                 })
             }
         }
-    }
+        
         ///////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////
     }
-})
+}
