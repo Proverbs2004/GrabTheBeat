@@ -340,6 +340,7 @@ async function predictWebcam() {
             let top = results.landmarks[i][12];
             // 중지 뿌리 좌표
             let mid = results.landmarks[i][9];
+            let bottom = results.landmarks[i][0];
             // 손바닥 좌표
             let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
             // 엄지를 제외한 손가락 끝의 좌표
@@ -353,6 +354,25 @@ async function predictWebcam() {
                 
                 // 기존 주먹 여부 변경
                 prevInside = inside;
+
+                // 그랩 이펙트 추가
+                const effectBasePosition = objCanvasElement.getBoundingClientRect();
+
+                // 그랩 절대 위치
+                // scroll의 Y 좌표 + 비디오 컴포넌트의 상대 위치 + 비디오에서의 손 랜드마크 위치(0.0 ~ 1.0) * 비디오 가로 길이
+                let grabX = window.scrollX + effectBasePosition.left + ((1.0 - ((mid.x + bottom.x) / 2)) * video.videoWidth);
+                let grabY = window.scrollY + effectBasePosition.top + (((mid.y + bottom.y) / 2) * video.videoHeight);
+
+                // 그랩 커스텀 이벤트 생성
+                let grab = new MouseEvent('grab', {
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: grabX,
+                    clientY: grabY
+                })
+                
+                // grab 이벤트 발생
+                objCanvasElement.dispatchEvent(grab);
 
                 // 목표물 배열 순회하며 캐치 판정하기
                 targets.forEach(function(obj,i){
