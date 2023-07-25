@@ -1,0 +1,26 @@
+@keyframes click-effect {
+    25% {
+       border-color: rgba(20, 245, 10, 0.85);
+    }
+    100% {
+      box-shadow: 0 0 5px 2px rgba(20, 245, 10, 0.5);
+    }
+  }
+  
+  .effect {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: opacity 0.25s;
+  }
+  
+  .effect_animating {
+    animation: 0.5s click-effect linear;
+  }
+  
+  .effect_removing {
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
