@@ -3,6 +3,37 @@ import {
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
+// json으로 데이터 가져오기
+// OSU! 에서 가져온 DATA파일을 가져와 사용하기 위한 작업
+// JSON 파일 경로
+const startTimeArray = [];
+const positionArray = [];
+
+// fetch사용하여서 data.json 파일 가져오기
+fetch('/data.json')
+  .then(response => response.json())
+  .then(jsonData => {
+// 데이터를 배열에 담기
+    const hitObjects = jsonData.hitObjects;
+
+// for문 사용하여 data json에 있는 hitObjects의 데이터들을 하나하나 가져온다 
+    for (const obj of hitObjects) {
+      const startTime = obj.startTime;
+      const position = obj.position;
+    
+// 시작 시간과 위치만 배열에 담기, 나머지 자료들은 필요하면 배열로 추가하면 됨 
+      startTimeArray.push(startTime - 500);
+      positionArray.push(position);
+    }
+    // console에 배열 출력, 확인용 나중에 지워야 함 
+    console.log("startTimeArray:", startTimeArray);
+    console.log("positionArray:", positionArray);
+
+  })
+  .catch(error => console.error("Error fetching JSON:", error));
+// data.JSON 가져오기 끝
+
+
 // 섹션
 const demosSection = document.getElementById("demos");
 
@@ -59,9 +90,67 @@ const badElem = new Image();
 badElem.src = 'img/bad.png';
 
 // 4초마다 타깃 생성에서 배열에 집어넣기
-setInterval(() => {
-    targets.push({name:'circle',createdTime:Date.now(), curSize:0, status:'yet', x:Math.random()/2 +0.25, y:Math.random()/2 +0.25})}
-, 2000);
+// 예시라서 주석처리 일단 해 둠 
+// setInterval(() => {
+//     targets.push({name:'circle',createdTime:Date.now(), curSize:0, status:'yet', x:Math.random()/2 +0.25, y:Math.random()/2 +0.25})}
+// , 2000);
+
+
+// 노래 맞춰 이벤트 생성 하기 시작 
+// 시간 파악을 위한 변수
+let startTime=null; // 게임 시작 시간
+let positionArrayIdx=0; // 노트에 해당하는 원 생성 위치를 위한 배열 인덱스
+let audio = new Audio('/Dusty_Road.mp3'); // 실행할 오디오 파일
+// 시작 버튼 
+document.querySelector(".btn1").addEventListener("click", function () {
+    audio.loop = false; // 반복재생하지 않음
+    audio.volume = 0.5; // 음량 설정
+    audio.play(); // sound1.mp3 재생
+    startTime = performance.now(); // 버튼을 누르면 동시에 시작 시간 체크
+    positionArrayIdx=0; // 버튼을 누르면 동시에 인덱스 초기화 
+  });
+
+  // pause 버튼
+  document.querySelector(".btn2").addEventListener("click", function () {
+    audio.pause(); // sound1.mp3 재생
+  });
+
+
+  // restart 버튼 
+  document.querySelector(".btn3").addEventListener("click", function () {
+    audio.play(); // sound1.mp3 재생
+  });
+
+// 타겟들 상태에 따른 처리
+// 매시간 확인하는 setInterval을 사용하여 필요한 동작을 수행함 
+setInterval(function() {
+    const nowTime = performance.now(); // 게임플레이 중 그 순간 시간을 확인 
+
+    // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
+    for (const time of startTimeArray) { // 노트 시간이 찍혀있는 배열을 순회하면서 확인한다 
+        if (startTime + time <= nowTime + 2 && startTime + time >= nowTime - 2) { // 게임 진행 중 지금 시간을 기준으로 +-2밀리 세컨드 안에 노트가 찍힌 시간이 있으면 동작
+            
+            // 도형 만들기 
+            targets.push({
+                name: 'circle', // 도형 모양 
+                createdTime: nowTime, // 생성할 시간, 위에서 진행 중인 현재 시간으로 함
+                curSize: 0,
+                status: 'yet', // 단계 - yet 
+                x: positionArray[positionArrayIdx][0] / 500, // x 축, data에서 뽑아낸 정보에서 0~1사이의 수로 정해놈 항상 일정하게 나타난다
+                y: positionArray[positionArrayIdx][1] / 500 // y 축, data에서 뽑아낸 정보에서 0~1사이의 수로 정해놈 항상 일정하게 나타난다
+            });
+            // 확인을 위해 찍어보기 
+            positionArrayIdx++;
+            console.log(positionArrayIdx);
+            console.log(time);
+            console.log(positionArray[positionArrayIdx][0] / 500);
+            console.log(positionArray[positionArrayIdx][1] / 500);
+
+        }
+
+    }
+
+
 
 // 타겟들 상태에 따른 처리
 setInterval(function(){
@@ -251,8 +340,8 @@ async function predictWebcam() {
                 })
             }
         }
-        
+    }
         ///////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////
     }
-}
+})
