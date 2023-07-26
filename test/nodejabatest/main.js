@@ -3,6 +3,8 @@ import {
     FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
+import { createEffect } from "./effect.js";
+
 // 섹션
 const demosSection = document.getElementById("demos");
 
@@ -295,8 +297,12 @@ function isInside(palm, tips) {
     return count >= 2;
 }
 
-let prevInside = false;
-let inside = false;
+let prevInside = [];
+let inside = [];
+for (let i = 0; i < results.landmarks.length; i++) {
+    prevInside.push(false);
+    inside.push(false);
+}
 
 // 영상이 로드될때마다 실행되는 함수
 async function predictWebcam() {
@@ -349,13 +355,10 @@ async function predictWebcam() {
             let tips = [results.landmarks[i][8], results.landmarks[i][12], results.landmarks[i][16], results.landmarks[i][20]];
 
             // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
-            inside = isInside(palm, tips);
+            inside[i] = isInside(palm, tips);
 
             // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
-            if(prevInside != inside){
-                
-                // 기존 주먹 여부 변경
-                prevInside = inside;
+            if(prevInside[i] === false && inside[i] === true){
 
                 // 그랩 이펙트 추가
                 const effectBasePosition = objCanvasElement.getBoundingClientRect();
@@ -401,6 +404,9 @@ async function predictWebcam() {
 
                 })
             }
+
+            // 기존 주먹 여부 변경
+            prevInside[i] = inside[i];
         }
         
         ///////////////////////////////////////////////////////////////////////////////////////////
