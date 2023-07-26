@@ -79,7 +79,7 @@ fetch('./data.json')
       const startTime = obj.startTime;
       const position = obj.position;
       // 시작 시간과 위치만 배열에 담기 
-      startTimeArray.push(startTime - 500);
+      startTimeArray.push(startTime);
       positionArray.push(position);
     }
     // 배열 출력
@@ -90,20 +90,20 @@ fetch('./data.json')
   .catch(error => console.error("Error fetching JSON:", error));
 
 
+// duration	음원의 전체 길이(초 단위)
+// currentTime	음원의 현재 재생 위치(초 단위)
 // 게임 시작 시간 찍기
 
 // 버튼을 눌렀을 때 음악 재생 및 노트 생성
 // 음악 재생
 // 시간 파악을 위한 변수
-let startTime=null;
-let positionArrayIdx=0;
+let ArrayIdx=0;
 let audio = new Audio('./Dusty_Road.mp3');
 document.querySelector(".btn1").addEventListener("click", function () {
     audio.loop = false; // 반복재생하지 않음
     audio.volume = 0.5; // 음량 설정
     audio.play(); // sound1.mp3 재생
-    startTime = performance.now();
-    positionArrayIdx=0;
+    ArrayIdx=0;
   });
 
   document.querySelector(".btn2").addEventListener("click", function () {
@@ -116,29 +116,31 @@ document.querySelector(".btn1").addEventListener("click", function () {
 
 // 타겟들 상태에 따른 처리
 setInterval(function() {
-    const nowTime = performance.now();
+    const nowTime = audio.currentTime;
 
     // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
-    for (const time of startTimeArray) {
-        if (startTime + time <= nowTime + 2 && startTime + time >= nowTime - 2) {
-            
-            targets.push({
-                name: 'circle',
-                createdTime: nowTime,
-                curSize: 0,
-                status: 'yet',
-                x: positionArray[positionArrayIdx][0] / 500,
-                y: positionArray[positionArrayIdx][1] / 500
-            });
-            positionArrayIdx++;
-            console.log(positionArrayIdx);
-            console.log(time);
-            console.log(positionArray[positionArrayIdx][0] / 500);
-            console.log(positionArray[positionArrayIdx][1] / 500);
-
+    // nowTime*1000 - 100 <= startTimeArray[ArrayIdx] <= nowTime*1000 + 100이 조건을 만족하면 노트를 화면에 생성
+    // 위의 조건을 만족한다는 뜻은 현재 진행시간과 원래 찍혀있는 노드를 비교하여 일치하면 됨
+    // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
+    if (startTimeArray[ArrayIdx] <= nowTime*1000 + 100 && startTimeArray[ArrayIdx] >= nowTime*1000 - 100) {
+        // 노트 생성을 위해 targets.push를 사용    
+        targets.push({
+            name: 'circle', // 모양은 원
+            createdTime: startTimeArray[ArrayIdx], // 생성 시간은 data.json
+            curSize: 0,
+            status: 'yet', // 도형 상태
+            x: positionArray[ArrayIdx][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
+            y: positionArray[ArrayIdx][1] / 500 // 위와 같음, 이건 y
+        });
+        // 상황파악을 위한 콘솔
+            console.log(ArrayIdx);
+            console.log(startTimeArray[ArrayIdx]);
+            console.log(nowTime*1000);
+        // 모든 작업이 끝나면 다음 노트 확인을 위한 인덱스 변수의 증가    
+            ArrayIdx++;
         }
 
-    }
+    
 
     // 타겟들 상태에 따른 처리 로직은 별도의 setInterval 함수 안에 있을 필요 없이 한 곳에서 처리하면 됩니다.
     targets.forEach((obj) => {
