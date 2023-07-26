@@ -71,7 +71,7 @@ badElem.src = 'img/bad.png';
 const startTimeArray = [];
 const positionArray = [];
 
-fetch('./data.json')
+fetch('./JanJi_HeroesTonight.json')
   .then(response => response.json())
   .then(jsonData => {
     // 데이터를 배열에 담기
@@ -100,7 +100,7 @@ fetch('./data.json')
 // 음악 재생
 // 시간 파악을 위한 변수
 let ArrayIdx=0;
-let audio = new Audio('./Dusty_Road.mp3');
+let audio = new Audio('./JanJi_HeroesTonight.mp3');
 document.querySelector(".btn1").addEventListener("click", function () {
     audio.loop = false; // 반복재생하지 않음
     audio.volume = 0.5; // 음량 설정
@@ -148,7 +148,7 @@ setInterval(function() {
     targets.forEach((obj) => {
         // 상태가 done이 아닌 타겟들만 그리기
         if (obj.status !== 'done') {
-            obj.curSize = (nowTime - obj.createdTime) / 50;
+            obj.curSize++; // 원이 커지는 방법 
             drawObjects();
 
             // 타겟이 일정 크기 이상 커지면 자동 비활성화
