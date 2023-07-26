@@ -375,7 +375,7 @@ async function predictWebcam() {
                     clientX: grabX,
                     clientY: grabY
                 })
-                
+
                 // grab 이벤트 발생
                 objCanvasElement.dispatchEvent(grab);
 
