@@ -14,7 +14,7 @@ const demosSection = document.getElementById("demos");
 const scoreBoard = document.getElementById("score");
 const video = document.getElementById("webcam");
 const canvasElement = document.getElementById("output_canvas");
-const canvasCtx = canvasElement.getContext("2d");
+const canvasCtx = canvasElement.getContext("2d");   
 
 let handLandmarker = undefined;
 let enableWebcamButton;
@@ -115,9 +115,13 @@ createHandLandmarker();
 //     }, 0);
 // }
 
+// let a = performance.now();
 // 영상이 로드될때마다 실행되는 함수
 async function predictWebcam() {
-    
+    // let b = performance.now();
+    // console.log(b-a);
+    // a=b;
+
     makeNode();
 
     manageTargets();
@@ -134,7 +138,7 @@ async function predictWebcam() {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     if (results.landmarks) {
         for (const landmarks of results.landmarks) {
-            drawConnectors(canvasCtx, landmarks, HandLandmarker.HAND_CONNECTIONS, {
+            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
                 color: "#00FF00",
                 lineWidth: 5
             });
