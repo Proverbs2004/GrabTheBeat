@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: black;">
+    <button class="backbutton" onClick="location.href='home.html'">
+    <svg class="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" stroke-width="0.5"/>
+        <path d="M0 0h48v48h-48z" fill="none"/>
+    </svg>
+    BACK
+    </button>
+    <div class="container">
+    <div class="title">CREATE GAME</div>
+    <button class="playsingle" style="margin-right:200px"onClick="location.href='room_singleplay.html'">PLAY<br>SINGLE</button>
+    <button class="playmulti" style="margin-left:200px">PLAY<br>MULTI</button>
+    </div>
+</body>
+
+</html>
+
+<style>
+
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url(./assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
+}
+.container {
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+    text-align: center;
+
+}
+.title {
+    font-family: 'Press Start 2P';
+    font-size: 80px;
+    line-height: 100px;
+    margin: 20px;
+    margin-top: 30px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    padding: 20px;
+}
+.backbutton,
+.playsingle,
+.playmulti{
+    font-family: 'Press Start 2P';
+    font-size: 40px;
+    padding: 20px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    margin: 20px;
+    background-color: transparent;
+    border-color: transparent;
+    /* 텍스트의 테두리 색상 설정 */
+    -webkit-text-stroke: 1px #FF99FF;
+}
+.backbutton{
+    display: inline-flex; /* 가운데 정렬을 위해 inline-flex로 변경 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+}
+.backbutton:hover,
+.playsingle:hover,
+.playmulti:hover{
+    fill: #FF99FF;
+    color: #FF99FF;
+    filter: drop-shadow(0px 0px 10px #FF99FF);
+    text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+
+</style>
