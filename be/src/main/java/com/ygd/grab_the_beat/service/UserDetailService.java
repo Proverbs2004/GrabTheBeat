@@ -3,9 +3,7 @@ package com.ygd.grab_the_beat.service;
 import com.ygd.grab_the_beat.domain.User;
 import com.ygd.grab_the_beat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

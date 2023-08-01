@@ -30,12 +30,15 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// h2database 사용
+	runtimeOnly 'com.h2database:h2'
+	
 	// 스프링 시큐리티를 사용하기 위한 스타터 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// 타임리프에서 스프링 시큐리티를 사용하기 위한 의존성 추가
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	// 스프링 시큐리티를 테스트하기 위한 의존성 추가
-	implementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
