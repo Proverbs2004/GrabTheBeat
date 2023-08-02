@@ -30,8 +30,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// mongodb
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	// h2database 사용
 	runtimeOnly 'com.h2database:h2'
