@@ -29,10 +29,12 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// mongodb
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	// h2database 사용
 	runtimeOnly 'com.h2database:h2'
@@ -43,6 +45,13 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	// 스프링 시큐리티를 테스트하기 위한 의존성 추가
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// 자바 JWT 라이브러리
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	// XML 문서와 Java 객체 간 매핑을 자동화
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	// Configuration Processor 어노테이션
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 	// OAuth2를 사용하기 위한 스타터 추가
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
