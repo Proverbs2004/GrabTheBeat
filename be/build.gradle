@@ -44,6 +44,8 @@ dependencies {
 	// 스프링 시큐리티를 테스트하기 위한 의존성 추가
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	// OAuth2를 사용하기 위한 스타터 추가
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
