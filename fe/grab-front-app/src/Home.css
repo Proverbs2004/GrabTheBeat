@@ -24,7 +24,7 @@
     }
   }
   
-  .container {
+  .containerHome {
       width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
       max-width: 1536px; /* 최대 너비를 1536px로 제한 */
       max-height: 864px;
@@ -32,7 +32,7 @@
       text-align: center;
   }
   
-  .title,
+  .titleHome,
   .creategame,
   .joingame,
   .google {
@@ -42,7 +42,7 @@
       margin: 20px;
   }
   
-  .title {
+  .titleHome {
       font-size: 500%;
       line-height: 100px;
       margin-top: 200px; /* 선택 사항: 요소들 사이에 마진 추가 */
@@ -68,9 +68,22 @@
       text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
   
   }
-  .button-container{
+  .button-containerHome{
       display: flex; /* create game과 join game을 수평으로 배치하기 위해 flex 레이아웃 사용 */
       justify-content: center;
       align-items: center;
       text-align: center;
+      
+  }
+
+  input {
+    cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경 */
+    border: 1px solid #ccc; /* 테두리 설정 */
+    padding: 8px; /* 내부 여백 설정 */
+  }
+
+  button {
+    cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경 */
+    border: 1px solid #ccc; /* 테두리 설정 */
+    padding: 8px; /* 내부 여백 설정 */
   }

@@ -4,6 +4,10 @@ import './App.css';
 
 import Home from './Home';
 import Create from './Create';
+import Join from './Join';
+import Singleplay from './Singleplay';
+
+
 
 function App() {
   return (
@@ -12,6 +16,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/singleplay" element={<Singleplay />} />
         </Routes>
       </BrowserRouter>
     </div>

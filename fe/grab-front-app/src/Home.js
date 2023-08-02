@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 
 
-function GameTitle() {
+function TitleGame() {
   return (
-    <div className="title">GRAB THE BEAT</div>
+    <div className="titleHome">GRAB THE BEAT</div>
   );
 }
 
 function ButtonCreateJoinContainer() {
   return (
-    <div className = "button-container">
+    <div className = "button-containerHome">
       <ButtonCreateGame />
       <ButtonJoinGame />
     </div>
@@ -22,7 +22,7 @@ function ButtonCreateGame() {
   
   return (
     <div>
-       <Link to="/create" className="creategame-link">
+       <Link to="/create">
         <button className="creategame" style={{ marginRight: '200px' }}>
           CREATE<br />
           GAME
@@ -35,7 +35,9 @@ function ButtonCreateGame() {
 function ButtonJoinGame() {
   return (
     <div>
-      <button className="joingame" style={{ marginLeft: '200px' }}>JOIN<br></br>GAME</button>
+      <Link to="/join" className="creategame-link">
+        <button className="joingame" style={{ marginLeft: '200px' }}>JOIN<br />GAME</button>
+      </Link>
     </div>
   );
 }
@@ -52,8 +54,8 @@ function Home() {
 
   return (
 
-    <div className="container">
-      <GameTitle />
+    <div className="containerHome">
+      <TitleGame />
       <ButtonCreateJoinContainer />
       <ButtonGoogle />
     </div>

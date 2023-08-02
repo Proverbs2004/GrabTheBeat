@@ -1,0 +1,41 @@
+@font-face {
+    font-family: "Press Start 2P";
+    font-style: normal;
+    font-weight: normal;
+    src: url("./Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+  }
+  body{
+    background-color: black
+  }
+  @keyframes neon {
+    0%,
+    100% {
+      text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+      color: #FF99FF;
+    }
+    50% {
+      text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+      color: #955d95;
+    }
+  }
+
+
+.containerSingleplay {
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+    text-align: center;
+}
+.titleSingleplay{
+    color: #FF99FF;
+    font-family: 'Press Start 2P';
+    font-size: 400%;
+    line-height: 100px;
+    margin: 10px;
+    margin-top: 0%; /* 선택 사항: 요소들 사이에 마진 추가 */
+    padding: 10px;
+    animation: neon 1s ease infinite;
+    -moz-animation: neon 1s ease infinite;
+    -webkit-animation: neon 1s ease infinite;
+}
