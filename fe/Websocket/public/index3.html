@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket Chatting</title>
+
+    <script>
+      const ws = new WebSocket("ws://localhost:8001")
+
+      // 메세지 전송
+      function sendMessage() {
+        const nickname = document.getElementById("nickname").value;
+        const messageInput = document.getElementById("message"); // Add this line
+        const message = messageInput.value;
+        if (message.trim() !== "") {
+        const fullMessage = `${nickname}:${message}`;
+        ws.send(fullMessage);
+        }
+
+        // 채팅이 전송되면 메시지 입력 필드를 비웁니다.
+        messageInput.value = ""; // 추가된 부분
+        }
+      // 메세지 수신
+      function receiveMessage(event) {
+        const chat = document.createElement("div")
+        const message = document.createTextNode(event.data)
+        chat.appendChild(message)
+
+        const chatLog = document.getElementById("chat-log")
+        chatLog.appendChild(chat)
+        scrollChatToBottom();
+      }
+
+      // 스크롤을 가장 아래로 내리는 함수
+      function scrollChatToBottom() {
+        const chatLog = document.getElementById("chat-log");
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+      // 엔터키 눌러서 채팅 치는 함수
+      function enterkey(event) {
+        if (event.keyCode == 13) {
+            sendMessage();
+        }
+    }
+      ws.onmessage = receiveMessage;
+    </script>
+  </head>
+  <body style="background-color: black;">
+    <div class="containersingleroom">
+      <div class="titlesingleroom">SINGLE PLAY</div>
+      <div class="cambox">player1's cam</div>
+      <div class="chatbox">
+        <div id="chat-log" class="chatlogbox"></div>
+      </div>
+      <!-- Move the messagebox here, outside the chatbox div -->
+      <div>
+        <input type="text" id="message" class="messagebox" onkeypress="enterkey(event)" />
+        <input type="text" id="nickname" placeholder="nickname">
+      </div>
+    </div>
+  </body>
+</html>
+
+
+
+
+
+
+<style>
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf');
+}
+.containersingleroom{
+  font-family: 'Press Start 2P';
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    height: 100vh;
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+}
+.titlesingleroom{
+  color: #FF99FF;
+    font-size: 400%;
+    line-height: 100px;
+    margin: 10px;
+    margin-top: 0%; /* 선택 사항: 요소들 사이에 마진 추가 */
+    padding: 10px;
+    padding-top: 0%;
+    text-align: center;
+}
+.cambox{
+    display: flex;
+    background-color: transparent;
+    aspect-ratio: 16/9;
+    max-width: 800px;
+    color: #FF99FF;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    margin-left: 6%;
+}
+.chatbox{
+    display: flex;
+    background-color: transparent;
+    aspect-ratio: 100/15;
+    max-width: 800px;
+    color: #FF99FF;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    margin-top:1%; 
+    margin-left: 6%;
+}
+
+/* 스크롤바 스타일 변경 */
+.chatlogbox::-webkit-scrollbar {
+  width: 15px;
+  }
+.chatlogbox::-webkit-scrollbar-thumb {
+  border: 2px solid #FF99FF; /* 테두리 색상을 설정합니다. */
+  border-radius: 10px;
+}
+.chatlogbox::-webkit-scrollbar-thumb:hover {
+  background-color: #FF99FF;
+  box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+.messagebox{
+  margin-top: 0%;
+  margin-left: 6%;
+  font-family: 'Press Start 2P';
+  font-size: 13px;
+  color: #FF99FF;
+  border-color: #FF99FF;
+  border-width: 2.5px;
+  border-style: solid;
+  border-radius: 10px;
+  background-color: transparent;
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 100/4;
+  box-sizing: border-box;
+}
+
+</style>
