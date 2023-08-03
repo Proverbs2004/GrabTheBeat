@@ -1,0 +1,41 @@
+@keyframes click-effect {
+  10% {
+    width: 5px;
+    height: 5px;
+    background-color: rgba(195, 195, 195, 0.9);
+    box-shadow: 0 0 2px 5px rgba(195, 195, 195, 0.85);
+    border: none;
+  }
+  25% {
+    width: 10px;
+    height: 10px;
+    background-color:  rgba(245, 245, 245, 0.95);
+    box-shadow: 0 0 25px 25px rgba(245, 245, 245, 1);
+    border: none;
+  }
+  100% {
+    width: 0px;
+    height: 0px;
+    background-color:  rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 1px 1px rgba(255, 255, 255, 1);
+    border: none;
+  }
+}
+
+.effect {
+  width: 2px;
+  height: 2px;
+  position: absolute;
+  border-radius: 50%;
+  border: none;
+  transition: opacity 0.25s;
+}
+
+.effect_animating {
+  animation: 0.5s click-effect linear;
+}
+
+.effect_removing {
+  opacity: 0;
+  transition: opacity 0.25s;
+}

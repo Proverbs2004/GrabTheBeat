@@ -1,0 +1,75 @@
+.node-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 0px solid rgb(255, 0, 255);
+    background-color: rgb(0, 0, 0);
+    filter: drop-shadow(0 0 0.25rem rgb(255, 0, 255));
+    position: absolute;
+    animation: growCircle 1s linear forwards;
+  }
+
+  .node-circle-fill {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 0, 255, 0.5), rgb(255,0,255));
+    position: absolute;
+    animation: growCircleFill 1s linear forwards;
+  }
+
+@keyframes growCircle {
+    0% {
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+  }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes growCircleFill {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes manageCircle {
+    0% {
+		opacity: 1;
+    }
+    100% {
+        opacity: 0;
+		transform: scale(4);
+    }
+}
+
+
+@keyframes catchedCircleFill {
+  0% {
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.5), rgb(0,255,0));
+  }
+  100% {
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.5), rgb(0,255,0));
+    
+  }
+  
+}
+
+@keyframes failedCircleFill {
+  0% {
+    background: radial-gradient(circle, rgba(255, 0, 0, 0.5), rgb(255,0,0));
+  }
+  100% {
+    background: radial-gradient(circle, rgba(255, 0, 0, 0.5), rgb(255,0,0));
+    
+  }
+  
+}
