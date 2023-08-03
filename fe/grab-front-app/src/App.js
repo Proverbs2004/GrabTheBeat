@@ -5,6 +5,7 @@ import './App.css';
 import Home from './Home';
 import Create from './Create';
 import Join from './Join';
+import SingleplayJoin from './SingleplayJoin';
 import Singleplay from './Singleplay';
 
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/create" element={<Create />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/singleplayJoin" element={<SingleplayJoin />} />
           <Route path="/singleplay" element={<Singleplay />} />
         </Routes>
       </BrowserRouter>

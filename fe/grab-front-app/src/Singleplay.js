@@ -1,10 +1,11 @@
-import './Singleplay.css';
+import './SingleplayJoin.css';
 import { Link } from 'react-router-dom';
+// import React, { useState, useEffect, useCallback } from 'react';
 
 function Singleplay() {
     return(
         <div>
-            <ButtonHome />    
+            <ButtonHome />
             <div className="containerSingleplay">
                 <TitleSingleplay />
             </div>
@@ -31,5 +32,6 @@ function ButtonHome() {
         </Link>
     )
 }
+
 
 export default Singleplay;

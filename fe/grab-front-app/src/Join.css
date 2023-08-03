@@ -88,6 +88,7 @@ input {
     margin: 1%;
     text-align: center;
     outline: none;
+    caret-color: transparent;
     /* caret-shape: block; 안먹힘 */
 }
 
@@ -95,9 +96,11 @@ input {
     color: #FF99FF;
 }
 
-input::placeholder{
-    color: transparent;
+input:focus::placeholder {
+  color: transparent;
 }
+
+
 
 
 .joinbutton{
