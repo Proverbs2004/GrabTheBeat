@@ -30,15 +30,17 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests()
+                // antMatchers()에 있는 URL은 모두 접근 허용
                 .antMatchers("/login", "/signup", "/user", "/**").permitAll()
+                // 그 이외의 URL은 인증되어야 접속 가능
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/articles")
+                .formLogin()                        // 로그인 폼
+                .loginPage("/login")                // 로그인 페이지는 "/login"
+                .defaultSuccessUrl("/articles")     // 로그인 성공 시에는 "/articles"
                 .and()
-                .logout()
-                .logoutSuccessUrl("/login")
+                .logout()                           // 로그아웃
+                .logoutSuccessUrl("/login")         // 로그아웃 성공 시에는 "/login"
                 .invalidateHttpSession(true)
                 .and()
                 .csrf().disable()

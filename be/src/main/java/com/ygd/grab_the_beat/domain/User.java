@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
+// User 엔티티
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
