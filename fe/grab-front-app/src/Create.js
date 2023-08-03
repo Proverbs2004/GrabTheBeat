@@ -29,7 +29,7 @@ function ButtonPlaysingle() {
 
     return (
       <div>
-        <Link to='/singleplay'>
+        <Link to='/singleplayJoin'>
           <button className="playsingle" style={{ marginRight: '200px' }}>
           PLAY<br />
           SINGLE
