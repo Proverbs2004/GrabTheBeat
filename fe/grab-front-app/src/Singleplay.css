@@ -21,7 +21,7 @@
 
 
 .containerSingleplay {
-    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
     max-width: 1536px; /* 최대 너비를 1536px로 제한 */
     max-height: 864px;
     color: #FF99FF;
@@ -38,4 +38,34 @@
     animation: neon 1s ease infinite;
     -moz-animation: neon 1s ease infinite;
     -webkit-animation: neon 1s ease infinite;
+}
+
+#videoZone {
+  position: absolute;
+  /* left: 0px;
+  top: 0px; */
+  clear: both;
+  display: block;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  filter: contrast(100.0) brightness(0.3) grayscale(100%);
+  z-index: -2;
+}
+#canvasZone {
+  position: absolute;
+  /* left: 0px;
+  top: 0px; */
+  clear: both;
+  display: block;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  z-index: -1;
+}
+#gameContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 1000px;
 }
