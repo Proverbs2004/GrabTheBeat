@@ -1,4 +1,4 @@
-// import './SingleplayJoin.css';
+
 import { Link} from 'react-router-dom';
 import { React, useState, useEffect, useRef } from 'react';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
@@ -8,19 +8,17 @@ import {
     FilesetResolver,
 } from "@mediapipe/tasks-vision";
 import './Singleplay.css';
-import './util/node.css';
-import './util/effect.css';
+import '../../util/node.css';
+import '../../util/effect.css';
 
-import {createCircle} from "./util/node.js";
-import {createEffect} from "./util/effect.js";
+import {createCircle} from "../../util/node.js";
+import {createEffect} from "../../util/effect.js";
 
-// import Chat from './components/Chat';
 
-// import MusicSelect from './components/MusicSelect';
+import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
+import jsonData from '../../data/JanJi_HeroesTonight.json';
 
-import heroesTonight from './data/JanJi_HeroesTonight.mp3';
 
-import jsonData from './data/JanJi_HeroesTonight.json';
 
 
 
@@ -30,44 +28,22 @@ function TitleSingleplay() {
     )
 }
 
-function ButtonHome() {
-    return (
-        <Link to="/" >
-        <button className="backbutton" >
-            <svg className="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" strokeWidth="0.5"/>
-                <path d="M0 0h48v48h-48z" fill="none"/>
-            </svg>
-            HOME
-        </button>
-        </Link>
-    )
-}
-
 
 
 function Singleplay(){
-    // const worker = new Worker('./util/worker.js');
-    // const [nowTime, setNowTime] = useState(-10);
-    // const [audio, setAudio] = useState(new Audio(heroesTonight));
-    // const [startTimeArray, setStartTimeArray] = useState([]);
-    // const [positionArray, setPositionArray] = useState([]);;
-    // const [arrayIdx, setArrayIdx] = useState(0);
-    // const [targets, setTargets] = useState([]);
-    // let score = 0;
+
     const [score, setScore] = useState(0);
     let nowTime=-1;
     let audio = new Audio(heroesTonight);
     const startTimeArray = [];
     const positionArray = [];
-    // let arrayIdx = 0;
+
     let arrayIdx=0;
     let targets = [];
     const prevInside = [false, false];
     const inside = [false, false];
 
     const videoRef = useRef(null);
-    // const animationFrameRef = useRef(null);
     const canvasElementRef = useRef(null);
     const playBtnRef = useRef(null);
     const root = document.getElementById('root');
@@ -85,18 +61,14 @@ function Singleplay(){
     
 
     function makeNode(){
-        // setNowTime(audio.currentTime);
+
         nowTime = audio.currentTime;
-        // console.log(audio);
-        // console.log(nowTime);
-        // console.log(performance.now());
-        // console.log(nowTime, (Date.now()-originTime)/1000);
+
         
         // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
         // nowTime*1000 - 100 <= startTimeArray[ArrayIdx] <= nowTime*1000 + 100이 조건을 만족하면 노트를 화면에 생성
         // 위의 조건을 만족한다는 뜻은 현재 진행시간과 원래 찍혀있는 노드를 비교하여 일치하면 됨
         // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
-        // console.log(startTimeArray[ArrayIdx]);
         if (nowTime*1000 >=  startTimeArray[arrayIdx] - 1000) {
             // 노트 생성을 위해 targets.push를 사용 
             const newTarget = {
@@ -113,12 +85,7 @@ function Singleplay(){
             const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root);
             newTarget.elem = elems[0];
             newTarget.elemFill = elems[1];
-            targets.push(newTarget); 
-            // 상황파악을 위한 콘솔
-            // console.log(ArrayIdx);
-            // console.log(startTimeArray[ArrayIdx]);
-            // console.log(nowTime*1000);
-            // 모든 작업이 끝나면 다음 노트 확인을 위한 인덱스 변수의 증가    
+            targets.push(newTarget);    
             arrayIdx++;
         }
     }
@@ -159,6 +126,7 @@ function Singleplay(){
                 let top = results.landmarks[i][12];
                 // 중지 뿌리 좌표
                 let mid = results.landmarks[i][9];
+
                 let bottom = results.landmarks[i][0];
                 // 손바닥 좌표
                 let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
@@ -261,9 +229,7 @@ function Singleplay(){
     }
 
     function playAudio() {
-        console.log(audio);
-        console.log(audio.src);
-        console.log('playaudio');
+
         if (audio) {
             audio.loop = false; // 반복재생하지 않음
             audio.volume = 0.5; // 음량 설정
@@ -321,7 +287,13 @@ function Singleplay(){
                     });
                     if(hasGetUserMedia){
                         
-                        const constraints = {video: {frameRate:{max:60}}};
+                        const constraints = {
+                            video: {
+                                width: { ideal: 600 },
+                                height: { ideal: 450 },
+                                frameRate: { max: 60 } // 최대 프레임 레이트도 지정 가능
+                            }
+                        };
                         
                     // Activate the webcam stream.
                     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -330,13 +302,12 @@ function Singleplay(){
                             setInterval(()=>{
                                 predictWebcam(handLandmarker, canvasElement, canvasCtx, video)},50);
                         });
-                        // video.requestVideoFrameCallback(predictWebcam);
                         console.log("using media!");
-                        
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-                            canvasElement.style.width = video.videoWidth;
-                            canvasElement.style.height = video.videoHeight;
+
+                            video.width = video.videoWidth;
+                            video.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
                             
@@ -363,19 +334,22 @@ function Singleplay(){
     },[])
         
         
+    
 
     return(
         <div>
-            <ButtonHome/>
+            {/* <ButtonHome/> */}
             <div className="containerSingleplay">
                 <TitleSingleplay />
+              
                 <button id="gameStart" ref={playBtnRef}>게임시작</button>
                 <div>Score: <div>{score}</div></div>
-                <div id="gameContainer">
+                <div className="gameContainer">
                     <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
-                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>
+                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>  
                 </div>
             </div>
+
         </div>
     )
 }

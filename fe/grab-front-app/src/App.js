@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"; 
 import './App.css';
 
-import Home from './Home';
-import Create from './Create';
-import Join from './Join';
-import SingleplayJoin from './SingleplayJoin';
-import Singleplay from './Singleplay';
+import Home from './pages/home/Home';
+import Create from './pages/create/Create';
+import Join from './pages/join/Join';
+import SingleplayJoin from './pages/singleplayjoin/SingleplayJoin';
+import Singleplay from './pages/singleplay/Singleplay';
 
 
 
@@ -25,5 +25,9 @@ function App() {
     </div>
   );
 }
+
+
+
+
 
 export default App;

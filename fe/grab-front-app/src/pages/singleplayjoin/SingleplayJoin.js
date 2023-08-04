@@ -125,7 +125,9 @@ function JoinForm() {
             />
             {touched.userName && errors.userName && <span><br />{errors.userName}</span>}
             <br />
-            <button type="submit" className="joinbutton" >JOIN</button>
+            <Link to="/singleplay">
+                <button type="submit" className="joinbutton" >JOIN</button>
+            </Link>
         </form>
     )
 }

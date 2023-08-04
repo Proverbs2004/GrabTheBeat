@@ -1,0 +1,200 @@
+@font-face {
+  font-family: "Press Start 2P";
+  font-style: normal;
+  font-weight: normal;
+  src: url("../../Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+}
+body{
+  background-color: black
+}
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+    color: #FF99FF;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+    color: #955d95;
+  }
+}
+
+
+.containerSingleplay {
+  /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
+  max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+  max-height: 864px;
+  color: #FF99FF;
+  text-align: center;
+}
+.titleSingleplay{
+  color: #FF99FF;
+  font-family: 'Press Start 2P';
+  font-size: 400%;
+  line-height: 100px;
+  margin: 10px;
+  margin-top: 0%; /* 선택 사항: 요소들 사이에 마진 추가 */
+  padding: 10px;
+  animation: neon 1s ease infinite;
+  -moz-animation: neon 1s ease infinite;
+  -webkit-animation: neon 1s ease infinite;
+}
+
+#videoZone {
+height: 100%;
+clear: both;
+transform: rotateY(180deg);
+-webkit-transform: rotateY(180deg);
+-moz-transform: rotateY(180deg);
+filter: contrast(100.0) brightness(0.0) grayscale(100%);
+z-index: -2;
+position: absolute;
+
+}
+#canvasZone {
+height: 100%;
+clear: both;
+transform: rotateY(180deg);
+-webkit-transform: rotateY(180deg);
+-moz-transform: rotateY(180deg);
+z-index: -1;
+
+position: absolute;
+
+}
+
+.gameContainer {
+width: 800px;
+aspect-ratio: 16/9;
+border: 2.5px solid #ff99ff;
+border-radius: 10px;
+margin-left: 6%;
+align-content: center;
+display: flex;
+justify-content: center;
+position: relative; /* 부모 요소에 position: relative; 설정 */
+
+}
+
+
+.containersingleroom{
+  font-family: 'Press Start 2P';
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    height: 100vh;
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+}
+.titlesingleroom{
+  color: #FF99FF;
+    font-size: 400%;
+    line-height: 100px;
+    margin: 10px;
+    margin-top: 0%; /* 선택 사항: 요소들 사이에 마진 추가 */
+    padding: 10px;
+    padding-top: 0%;
+    text-align: center;
+}
+.cambox{
+    display: flex;
+    background-color: transparent;
+    aspect-ratio: 16/9;
+    max-width: 800px;
+    color: #FF99FF;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    margin-left: 6%;
+}
+
+.chatlogbox{
+  width: calc(100% - 4.8px); /* 스크롤바의 너비가 15px로 가정 */
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 아래로 쌓이게 함 */
+  background-color: transparent;
+  aspect-ratio: 100/15;
+  border-color: #FF99FF;
+  border-style: solid;
+  border-radius: 10px;
+  margin-left: 6%;
+  overflow-y: auto; /* 스크롤을 사용하여 메시지를 볼 수 있도록 함 */
+  max-height: 200px; /* 스크롤 높이를 제한하여 너무 많은 메시지가 쌓이는 것을 방지 */
+  
+}
+/* 스크롤바 스타일 변경 */
+.chatlogbox::-webkit-scrollbar {
+  width: 15px;
+  }
+.chatlogbox::-webkit-scrollbar-thumb {
+  border: 2px solid #FF99FF; /* 테두리 색상을 설정합니다. */
+  border-radius: 10px;
+}
+.chatlogbox::-webkit-scrollbar-thumb:hover {
+  background-color: #FF99FF;
+  box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+.messagebox{
+  display: flex;
+  margin-top: 0%;
+  margin-left: 6%;
+  font-family: 'Press Start 2P';
+  font-size: 13px;
+  color: #FF99FF;
+  border-color: #FF99FF;
+  border-width: 2.5px;
+  border-style: solid;
+  border-radius: 10px;
+  background-color: transparent;
+  outline: none;
+  width: 100%;
+  aspect-ratio: 100/4;
+  box-sizing: border-box;
+}
+.hihi{
+  color: #FF99FF;
+}
+
+
+#container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-areas: "sidebar main";
+  width: 100vw;
+  height: 100vh;
+}
+#main {
+  grid-area: main;
+}
+#new-message {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 5px;
+  margin-left: 0px;
+  border-top: 1px solid #3f3f3f;
+}
+#messages-list {
+  padding: 5px 0 0 5px;
+}
+#sidebar {
+  grid-area: sidebar;
+  padding: 5px 0 0 5px;
+  border-right: 1px solid #3f3f3f;
+  height: 100%;
+}
+
+/* new */
+
+#new-message {
+  padding: 0px;
+  height: 50px;
+}
+
+#new-message input {
+  font-family: "Press Start 2P";
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  height: 50px;
+  padding: 5px;
+}
