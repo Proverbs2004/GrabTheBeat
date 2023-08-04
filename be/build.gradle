@@ -44,6 +44,11 @@ dependencies {
 
 	// openvidu 사용을 위한 의존성 추가
 	implementation 'io.openvidu:openvidu-java-client:2.28.0'
+
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	// 스프링 OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 }
 
 tasks.named('test') {
