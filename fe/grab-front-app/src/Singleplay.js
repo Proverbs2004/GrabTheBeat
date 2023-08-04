@@ -30,19 +30,19 @@ function TitleSingleplay() {
     )
 }
 
-function ButtonHome() {
-    return (
-        <Link to="/" >
-        <button className="backbutton" >
-            <svg className="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" strokeWidth="0.5"/>
-                <path d="M0 0h48v48h-48z" fill="none"/>
-            </svg>
-            HOME
-        </button>
-        </Link>
-    )
-}
+// function ButtonHome() {
+//     return (
+//         <Link to="/" >
+//         <button className="backbutton" >
+//             <svg className="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+//                 <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" strokeWidth="0.5"/>
+//                 <path d="M0 0h48v48h-48z" fill="none"/>
+//             </svg>
+//             HOME
+//         </button>
+//         </Link>
+//     )
+// }
 
 
 
@@ -159,6 +159,7 @@ function Singleplay(){
                 let top = results.landmarks[i][12];
                 // 중지 뿌리 좌표
                 let mid = results.landmarks[i][9];
+                console.log(mid.x, mid.y);
                 let bottom = results.landmarks[i][0];
                 // 손바닥 좌표
                 let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
@@ -321,7 +322,13 @@ function Singleplay(){
                     });
                     if(hasGetUserMedia){
                         
-                        const constraints = {video: {frameRate:{max:60}}};
+                        const constraints = {
+                            video: {
+                                width: { ideal: 600 },
+                                height: { ideal: 450 },
+                                frameRate: { max: 60 } // 최대 프레임 레이트도 지정 가능
+                            }
+                        };
                         
                     // Activate the webcam stream.
                     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
@@ -332,11 +339,13 @@ function Singleplay(){
                         });
                         // video.requestVideoFrameCallback(predictWebcam);
                         console.log("using media!");
-                        
+                        console.log(canvasElement.style.width, video.videoWidth);
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-                            canvasElement.style.width = video.videoWidth;
-                            canvasElement.style.height = video.videoHeight;
+                            // canvasElement.style.width = video.videoWidth;
+                            // canvasElement.style.height = video.videoHeight;
+                            video.width = video.videoWidth;
+                            video.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
                             
@@ -366,12 +375,12 @@ function Singleplay(){
 
     return(
         <div>
-            <ButtonHome/>
+            {/* <ButtonHome/> */}
             <div className="containerSingleplay">
                 <TitleSingleplay />
                 <button id="gameStart" ref={playBtnRef}>게임시작</button>
                 <div>Score: <div>{score}</div></div>
-                <div id="gameContainer">
+                <div className="gameContainer">
                     <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
                     <canvas id="canvasZone" ref={canvasElementRef}></canvas>
                 </div>
