@@ -7,6 +7,7 @@ import Create from './pages/create/Create';
 import Join from './pages/join/Join';
 import SingleplayJoin from './pages/singleplayjoin/SingleplayJoin';
 import Singleplay from './pages/singleplay/Singleplay';
+import Client from './webSocket/client/WebSocketClient';
 
 
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/singleplayJoin" element={<SingleplayJoin />} />
           <Route path="/singleplay" element={<Singleplay />} />
+          <Route path="/webSocket" element={<Client />} />
         </Routes>
       </BrowserRouter>
     </div>
