@@ -1,12 +1,12 @@
-package com.ygd.grab_the_beat.config;
+package me.wooseok.config;
 
-import com.ygd.grab_the_beat.config.jwt.TokenProvider;
-import com.ygd.grab_the_beat.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.ygd.grab_the_beat.config.oauth.OAuth2SuccessHandler;
-import com.ygd.grab_the_beat.config.oauth.OAuth2UserCustomService;
-import com.ygd.grab_the_beat.repository.RefreshTokenRepository;
-import com.ygd.grab_the_beat.service.UserService;
 import lombok.RequiredArgsConstructor;
+import me.wooseok.config.jwt.TokenProvider;
+import me.wooseok.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import me.wooseok.config.oauth.OAuth2SuccessHandler;
+import me.wooseok.config.oauth.OAuth2UserCustomService;
+import me.wooseok.repository.RefreshTokenRepository;
+import me.wooseok.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -31,60 +31,59 @@ public class WebOAuthSecurityConfig {
     private final UserService userService;
 
     @Bean
-    public WebSecurityCustomizer configure() { // 스프링 시큐리티 기능 비활성화
+    public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(toH2Console())
-                .antMatchers("/img/**", "/css/**", "/js/**");
-//                .antMatchers("/static/**");
+                .requestMatchers("/static/img/**", "/css/**", "/js/**");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 토큰 방식으로 인증을 하기 때문에 기존에 사용하던 폼로그인, 세션 비활성화
-        http.csrf().disable()           // Rest API 이므로, CSRF 보안이 필요없으므로, disable 처리.
-                .httpBasic().disable()  // HTTP Basic Auth 기반으로 로그인 인증창이 뜸. disable 시에는 인증창이 뜨지 않음.
-                .formLogin().disable()  // Auth 로그인 만을 수행할 것이므로, 기본 로그인 disable 처리.
-                .logout().disable();    // Auth 로그인 만을 수행할 것이므로, 기본 로그아웃 disable 처리.
+        http.csrf().disable()
+                .httpBasic().disable()
+                .formLogin().disable()
+                .logout().disable();
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // 헤더를 확인할 커스텀 필터 추가
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        // 토큰 재발급 URL은 인증 없이 접근 가능하도록 설정. 나머지 API URL은 인증 필요
+
         http.authorizeRequests()
-                .antMatchers("/api/token").permitAll()
-                .antMatchers("/api/**").authenticated()
+                .requestMatchers("/api/token").permitAll()
+                .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();
 
         http.oauth2Login()
                 .loginPage("/login")
                 .authorizationEndpoint()
-                // Authoriztion 요청과 관련된 상태 저장
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                .successHandler(oAuth2SuccessHandler()) // 인증 성공 시 실행할 핸들러
+                .successHandler(oAuth2SuccessHandler())
                 .userInfoEndpoint()
                 .userService(oAuth2UserCustomService);
 
         http.logout()
                 .logoutSuccessUrl("/login");
 
-        // /api로 시작하는 url인 경우 401 상태 코드를 반환하도록 예외 처리
+
         http.exceptionHandling()
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                         new AntPathRequestMatcher("/api/**"));
 
+
         return http.build();
     }
+
 
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
         return new OAuth2SuccessHandler(tokenProvider,
                 refreshTokenRepository,
                 oAuth2AuthorizationRequestBasedOnCookieRepository(),
-                userService);
+                userService
+        );
     }
 
     @Bean
@@ -101,5 +100,4 @@ public class WebOAuthSecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
