@@ -18,7 +18,7 @@ import {createEffect} from "../../util/effect.js";
 import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
 import jsonData from '../../data/JanJi_HeroesTonight.json';
 
-
+import Websocket from '../../webSocket/client/WebSocketClient'
 
 
 
@@ -344,9 +344,12 @@ function Singleplay(){
               
                 <button id="gameStart" ref={playBtnRef}>게임시작</button>
                 <div>Score: <div>{score}</div></div>
+                <div>
                 <div className="gameContainer">
                     <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
                     <canvas id="canvasZone" ref={canvasElementRef}></canvas>  
+                </div>
+                <Websocket />
                 </div>
             </div>
 

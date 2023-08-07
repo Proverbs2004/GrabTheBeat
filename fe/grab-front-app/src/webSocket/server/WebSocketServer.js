@@ -1,7 +1,6 @@
 const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
-
 const app = express();
 
 
@@ -12,6 +11,7 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
 
   ws.on('message', (message) => {
+    console.log(server);
     console.log('Received:', message);
     const parsedMessage = JSON.parse(message);
     wss.clients.forEach((client) => {
@@ -26,7 +26,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log('WebSocket server listening on port 3000');
+server.listen(8003, () => {
+  console.log('WebSocket server listening on port 8003');
 });
 

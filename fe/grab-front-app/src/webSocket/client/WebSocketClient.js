@@ -9,8 +9,9 @@ const Client = () => {
   const messageInputRef = useRef(null);
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:3000');
+    ws.current = new WebSocket('ws://localhost:8003','echo-protocol');
 
+    console.log(ws.current);
   // 메세지 수신
   const receiveMessage = (event) => {
   const receivedMessage = JSON.parse(event.data);
@@ -18,6 +19,7 @@ const Client = () => {
   if (receivedMessage.fromServer) {
     // 서버에서 받은 메시지인 경우
     setChatHistory((prevChatHistory) => [...prevChatHistory, receivedMessage.content]);
+    console.log("받았엉");
   } else {
     // 클라이언트에서 보낸 메시지인 경우
     setChatHistory((prevChatHistory) => [...prevChatHistory, `${receivedMessage.nickname}: ${receivedMessage.message}`]);
@@ -69,23 +71,7 @@ const sendMessage = () => {
     <div>
       <div className="containersingleroom">
         <div className="chatbox">
-          <input
-            type="text"
-            placeholder="Nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-        <br />
-          <input
-            type="text"
-            placeholder="Message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyPress}
-            ref={messageInputRef}
-          />
-        <br />
-          <button onClick={sendMessage}>Send</button>
+          
           <div id="chat-log" className="chatlogbox">
             {chatHistory.map((message, index) => (
             <div key={index} className="chatmessage">
@@ -93,6 +79,27 @@ const sendMessage = () => {
             </div>
             ))}
           </div>
+          
+          <div>
+          <input
+            type="text"
+            className="messagebox"
+            placeholder="Nickname"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+          />
+          <input
+            type="text"
+            className="messagebox"
+            placeholder="Message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyPress}
+            ref={messageInputRef}
+          />
+          {/* <button onClick={sendMessage}>Send</button> */}
+          </div>
+
       </div>
       </div>  
     </div>
