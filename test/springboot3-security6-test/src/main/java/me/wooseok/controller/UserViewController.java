@@ -1,4 +1,4 @@
-package com.ygd.grab_the_beat.controller;
+package me.wooseok.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

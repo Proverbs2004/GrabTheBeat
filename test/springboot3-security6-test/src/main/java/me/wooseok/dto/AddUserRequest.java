@@ -1,14 +1,12 @@
-package com.ygd.grab_the_beat.dto;
+package me.wooseok.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// User를 DB에 저장할 것을 요청하기 위한 DTO 객체.
-@Getter
 @Setter
+@Getter
 public class AddUserRequest {
-
     private String email;
     private String password;
-
 }
