@@ -8,7 +8,6 @@ public class UserViewController {
 
     @GetMapping("/login")
     public String login() {
-        System.out.println("oauthLogin");
         return "oauthLogin";
     }
 
