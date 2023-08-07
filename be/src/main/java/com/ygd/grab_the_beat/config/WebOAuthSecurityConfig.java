@@ -33,7 +33,6 @@ public class WebOAuthSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() { // 스프링 시큐리티 기능 비활성화
         return (web) -> web.ignoring()
-                .requestMatchers(toH2Console())
                 .antMatchers("/img/**", "/css/**", "/js/**");
 //                .antMatchers("/static/**");
     }
