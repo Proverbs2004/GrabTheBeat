@@ -1,11 +1,13 @@
 
 import { Link} from 'react-router-dom';
 import { React, useState, useEffect, useRef } from 'react';
-import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
+import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
 import {
+    FaceLandmarker,
     HandLandmarker,
     FilesetResolver,
+    DrawingUtils,
 } from "@mediapipe/tasks-vision";
 import './Singleplay.css';
 import '../../util/node.css';
@@ -14,8 +16,12 @@ import '../../util/effect.css';
 import {createCircle} from "../../util/node.js";
 import {createEffect} from "../../util/effect.js";
 
+import Chat from '../../components/Chat.js';
+import MusicSelect from '../../components/MusicSelect.js';
 
 import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
+import drum from '../../data/drum.mp3';
+
 import jsonData from '../../data/JanJi_HeroesTonight.json';
 
 import Websocket from '../../webSocket/client/WebSocketClient'
@@ -32,23 +38,36 @@ function TitleSingleplay() {
 
 function Singleplay(){
 
-    const [score, setScore] = useState(0);
+    const [goodScore, setGoodScore] = useState(0);
+    const [perfectScore, setPerfectScore] = useState(0);
+    const [failedScore, setFailedScore] = useState(0);
+    const [highestCombo, setHighestCombo] = useState(0);
+    const [comboScore, setComboScore] = useState(0);
+    
     let nowTime=-1;
     let audio = new Audio(heroesTonight);
+    let drumSound = new Audio(drum);
     const startTimeArray = [];
     const positionArray = [];
-
+    // let arrayIdx = 0;
     let arrayIdx=0;
     let targets = [];
+    let drawingUtils = null;
+    let handLandmarker = null;
+    let faceLandmarker = null;
+    let handResults = null;
+    let faceResults = null;
+
     const prevInside = [false, false];
     const inside = [false, false];
 
     const videoRef = useRef(null);
+    // const animationFrameRef = useRef(null);
     const canvasElementRef = useRef(null);
     const playBtnRef = useRef(null);
+    let canvasCtx = null;
     const root = document.getElementById('root');
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
-    
     
     // 데이터를 배열에 담기
     const hitObjects = jsonData.hitObjects;
@@ -57,81 +76,64 @@ function Singleplay(){
         startTimeArray.push(obj.startTime);
         positionArray.push(obj.position); 
     }
-    
-    
 
     function makeNode(){
-
         nowTime = audio.currentTime;
-
         
         // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
         // nowTime*1000 - 100 <= startTimeArray[ArrayIdx] <= nowTime*1000 + 100이 조건을 만족하면 노트를 화면에 생성
         // 위의 조건을 만족한다는 뜻은 현재 진행시간과 원래 찍혀있는 노드를 비교하여 일치하면 됨
         // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
+        // console.log(startTimeArray[ArrayIdx]);
         if (nowTime*1000 >=  startTimeArray[arrayIdx] - 1000) {
             // 노트 생성을 위해 targets.push를 사용 
             const newTarget = {
                 name: 'circle', // 모양은 원
                 elem: null,
+                elemBack: null,
                 elemFill: null,
-                createdTime: startTimeArray[arrayIdx]-1200, // 생성 시간은 data.json
+                createdTime: startTimeArray[arrayIdx]-1000, // 생성 시간은 data.json
                 curSize: 0,
                 status: 'yet', // 도형 상태
                 x: positionArray[arrayIdx][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
                 y: positionArray[arrayIdx][1] / 500 // 위와 같음, 이건 y
             };
-            // setTargets([...targets, newTarget]);
             const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root);
             newTarget.elem = elems[0];
-            newTarget.elemFill = elems[1];
-            targets.push(newTarget);    
+            newTarget.elemBack = elems[1];
+            newTarget.elemFill = elems[2];
+            targets.push(newTarget); 
+            // 모든 작업이 끝나면 다음 노트 확인을 위한 인덱스 변수의 증가    
             arrayIdx++;
         }
     }
     
-    function predictWebcam(landmarker, canvasElement, canvasCtx, video){
+    function predictWebcam(){
         let now = performance.now();
-        const results = landmarker.detectForVideo(video, now);
+        handResults = handLandmarker.detectForVideo(videoRef.current, now);
         
         makeNode();
-
         manageTargets();
 
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        if (results.landmarks) {
-            for (const landmarks of results.landmarks) {
-                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-                    color: "#00FF00",
-                    lineWidth: 5
-                });
-                drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
-            }
-        }
-        canvasCtx.restore();
-        
         //손이 있을때
-        if(results.landmarks.length>0){
-
+        if(handResults.landmarks.length>0){
             // 양손 대상으로 진행
-            for(let i=0; i<results.landmarks.length; i++){
+            for(let i=0; i<handResults.landmarks.length; i++){
 
                 //////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////////////
                 // 좌표의 진행방향은 좌하향임 (캠마다 좌우반전 설정이 달라져서 바뀔수도)
-                // results.landmarks[손 객체의 인덱스][손가락 인덱스]
+                // handResults.landmarks[손 객체의 인덱스][손가락 인덱스]
                 // 조악한 예시 알고리즘;;
                 // 중지 꼭대기 좌표
-                let top = results.landmarks[i][12];
+                let top = handResults.landmarks[i][12];
                 // 중지 뿌리 좌표
-                let mid = results.landmarks[i][9];
-
-                let bottom = results.landmarks[i][0];
+                let mid = handResults.landmarks[i][9];
+                let bottom = handResults.landmarks[i][0];
                 // 손바닥 좌표
-                let palm = [results.landmarks[i][2], results.landmarks[i][5], results.landmarks[i][17], results.landmarks[i][0]];
+                let palm = [handResults.landmarks[i][2], handResults.landmarks[i][5], handResults.landmarks[i][17], handResults.landmarks[i][0]];
                 // 엄지를 제외한 손가락 끝의 좌표
-                let tips = [results.landmarks[i][8], results.landmarks[i][12], results.landmarks[i][16], results.landmarks[i][20]];
+                let tips = [handResults.landmarks[i][8], handResults.landmarks[i][12], handResults.landmarks[i][16], handResults.landmarks[i][20]];
 
                 // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
                 inside[i] = isInside(palm, tips);
@@ -140,10 +142,11 @@ function Singleplay(){
                 if(prevInside[i] === false && inside[i] === true){
 
                     // 캐치 이펙트 생성
-                    createEffect((mid.x + bottom.x) / 2, (mid.y + bottom.y) / 2, videoRef.current, root);
+                    createEffect(mid.x, mid.y, videoRef.current, root);
+                    // 드럼 소리 재생
+                    playDrum();
 
                     // 목표물 배열 순회하며 캐치 판정하기
-                    // eslint-disable-next-line no-loop-func
                     targets.forEach(function(obj){
 
                         // 상태가 yet인 타겟 대상만 검사 
@@ -153,22 +156,37 @@ function Singleplay(){
                             if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
 
                                 // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
-                                if(nowTime > obj.createdTime/1000 + 0.500 && nowTime < obj.createdTime/1000 + 1.500){
+                                if(nowTime < obj.createdTime/1000 + 0.500 || nowTime > obj.createdTime/1000 + 1.500){
                                     
-                                    setScore((score)=>score+1);
-                                    obj.status = 'catched';
-                                    obj.elem.style.animation = "manageCircle 1s forwards";
-                                    obj.elemFill.style.animation =  'catchedCircleFill 1s forwards';
-                                    obj.status = 'done';
-                                    deleteElements(obj.elem, obj.elemFill, 3000);
-                                    
-                                    
-                                } else {
+                                    setComboScore(0);
+                                    setFailedScore((prev)=>prev+1);
                                     obj.status = 'failed';
-                                    obj.elem.style.animation = "manageCircle 1s forwards";
                                     obj.elemFill.style.animation =  'failedCircleFill 1s forwards';
                                     obj.status = 'done';
-                                    deleteElements(obj.elem, obj.elemFill, 3000);
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},2000);
+
+                                } else if(nowTime > obj.createdTime/1000 + 0.900 && nowTime < obj.createdTime/1000 + 1.100){
+
+                                    // perfectScore++;
+                                    setPerfectScore((prev)=>prev+1);
+                                    setComboScore((prev)=>prev+1);
+                                    obj.status = 'catched';
+                                    obj.elemFill.style.animation =  'perfectCircleFill 1s forwards';
+                                    obj.status = 'done';
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},2000);
+
+                                } 
+                                else {
+
+                                    setGoodScore((prev)=>prev+1);
+                                    setComboScore((prev)=>prev+1);
+                                    obj.status = 'catched';
+                                    obj.elemFill.style.animation =  'goodCircleFill 1s forwards';
+                                    obj.status = 'done';
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},2000);
                                 }
                             }
 
@@ -180,10 +198,79 @@ function Singleplay(){
                 // 기존 주먹 여부 변경
                 prevInside[i] = inside[i];
             }
+            
             ///////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////
         }
-        // window.requestAnimationFrame(predictWebcam);
+        // 손그리기
+        faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElementRef.current.width, canvasElementRef.current.height);
+        if (handResults.landmarks) {
+            for (const landmarks of handResults.landmarks) {
+                drawConnectors(
+                    canvasCtx,
+                    landmarks,
+                    HAND_CONNECTIONS,
+                    { color: "rgb(255, 0, 255)", lineWidth: 10}
+                );
+                // drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
+            }
+        }
+        if (faceResults.faceLandmarks) {
+            for (const landmarks of faceResults.faceLandmarks) {
+                // drawingUtils.drawConnectors(
+                //     landmarks,
+                //     FaceLandmarker.FACE_LANDMARKS_TESSELATION,
+                //     { color: "#C0C0C070", lineWidth: 10 }
+                // );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_LEFT_EYE,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_FACE_OVAL,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                drawingUtils.drawConnectors(
+                    landmarks,
+                    FaceLandmarker.FACE_LANDMARKS_LIPS,
+                    { color: "rgb(255, 0, 255)" }
+                );
+                // drawingUtils.drawConnectors(
+                //     landmarks,
+                //     FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS,
+                //     { color: "rgb(255, 0, 255)" }
+                // );
+                // drawingUtils.drawConnectors(
+                //     landmarks,
+                //     FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS,
+                //     { color: "rgb(255, 0, 255)" }
+                // );
+            }
+        }
+        canvasCtx.restore();
+        
+        
+        window.requestAnimationFrame(predictWebcam);
+        console.log(now - performance.now());
     }
     
     function isInside(palm, tips) {
@@ -238,6 +325,15 @@ function Singleplay(){
         }
     }
 
+    function playDrum() {
+        if (drumSound) {
+            drumSound.currentTime = 0;
+            drumSound.loop = false;
+            drumSound.volume = 1;
+            drumSound.play();
+        }
+    }
+
     function manageTargets(){
         targets.forEach((obj) => {
             // 상태가 done이 아닌 타겟들만 그리기
@@ -245,30 +341,24 @@ function Singleplay(){
     
                 // 타겟이 일정 크기 이상 커지면 자동 비활성화
                 if (obj.status === 'yet' && nowTime > obj.createdTime/1000 + 1.500) {
+                    setComboScore(0);
+                    setFailedScore((prev)=>prev+1);
                     obj.status = 'failed';
-                    // obj.elem.remove();
-                    obj.elem.style.animation = "manageCircle 1s forwards";
                     obj.elemFill.style.animation =  'failedCircleFill 1s forwards';
-                    // setTimeout(() => { obj.status = 'done' }, 500);
                     obj.status = 'done';
-                    deleteElements(obj.elem, obj.elemFill, 3000);
+                    obj.elemBack.remove();
+                    setTimeout(()=>{obj.elem.remove()},2000);
                 }
             }
         });
     }
 
-    // 엘리먼트 삭제하는 유틸
-    function deleteElements (elA, elB, seconds){
-        setTimeout(()=>{
-            elA.remove();
-            elB.remove();
-        },seconds);
-    }
 
     useEffect(()=>{
         const video = videoRef.current;
         const canvasElement = canvasElementRef.current;
-        const canvasCtx = canvasElement.getContext("2d");
+        canvasCtx = canvasElement.getContext("2d");
+        drawingUtils = new DrawingUtils(canvasCtx);
         const playBtn = playBtnRef.current;
         playBtn.addEventListener('click',playAudio);
 
@@ -276,38 +366,40 @@ function Singleplay(){
             try{
                 const vision = await FilesetResolver.forVisionTasks(
                     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-                    );
-                    const handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                        baseOptions: {
-                            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-                            delegate: "GPU"
-                        },
-                        runningMode: 'VIDEO',
-                        numHands: 2
-                    });
-                    if(hasGetUserMedia){
-                        
-                        const constraints = {
-                            video: {
-                                width: { ideal: 600 },
-                                height: { ideal: 450 },
-                                frameRate: { max: 60 } // 최대 프레임 레이트도 지정 가능
-                            }
-                        };
-                        
+                );
+
+                handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                        delegate: "GPU"
+                    },
+                    runningMode: 'VIDEO',
+                    numHands: 2
+                });
+                faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                      delegate: "GPU"
+                    },
+                    outputFaceBlendshapes: true,
+                    runningMode: 'VIDEO',
+                    numFaces: 1
+                });
+
+                if(hasGetUserMedia){
+                   
+                    const constraints = {video: true};
+                    
                     // Activate the webcam stream.
                     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
                         video.srcObject = stream;
-                        video.addEventListener("loadeddata", ()=>{
-                            setInterval(()=>{
-                                predictWebcam(handLandmarker, canvasElement, canvasCtx, video)},50);
-                        });
+                        video.addEventListener("loadeddata", predictWebcam);
+                                
                         console.log("using media!");
+                            
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-
-                            video.width = video.videoWidth;
-                            video.height = video.videoHeight;
+                            canvasElement.style.width = video.videoWidth;                                canvasElement.style.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
                             
@@ -316,7 +408,6 @@ function Singleplay(){
                         
                     });
                 }
-                
                 return handLandmarker;
                 
                 
@@ -327,13 +418,14 @@ function Singleplay(){
         };
         createHandLandmarker();
 
-        
-
-        // 게임 리셋
-
     },[])
         
+    useEffect(()=>{
+        if(comboScore>highestCombo){
+            setHighestCombo(comboScore);
+        }
         
+    },[comboScore]);   
     
 
     return(
@@ -343,11 +435,17 @@ function Singleplay(){
                 <TitleSingleplay />
               
                 <button id="gameStart" ref={playBtnRef}>게임시작</button>
-                <div>Score: <div>{score}</div></div>
+                <div>
+                    <div>perfect: {perfectScore}</div>
+                    <div>good: {goodScore}</div>
+                    <div>failed: {failedScore}</div>
+                    <div>highest combo: {highestCombo}</div>
+                    <div>current combo: {comboScore}</div>
+                </div>
                 <div>
                 <div className="gameContainer">
                     <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
-                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>  
+                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>
                 </div>
                 <Websocket />
                 </div>
