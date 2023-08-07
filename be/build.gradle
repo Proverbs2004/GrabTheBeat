@@ -39,10 +39,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-
-	// openvidu 사용을 위한 의존성 추가
-	implementation 'io.openvidu:openvidu-java-client:2.28.0'
-
 }
 
 test {
