@@ -3,17 +3,21 @@
 export function createCircle(x, y, video, root){
 
     let circle = document.createElement('div');
+    let circleBack = document.createElement('div');
     let circleFill = document.createElement('div');
 
+
     circle.classList.add('node-circle');
+    circleBack.classList.add('node-circle-back');
     circleFill.classList.add('node-circle-fill');
 
     circle.appendChild(circleFill);
+    circle.appendChild(circleBack);
     root.appendChild(circle);
     
     setGamePosition(video, circle, x, y, 60, 60);
 
-    return [circle,circleFill];
+    return [circle, circleBack, circleFill];
 }
 
 function setGamePosition(frame, el, x, y, w, h){
