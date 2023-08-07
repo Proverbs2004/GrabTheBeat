@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket Chatting</title>
+
+    <script>
+      const ws = new WebSocket("ws://localhost:8001")
+
+      // 메세지 전송
+      function sendMessage() {
+        const nickname = document.getElementById("nickname").value
+        const message = document.getElementById("message").value
+        const fullMessage = `${nickname}: ${message}`
+
+        ws.send(fullMessage)
+      }
+      // 메세지 수신
+      function receiveMessage(event) {
+        const chat = document.createElement("div")
+        const message = document.createTextNode(event.data)
+        chat.appendChild(message)
+
+        const chatLog = document.getElementById("chat-log")
+        chatLog.appendChild(chat)
+        scrollChatToBottom();
+      }
+      ws.onmessage = receiveMessage
+      
+    </script>
+  </head>
+  <body>
+    <div id="chat-log" class="chatbox"></div>
+    <div>
+      <input
+        type="text"
+        id="nickname"
+        placeholder="nickname"
+        style="width: 50px"
+      />
+      <input
+        type="text"
+        id="message"
+        placeholder="메세지"
+        style="width: 200px"
+      />
+      <button onClick="sendMessage()">send</button>
+    </div>
+
+    
+  </body>
+</html>
+<style>
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf');
+}
+body{
+  font-family: 'Press Start 2P';
+}
+.chatbox{
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 아래로 쌓이게 함 */
+  background-color: transparent;
+  aspect-ratio: 100/15;
+  max-width: 800px;
+  color: #FF99FF;
+  border-color: #FF99FF;
+  border-style: solid;
+  border-radius: 10px;
+  margin-top:1%; 
+  margin-left: 6%;
+  overflow-y: auto; /* 스크롤을 사용하여 메시지를 볼 수 있도록 함 */
+  max-height: 200px; /* 스크롤 높이를 제한하여 너무 많은 메시지가 쌓이는 것을 방지 */
+}
+</style>
