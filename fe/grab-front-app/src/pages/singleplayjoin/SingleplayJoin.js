@@ -125,8 +125,8 @@ function JoinForm() {
             />
             {touched.userName && errors.userName && <span><br />{errors.userName}</span>}
             <br />
-            <Link to="/singleplay">
-                <button type="submit" className="joinbutton" >JOIN</button>
+            <Link to={`/singleplayWaiting?userName=${values.userName}`}>
+                <button type="submit" className="joinbutton">JOIN</button>
             </Link>
         </form>
     )

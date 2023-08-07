@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import './client.css';
 
 const Client = () => {
@@ -7,6 +8,9 @@ const Client = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const ws = useRef(null);
   const messageInputRef = useRef(null);
+
+  const location = useLocation();
+  const userName = new URLSearchParams(location.search).get('userName');
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:8003','echo-protocol');
@@ -22,7 +26,7 @@ const Client = () => {
     console.log("받았엉");
   } else {
     // 클라이언트에서 보낸 메시지인 경우
-    setChatHistory((prevChatHistory) => [...prevChatHistory, `${receivedMessage.nickname}: ${receivedMessage.message}`]);
+    setChatHistory((prevChatHistory) => [...prevChatHistory, `${receivedMessage.userName}: ${receivedMessage.message}`]);
   }
   scrollChatToBottom();
 };
@@ -37,7 +41,7 @@ return () => {
 // 메세지 전송
 const sendMessage = () => {
   if (message.trim() !== '') {
-    const fullMessage = JSON.stringify({ nickname, message });
+    const fullMessage = JSON.stringify({ userName, message });
     console.log(fullMessage);
     // 웹 소켓의 상태가 "OPEN"일 때만 메시지를 보냄
     if (ws.current.readyState === WebSocket.OPEN) {
@@ -45,7 +49,7 @@ const sendMessage = () => {
       setMessage('');
       console.log(fullMessage);
       // 메시지를 채팅 로그에 추가하고 스크롤을 가장 아래로 내림
-      setChatHistory((prevChatHistory) => [...prevChatHistory, `${nickname}: ${message}`]);
+      setChatHistory((prevChatHistory) => [...prevChatHistory, `${userName}: ${message}`]);
       scrollChatToBottom();
     } else {
       console.log("왜 안돼?");
@@ -81,13 +85,6 @@ const sendMessage = () => {
           </div>
           
           <div>
-          <input
-            type="text"
-            className="messagebox"
-            placeholder="Nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
           <input
             type="text"
             className="messagebox"
