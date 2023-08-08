@@ -1,6 +1,6 @@
-package com.ygd.grab_the_beat.repository;
+package com.ygd.grab_the_beat.user.repository;
 
-import com.ygd.grab_the_beat.domain.RefreshToken;
+import com.ygd.grab_the_beat.user.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

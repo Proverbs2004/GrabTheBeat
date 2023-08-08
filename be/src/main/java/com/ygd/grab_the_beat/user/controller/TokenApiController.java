@@ -1,8 +1,8 @@
-package com.ygd.grab_the_beat.controller;
+package com.ygd.grab_the_beat.user.controller;
 
-import com.ygd.grab_the_beat.dto.CreateAccessTokenRequest;
-import com.ygd.grab_the_beat.dto.CreateAccessTokenResponse;
-import com.ygd.grab_the_beat.service.TokenService;
+import com.ygd.grab_the_beat.user.request.CreateAccessTokenRequest;
+import com.ygd.grab_the_beat.user.response.CreateAccessTokenResponse;
+import com.ygd.grab_the_beat.user.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

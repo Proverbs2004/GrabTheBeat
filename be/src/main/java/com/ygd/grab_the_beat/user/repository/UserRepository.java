@@ -1,6 +1,6 @@
-package com.ygd.grab_the_beat.repository;
+package com.ygd.grab_the_beat.user.repository;
 
-import com.ygd.grab_the_beat.domain.User;
+import com.ygd.grab_the_beat.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

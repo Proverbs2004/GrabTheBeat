@@ -3,11 +3,11 @@ package com.ygd.grab_the_beat.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ygd.grab_the_beat.config.jwt.JwtFactory;
 import com.ygd.grab_the_beat.config.jwt.JwtProperties;
-import com.ygd.grab_the_beat.domain.RefreshToken;
-import com.ygd.grab_the_beat.domain.User;
-import com.ygd.grab_the_beat.dto.CreateAccessTokenRequest;
-import com.ygd.grab_the_beat.repository.RefreshTokenRepository;
-import com.ygd.grab_the_beat.repository.UserRepository;
+import com.ygd.grab_the_beat.user.entity.RefreshToken;
+import com.ygd.grab_the_beat.user.entity.User;
+import com.ygd.grab_the_beat.user.request.CreateAccessTokenRequest;
+import com.ygd.grab_the_beat.user.repository.RefreshTokenRepository;
+import com.ygd.grab_the_beat.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest

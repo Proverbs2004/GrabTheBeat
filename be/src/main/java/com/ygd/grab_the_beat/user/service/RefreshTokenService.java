@@ -1,7 +1,7 @@
-package com.ygd.grab_the_beat.service;
+package com.ygd.grab_the_beat.user.service;
 
-import com.ygd.grab_the_beat.domain.RefreshToken;
-import com.ygd.grab_the_beat.repository.RefreshTokenRepository;
+import com.ygd.grab_the_beat.user.entity.RefreshToken;
+import com.ygd.grab_the_beat.user.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

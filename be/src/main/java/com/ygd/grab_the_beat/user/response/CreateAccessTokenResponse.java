@@ -1,4 +1,4 @@
-package com.ygd.grab_the_beat.dto;
+package com.ygd.grab_the_beat.user.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
