@@ -4,13 +4,12 @@ export function createEffect(x, y, video, root) {
   
   let effect = document.createElement('div');
   
-  root.appendChild(effect);
   effect.classList.add('effect');
+  root.appendChild(effect);
 
   setGamePosition(video, effect, x, y, 2, 2);
-  effect.style.animation = 'click-effect 0.3s';
 
-  setTimeout(()=>{effect.remove()},2000);
+  setTimeout(()=>{effect.remove()},500);
 
 }
 

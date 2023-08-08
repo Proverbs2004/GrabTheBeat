@@ -13,16 +13,19 @@ import './Singleplay.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
-import {createCircle} from "../../util/node.js";
+import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
 import {createEffect} from "../../util/effect.js";
 
 import Chat from '../../components/Chat.js';
 import MusicSelect from '../../components/MusicSelect.js';
 
-import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
+// import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
+import redBone from '../../data/DonaldGlover_RedBone.mp3';
+
 import drum from '../../data/drum.mp3';
 
-import jsonData from '../../data/JanJi_HeroesTonight.json';
+// import jsonData from '../../data/JanJi_HeroesTonight.json';
+import jsonData from '../../data/DonaldGlover_RedBone.json';
 
 import Websocket from '../../webSocket/client/WebSocketClient'
 
@@ -44,12 +47,14 @@ function Singleplay(){
     const [highestCombo, setHighestCombo] = useState(0);
     const [comboScore, setComboScore] = useState(0);
     
-    let nowTime=-1;
-    let audio = new Audio(heroesTonight);
+    let nowTime=-2;
+    let audio = new Audio(redBone);
     let drumSound = new Audio(drum);
+    let isGamePlaying = false;
+    let gameStartTime = 0;
     const startTimeArray = [];
     const positionArray = [];
-    // let arrayIdx = 0;
+
     let arrayIdx=0;
     let targets = [];
     let drawingUtils = null;
@@ -62,11 +67,11 @@ function Singleplay(){
     const inside = [false, false];
 
     const videoRef = useRef(null);
-    // const animationFrameRef = useRef(null);
     const canvasElementRef = useRef(null);
     const playBtnRef = useRef(null);
     let canvasCtx = null;
     const root = document.getElementById('root');
+
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     
     // 데이터를 배열에 담기
@@ -78,7 +83,6 @@ function Singleplay(){
     }
 
     function makeNode(){
-        nowTime = audio.currentTime;
         
         // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
         // nowTime*1000 - 100 <= startTimeArray[ArrayIdx] <= nowTime*1000 + 100이 조건을 만족하면 노트를 화면에 생성
@@ -86,7 +90,6 @@ function Singleplay(){
         // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
         // console.log(startTimeArray[ArrayIdx]);
         if (nowTime*1000 >=  startTimeArray[arrayIdx] - 1000) {
-            // 노트 생성을 위해 targets.push를 사용 
             const newTarget = {
                 name: 'circle', // 모양은 원
                 elem: null,
@@ -94,7 +97,7 @@ function Singleplay(){
                 elemFill: null,
                 createdTime: startTimeArray[arrayIdx]-1000, // 생성 시간은 data.json
                 curSize: 0,
-                status: 'yet', // 도형 상태
+                done: false, // 도형 상태
                 x: positionArray[arrayIdx][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
                 y: positionArray[arrayIdx][1] / 500 // 위와 같음, 이건 y
             };
@@ -111,99 +114,31 @@ function Singleplay(){
     function predictWebcam(){
         let now = performance.now();
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
-        
-        makeNode();
-        manageTargets();
-
-        //손이 있을때
-        if(handResults.landmarks.length>0){
-            // 양손 대상으로 진행
-            for(let i=0; i<handResults.landmarks.length; i++){
-
-                //////////////////////////////////////////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////////////////////////////////////////
-                // 좌표의 진행방향은 좌하향임 (캠마다 좌우반전 설정이 달라져서 바뀔수도)
-                // handResults.landmarks[손 객체의 인덱스][손가락 인덱스]
-                // 조악한 예시 알고리즘;;
-                // 중지 꼭대기 좌표
-                let top = handResults.landmarks[i][12];
-                // 중지 뿌리 좌표
-                let mid = handResults.landmarks[i][9];
-                let bottom = handResults.landmarks[i][0];
-                // 손바닥 좌표
-                let palm = [handResults.landmarks[i][2], handResults.landmarks[i][5], handResults.landmarks[i][17], handResults.landmarks[i][0]];
-                // 엄지를 제외한 손가락 끝의 좌표
-                let tips = [handResults.landmarks[i][8], handResults.landmarks[i][12], handResults.landmarks[i][16], handResults.landmarks[i][20]];
-
-                // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
-                inside[i] = isInside(palm, tips);
-
-                // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
-                if(prevInside[i] === false && inside[i] === true){
-
-                    // 캐치 이펙트 생성
-                    createEffect(mid.x, mid.y, videoRef.current, root);
-                    // 드럼 소리 재생
-                    playDrum();
-
-                    // 목표물 배열 순회하며 캐치 판정하기
-                    targets.forEach(function(obj){
-
-                        // 상태가 yet인 타겟 대상만 검사 
-                        if(obj.status === 'yet'){
-
-                            // 캐치했을 때 알고리즘 조건문
-                            if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
-
-                                // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
-                                if(nowTime < obj.createdTime/1000 + 0.500 || nowTime > obj.createdTime/1000 + 1.500){
-                                    
-                                    setComboScore(0);
-                                    setFailedScore((prev)=>prev+1);
-                                    obj.status = 'failed';
-                                    obj.elemFill.style.animation =  'failedCircleFill 1s forwards';
-                                    obj.status = 'done';
-                                    obj.elemBack.remove();
-                                    setTimeout(()=>{obj.elem.remove()},2000);
-
-                                } else if(nowTime > obj.createdTime/1000 + 0.900 && nowTime < obj.createdTime/1000 + 1.100){
-
-                                    // perfectScore++;
-                                    setPerfectScore((prev)=>prev+1);
-                                    setComboScore((prev)=>prev+1);
-                                    obj.status = 'catched';
-                                    obj.elemFill.style.animation =  'perfectCircleFill 1s forwards';
-                                    obj.status = 'done';
-                                    obj.elemBack.remove();
-                                    setTimeout(()=>{obj.elem.remove()},2000);
-
-                                } 
-                                else {
-
-                                    setGoodScore((prev)=>prev+1);
-                                    setComboScore((prev)=>prev+1);
-                                    obj.status = 'catched';
-                                    obj.elemFill.style.animation =  'goodCircleFill 1s forwards';
-                                    obj.status = 'done';
-                                    obj.elemBack.remove();
-                                    setTimeout(()=>{obj.elem.remove()},2000);
-                                }
-                            }
-
-                        }
-
-                    })
-                }
-
-                // 기존 주먹 여부 변경
-                prevInside[i] = inside[i];
-            }
-            
-            ///////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////
-        }
-        // 손그리기
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
+        
+        // 게임이 실행중일 때 진행
+        if(isGamePlaying){
+
+            makeNode();
+            manageTargets();
+            
+            if(nowTime<0){
+                // nowtime을 -2초부터 0초까지 실행시켜야함
+                nowTime = -2 + (performance.now() - gameStartTime)/1000;
+            } else {
+                nowTime = audio.currentTime;
+                
+            }
+
+            // 음악이 끝나면 대기상태로 전환
+            if(audio.ended){
+                nowTime=-2;
+                isGamePlaying=false;
+                audio.currentTime=0;
+            }
+        }
+
+        // 손그리기
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElementRef.current.width, canvasElementRef.current.height);
         if (handResults.landmarks) {
@@ -214,16 +149,10 @@ function Singleplay(){
                     HAND_CONNECTIONS,
                     { color: "rgb(255, 0, 255)", lineWidth: 10}
                 );
-                // drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
             }
         }
         if (faceResults.faceLandmarks) {
             for (const landmarks of faceResults.faceLandmarks) {
-                // drawingUtils.drawConnectors(
-                //     landmarks,
-                //     FaceLandmarker.FACE_LANDMARKS_TESSELATION,
-                //     { color: "#C0C0C070", lineWidth: 10 }
-                // );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE,
@@ -254,29 +183,101 @@ function Singleplay(){
                     FaceLandmarker.FACE_LANDMARKS_LIPS,
                     { color: "rgb(255, 0, 255)" }
                 );
-                // drawingUtils.drawConnectors(
-                //     landmarks,
-                //     FaceLandmarker.FACE_LANDMARKS_RIGHT_IRIS,
-                //     { color: "rgb(255, 0, 255)" }
-                // );
-                // drawingUtils.drawConnectors(
-                //     landmarks,
-                //     FaceLandmarker.FACE_LANDMARKS_LEFT_IRIS,
-                //     { color: "rgb(255, 0, 255)" }
-                // );
             }
         }
         canvasCtx.restore();
         
+        // 캐칭 알고리즘 및 판정, 노드관리
+        if(handResults.landmarks.length>0){
+            // 양손 대상으로 진행
+            for(let i=0; i<handResults.landmarks.length; i++){
+                //////////////////////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////////////
+                // 좌표의 진행방향은 좌하향임 (캠마다 좌우반전 설정이 달라져서 바뀔수도)
+                // handResults.landmarks[손 객체의 인덱스][손가락 인덱스]
+                // 조악한 예시 알고리즘;;
+                // 중지 꼭대기 좌표
+                // 중지 뿌리 좌표
+                let mid = handResults.landmarks[i][9];
+                // 손바닥 좌표
+                let palm = [handResults.landmarks[i][2], handResults.landmarks[i][5], handResults.landmarks[i][17], handResults.landmarks[i][0]];
+                // 엄지를 제외한 손가락 끝의 좌표
+                let tips = [handResults.landmarks[i][8], handResults.landmarks[i][12], handResults.landmarks[i][16], handResults.landmarks[i][20]];
+
+                // 손가락 끝이 손바닥 사각형 안에 들어갔는지 저장
+                inside[i] = isInside(palm, tips);
+
+                // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
+                if(prevInside[i] === false && inside[i] === true){
+
+                    // 캐치 이펙트 생성
+                    createEffect(mid.x, mid.y, videoRef.current, root);
+                    // 드럼 소리 재생
+                    playDrum();
+
+                    // 목표물 배열 순회하며 캐치 판정하기
+                    targets.forEach(function(obj){
+
+                        // 상태가 yet인 타겟 대상만 검사 
+                        if(obj.done === false){
+
+                            // 캐치했을 때 알고리즘 조건문
+                            if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
+
+                                // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
+                                if(nowTime < obj.createdTime/1000 + 0.500 || nowTime > obj.createdTime/1000 + 1.500){
+                                    
+                                    setComboScore(0);
+                                    setFailedScore((prev)=>prev+1);
+                                    createBad(obj.elem);
+                                    obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
+                                    obj.done = true;
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},500);
+
+                                } else if(nowTime > obj.createdTime/1000 + 0.900 && nowTime < obj.createdTime/1000 + 1.100){
+
+                                    setPerfectScore((prev)=>prev+1);
+                                    setComboScore((prev)=>prev+1);
+                                    createPerfect(obj.elem);
+                                    obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
+                                    obj.done = true;
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},500);
+
+                                } 
+                                else {
+
+                                    setGoodScore((prev)=>prev+1);
+                                    setComboScore((prev)=>prev+1);
+                                    createGood(obj.elem);
+                                    obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
+                                    obj.done = true;
+                                    obj.elemBack.remove();
+                                    setTimeout(()=>{obj.elem.remove()},500);
+                                }
+                            }
+
+                        }
+
+                    })
+                }
+
+                // 기존 주먹 여부 변경
+                prevInside[i] = inside[i];
+            }
+            
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////
+        }
         
         window.requestAnimationFrame(predictWebcam);
-        console.log(now - performance.now());
     }
     
+    // 알고리즘 도우미 함수
     function isInside(palm, tips) {
         // 손바닥 사각형의 좌표와 손가락 끝 좌표를 입력받아 주먹을 쥐었는지 판별하는 함수
         // 레이 캐스팅(Ray Casting) 알고리즘
-        const n = 4; // 손바닥을 사각형으로 인식
         let count = 0; // 손바닥에 들어온 손가락의 개수
     
         tips.forEach(element => { // 손가락 끝들을 반복
@@ -290,13 +291,13 @@ function Singleplay(){
                 let x2 = palm[(i+1)%4].x; // 다음 손바닥 사각형의 꼭짓점 좌표
                 let y2 = palm[(i+1)%4].y;
     
-                if(y == y1 && y == y2 && x >= Math.min(x1, x2)  && x <= Math.max(x1, x2)) {
+                if(y === y1 && y === y2 && x >= Math.min(x1, x2)  && x <= Math.max(x1, x2)) {
                     // 손바닥 사각형의 선분 위에 있다 => 들어왔다
                     count++;
                     break;
                 }
     
-                if(y > Math.min(y1, y2) && y <= Math.max(y1, y2) && x <= Math.max(x1, x2) && y1 != y2) {
+                if(y > Math.min(y1, y2) && y <= Math.max(y1, y2) && x <= Math.max(x1, x2) && y1 !== y2) {
                     // 손가락 끝이 손바닥 사각형의 선분과 교차하는 경우
                     let x_intersect = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
                     if(x <= x_intersect) {
@@ -315,14 +316,25 @@ function Singleplay(){
         return count >= 2;
     }
 
-    function playAudio() {
+    function playGame() {
+        if (audio && !isGamePlaying) {
 
-        if (audio) {
-            audio.loop = false; // 반복재생하지 않음
-            audio.volume = 0.5; // 음량 설정
-            audio.play(); // sound1.mp3 재생
+            gameStartTime = performance.now();
+            isGamePlaying=true;
             arrayIdx=0;
-        }
+
+            setPerfectScore(0);
+            setGoodScore(0);
+            setFailedScore(0);
+            setHighestCombo(0);
+            setComboScore(0);
+
+            setTimeout(function(){
+                audio.loop = false;
+                audio.volume = 0.3;
+                audio.play();
+            },2000);
+        };
     }
 
     function playDrum() {
@@ -336,18 +348,17 @@ function Singleplay(){
 
     function manageTargets(){
         targets.forEach((obj) => {
-            // 상태가 done이 아닌 타겟들만 그리기
-            if (obj.status !== 'done') {
-    
+            // 처리되지 않은 타겟만 조사
+            if (obj.done !== true) {
                 // 타겟이 일정 크기 이상 커지면 자동 비활성화
-                if (obj.status === 'yet' && nowTime > obj.createdTime/1000 + 1.500) {
+                if (obj.done === false && nowTime > obj.createdTime/1000 + 1.500) {
                     setComboScore(0);
                     setFailedScore((prev)=>prev+1);
-                    obj.status = 'failed';
-                    obj.elemFill.style.animation =  'failedCircleFill 1s forwards';
-                    obj.status = 'done';
+                    createBad(obj.elem);
+                    obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
                     obj.elemBack.remove();
-                    setTimeout(()=>{obj.elem.remove()},2000);
+                    obj.done = true;
+                    setTimeout(()=>{obj.elem.remove()},500);
                 }
             }
         });
@@ -360,9 +371,9 @@ function Singleplay(){
         canvasCtx = canvasElement.getContext("2d");
         drawingUtils = new DrawingUtils(canvasCtx);
         const playBtn = playBtnRef.current;
-        playBtn.addEventListener('click',playAudio);
+        playBtn.addEventListener('click',playGame);
 
-        async function createHandLandmarker () {
+        async function initializeData () {
             try{
                 const vision = await FilesetResolver.forVisionTasks(
                     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
@@ -416,7 +427,7 @@ function Singleplay(){
             }
             
         };
-        createHandLandmarker();
+        initializeData();
 
     },[])
         
