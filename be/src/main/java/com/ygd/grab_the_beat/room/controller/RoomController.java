@@ -1,9 +1,10 @@
 package com.ygd.grab_the_beat.room.controller;
 
+import com.ygd.grab_the_beat.config.response.BaseException;
+import com.ygd.grab_the_beat.config.response.BaseResponse;
+import com.ygd.grab_the_beat.room.request.RoomRequest;
 import com.ygd.grab_the_beat.room.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,24 +19,18 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity makeRoom() {
-        String code = roomService.makeRoom();
-
-        return ResponseEntity.ok(code);
+    public BaseResponse makeRoom() {
+        return new BaseResponse(roomService.makeRoom());
     }
 
     @PostMapping("/join")
-    public ResponseEntity joinRoom(@RequestBody String code) {
-        roomService.joinRoom(code);
-
-        return ResponseEntity.ok(code);
+    public BaseResponse joinRoom(@RequestBody RoomRequest roomRequest) throws BaseException {
+        return new BaseResponse(roomService.joinRoom(roomRequest.getCode()));
     }
 
     @PutMapping
-    public ResponseEntity exitRoom(@RequestBody String code) {
-        roomService.exitRoom(code);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    public BaseResponse exitRoom(@RequestBody RoomRequest roomRequest) throws BaseException {
+        return new BaseResponse(roomService.exitRoom(roomRequest.getCode()));
     }
 
 }
