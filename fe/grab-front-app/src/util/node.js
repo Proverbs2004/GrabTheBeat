@@ -20,6 +20,31 @@ export function createCircle(x, y, video, root){
     return [circle, circleBack, circleFill];
 }
 
+export function createPerfect(circle){
+    const judge = document.createElement('div');
+    judge.innerText = 'Perfect!'
+    judge.classList.add('judge-perfect');
+    circle.appendChild(judge);
+    setTimeout(()=>{judge.remove()},300);
+}
+
+export function createGood(circle){
+    const judge = document.createElement('div');
+    judge.innerText = 'Good!'
+    judge.classList.add('judge-good');
+    circle.appendChild(judge);
+    setTimeout(()=>{judge.remove()},300);
+    
+}
+
+export function createBad(circle){
+    const judge = document.createElement('div');
+    judge.innerText = 'Bad!'
+    judge.classList.add('judge-bad');
+    circle.appendChild(judge);
+    setTimeout(()=>{judge.remove()},300);
+}
+
 function setGamePosition(frame, el, x, y, w, h){
     const rect = frame.getBoundingClientRect();
     const newX = window.scrollX + rect.left + ((1.0 - x) * frame.videoWidth) - w/2;
