@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, String> {
 
+    Room findByRoomId(int roomId);
+
     Room getByCode(String code);
 
     @Query("SELECT r.playerCount FROM Room r WHERE r.code = :code")
