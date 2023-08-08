@@ -28,19 +28,22 @@ import drum from '../../data/drum.mp3';
 import jsonData from '../../data/DonaldGlover_RedBone.json';
 
 import Websocket from '../../webSocket/client/WebSocketClient'
+import { log } from 'util';
 
 
 
 function TitleSingleplay() {
     return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+        <div className="titleSingleplayNoAnim">SINGLE PLAY</div>
     )
 }
 
 
 
 function Singleplay(){
-
+    // const [isGamePlaying, setIsGamePlaying] = useState(0);
+    const [isGamePlayingState, setIsGamePlayingState] = useState(false);
+    const isGamePlaying = useRef(false);
     const [goodScore, setGoodScore] = useState(0);
     const [perfectScore, setPerfectScore] = useState(0);
     const [failedScore, setFailedScore] = useState(0);
@@ -48,9 +51,8 @@ function Singleplay(){
     const [comboScore, setComboScore] = useState(0);
     
     let nowTime=-2;
-    let audio = new Audio(redBone);
+    const audio = useRef(new Audio(redBone));
     let drumSound = new Audio(drum);
-    let isGamePlaying = false;
     let gameStartTime = 0;
     const startTimeArray = [];
     const positionArray = [];
@@ -68,7 +70,7 @@ function Singleplay(){
 
     const videoRef = useRef(null);
     const canvasElementRef = useRef(null);
-    const playBtnRef = useRef(null);
+
     let canvasCtx = null;
     const root = document.getElementById('root');
 
@@ -112,12 +114,13 @@ function Singleplay(){
     }
     
     function predictWebcam(){
+        console.log(isGamePlaying.current);
         let now = performance.now();
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
         
         // 게임이 실행중일 때 진행
-        if(isGamePlaying){
+        if(isGamePlaying.current){
 
             makeNode();
             manageTargets();
@@ -126,15 +129,15 @@ function Singleplay(){
                 // nowtime을 -2초부터 0초까지 실행시켜야함
                 nowTime = -2 + (performance.now() - gameStartTime)/1000;
             } else {
-                nowTime = audio.currentTime;
+                nowTime = audio.current.currentTime;
                 
             }
 
             // 음악이 끝나면 대기상태로 전환
-            if(audio.ended){
+            if(audio.current.ended){
                 nowTime=-2;
-                isGamePlaying=false;
-                audio.currentTime=0;
+                setIsGamePlayingState(false);
+                audio.current.currentTime=0;
             }
         }
 
@@ -315,12 +318,23 @@ function Singleplay(){
         // 손바닥에 손가락이 2개 이상 들어왔는지 반환
         return count >= 2;
     }
+    function stopGame(){
+        setIsGamePlayingState(false);
+        audio.current.pause();
+        nowTime=-2;
+        audio.current.currentTime=0;
+        
+        targets.forEach((obj)=>{
+            obj.done = false;
+        })
 
+        console.log('audio should be paused');
+        console.log(isGamePlaying.current);
+    }
     function playGame() {
-        if (audio && !isGamePlaying) {
+        if (audio.current && !isGamePlaying.current) {
 
             gameStartTime = performance.now();
-            isGamePlaying=true;
             arrayIdx=0;
 
             setPerfectScore(0);
@@ -329,10 +343,14 @@ function Singleplay(){
             setHighestCombo(0);
             setComboScore(0);
 
+            setIsGamePlayingState(true);
+            // isGamePlaying=1;
+
             setTimeout(function(){
-                audio.loop = false;
-                audio.volume = 0.3;
-                audio.play();
+                audio.current.currentTime = 0;
+                audio.current.loop = false;
+                audio.current.volume = 0.3;
+                audio.current.play();
             },2000);
         };
     }
@@ -370,8 +388,6 @@ function Singleplay(){
         const canvasElement = canvasElementRef.current;
         canvasCtx = canvasElement.getContext("2d");
         drawingUtils = new DrawingUtils(canvasCtx);
-        const playBtn = playBtnRef.current;
-        playBtn.addEventListener('click',playGame);
 
         async function initializeData () {
             try{
@@ -438,30 +454,67 @@ function Singleplay(){
         
     },[comboScore]);   
     
-
+    useEffect(()=>{
+        isGamePlaying.current=isGamePlayingState;
+    },[isGamePlayingState])
+    
+    console.log(isGamePlaying.current);
     return(
-        <div>
-            {/* <ButtonHome/> */}
             <div className="containerSingleplay">
+                {/* <Link to="/" >
+                    <button className="backbutton" >
+                        <svg className="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" strokeWidth="0.5"/>
+                            <path d="M0 0h48v48h-48z" fill="none"/>
+                        </svg>
+                        BACK
+                    </button>
+                </Link> */}
                 <TitleSingleplay />
-              
-                <button id="gameStart" ref={playBtnRef}>게임시작</button>
-                <div>
-                    <div>perfect: {perfectScore}</div>
-                    <div>good: {goodScore}</div>
-                    <div>failed: {failedScore}</div>
-                    <div>highest combo: {highestCombo}</div>
-                    <div>current combo: {comboScore}</div>
-                </div>
-                <div>
-                <div className="gameContainer">
-                    <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
-                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>
-                </div>
-                <Websocket />
+                <button onClick={stopGame}>게임강제종료</button>
+                <div className="gameBox">
+                    <div className="gameContainer">
+                        <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
+                        <canvas id="canvasZone" ref={canvasElementRef}></canvas>
+                    </div>
+                    
+                    {!isGamePlayingState
+                    ? <MusicBox
+                        playGame={playGame}/>
+                    : <ScoreBox
+                        perfectScore={perfectScore}
+                        goodScore={goodScore}
+                        failedScore={failedScore}
+                        highestCombo={highestCombo}
+                        comboScore={comboScore}
+                        stopGame={stopGame}/>
+                    }
+                    
+
                 </div>
             </div>
+    )
+}
 
+function MusicBox({playGame}){
+    return(
+        <div className="scoreBox">
+            <div className="songTitle">song title: AAA</div>
+            <button id="gameStart" onClick={playGame}>게임시작</button>
+        </div>
+    )
+
+}
+
+function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
+    return(
+        <div className="scoreBox">
+            <div>perfect: {perfectScore}</div>
+            <div>good: {goodScore}</div>
+            <div>failed: {failedScore}</div>
+            <div>highest combo: {highestCombo}</div>
+            <div>current combo: {comboScore}</div>
+            <button id="gameStart" onClick={stopGame}>종료</button>
         </div>
     )
 }
