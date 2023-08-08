@@ -25,6 +25,8 @@ public class Record {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "music_title")
+    private String musicTitle;
 
     @Column(name = "perfect_count")
     private Integer perfectCount;
