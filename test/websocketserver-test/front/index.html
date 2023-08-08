@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket 실습</title>
+    <script>
+      const ws = new WebSocket("ws://localhost:8000/foo");
+
+      function sendMsg() {
+        const name = document.getElementById("name").value;
+        const msg = document.getElementById("msg").value;
+        document.getElementById("msg").value = "";
+        ws.send(`${name}: ${msg}`);
+      }
+
+      function pressEnterKey() {
+        if (window.event.keyCode === 13) {
+          const name = document.getElementById("name").value;
+          const msg = document.getElementById("msg").value;
+          document.getElementById("msg").value = "";
+          ws.send(`${name}: ${msg}`);
+        }
+      }
+
+      ws.onmessage = function (event) {
+        const appendText = event.data;
+        document.getElementById("chatBox").innerHTML += `${appendText}\n`;
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Websocket 실습 과제</h1>
+    <div>
+      <textarea name="chatBox" id="chatBox" style="width: 500px; height: 200px" readonly></textarea>
+    </div>
+    <div>
+      <input type="text" name="name" id="name" style="width: 100px" />
+      <input type="text" name="msg" id="msg" style="width: 300px" onkeypress="pressEnterKey()" />
+      <button onclick="sendMsg()">전송</button>
+    </div>
+  </body>
+</html>
