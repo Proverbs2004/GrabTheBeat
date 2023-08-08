@@ -78,6 +78,7 @@ public class RoomService {
         return roomRepository.getPlayerCountByCode(code);
     }
 
+    @Transactional
     public int exitRoom(String code) throws BaseException {
         RoomStatus roomStatus = getRoomStatus(code);
 
