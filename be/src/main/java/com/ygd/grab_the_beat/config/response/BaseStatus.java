@@ -1,4 +1,4 @@
-package com.ygd.grab_the_beat.config.exception;
+package com.ygd.grab_the_beat.config.response;
 
 import lombok.Getter;
 
