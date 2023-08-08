@@ -2,10 +2,7 @@ package com.ygd.grab_the_beat.room.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "room")
@@ -16,6 +13,10 @@ import javax.persistence.Table;
 public class Room {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
+    private int roomId;
+
     @Column(name = "code", length = 6)
     private String code;
 
