@@ -1,6 +1,6 @@
 package com.ygd.grab_the_beat.config.jwt;
 
-import com.ygd.grab_the_beat.domain.User;
+import com.ygd.grab_the_beat.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;

@@ -4,8 +4,8 @@ import com.ygd.grab_the_beat.config.jwt.TokenProvider;
 import com.ygd.grab_the_beat.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.ygd.grab_the_beat.config.oauth.OAuth2SuccessHandler;
 import com.ygd.grab_the_beat.config.oauth.OAuth2UserCustomService;
-import com.ygd.grab_the_beat.repository.RefreshTokenRepository;
-import com.ygd.grab_the_beat.service.UserService;
+import com.ygd.grab_the_beat.user.repository.RefreshTokenRepository;
+import com.ygd.grab_the_beat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @RequiredArgsConstructor
 @Configuration

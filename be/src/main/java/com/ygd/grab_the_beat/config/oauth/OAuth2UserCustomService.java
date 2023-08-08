@@ -1,7 +1,7 @@
 package com.ygd.grab_the_beat.config.oauth;
 
-import com.ygd.grab_the_beat.domain.User;
-import com.ygd.grab_the_beat.repository.UserRepository;
+import com.ygd.grab_the_beat.user.entity.User;
+import com.ygd.grab_the_beat.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

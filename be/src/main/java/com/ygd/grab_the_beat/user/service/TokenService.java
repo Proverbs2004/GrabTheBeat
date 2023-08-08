@@ -1,7 +1,7 @@
-package com.ygd.grab_the_beat.service;
+package com.ygd.grab_the_beat.user.service;
 
 import com.ygd.grab_the_beat.config.jwt.TokenProvider;
-import com.ygd.grab_the_beat.domain.User;
+import com.ygd.grab_the_beat.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

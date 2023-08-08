@@ -1,10 +1,10 @@
 package com.ygd.grab_the_beat.config.oauth;
 
 import com.ygd.grab_the_beat.config.jwt.TokenProvider;
-import com.ygd.grab_the_beat.domain.RefreshToken;
-import com.ygd.grab_the_beat.domain.User;
-import com.ygd.grab_the_beat.repository.RefreshTokenRepository;
-import com.ygd.grab_the_beat.service.UserService;
+import com.ygd.grab_the_beat.user.entity.RefreshToken;
+import com.ygd.grab_the_beat.user.entity.User;
+import com.ygd.grab_the_beat.user.repository.RefreshTokenRepository;
+import com.ygd.grab_the_beat.user.service.UserService;
 import com.ygd.grab_the_beat.util.CookieUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

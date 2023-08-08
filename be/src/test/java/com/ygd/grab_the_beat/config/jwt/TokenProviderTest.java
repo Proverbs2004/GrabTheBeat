@@ -1,7 +1,7 @@
 package com.ygd.grab_the_beat.config.jwt;
 
-import com.ygd.grab_the_beat.domain.User;
-import com.ygd.grab_the_beat.repository.UserRepository;
+import com.ygd.grab_the_beat.user.entity.User;
+import com.ygd.grab_the_beat.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

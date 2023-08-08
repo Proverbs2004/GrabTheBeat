@@ -1,7 +1,7 @@
-package com.ygd.grab_the_beat.controller;
+package com.ygd.grab_the_beat.user.controller;
 
-import com.ygd.grab_the_beat.dto.AddUserRequest;
-import com.ygd.grab_the_beat.service.UserService;
+import com.ygd.grab_the_beat.user.request.AddUserRequest;
+import com.ygd.grab_the_beat.user.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

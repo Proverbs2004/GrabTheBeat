@@ -1,4 +1,4 @@
-package com.ygd.grab_the_beat.dto;
+package com.ygd.grab_the_beat.user.request;
 
 import lombok.Getter;
 import lombok.Setter;

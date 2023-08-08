@@ -1,4 +1,4 @@
-package com.ygd.grab_the_beat.domain;
+package com.ygd.grab_the_beat.user.entity;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,8 +1,8 @@
-package com.ygd.grab_the_beat.service;
+package com.ygd.grab_the_beat.user.service;
 
-import com.ygd.grab_the_beat.dto.AddUserRequest;
-import com.ygd.grab_the_beat.domain.User;
-import com.ygd.grab_the_beat.repository.UserRepository;
+import com.ygd.grab_the_beat.user.request.AddUserRequest;
+import com.ygd.grab_the_beat.user.entity.User;
+import com.ygd.grab_the_beat.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
