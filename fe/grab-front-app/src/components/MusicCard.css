@@ -1,0 +1,41 @@
+.sliderContainer {
+    /* Set the desired width and height of the slider container. You can adjust these values based on your requirement. */
+    width: 30%;
+    height: 400px;
+    margin: 0 auto; /* Center the container horizontally on the screen. You can adjust the margin as needed. */
+    overflow: hidden; /* Hide any content that overflows the container. */
+  }
+  .musicCard {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    transition: box-shadow 0.9s ease;
+  }
+  
+  .musicCard:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* SingleplayWaiting.css */
+.custom-prev-arrow,
+.custom-next-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 24px;
+  color: #ff99ff;
+
+  border-radius: 50%;
+  padding: 8px;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.custom-prev-arrow {
+  left: 10px;
+}
+
+.custom-next-arrow {
+  right: 10px;
+}

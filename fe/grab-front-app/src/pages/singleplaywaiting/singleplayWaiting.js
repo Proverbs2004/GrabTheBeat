@@ -1,6 +1,6 @@
 import { Link} from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { React, useState, useEffect, useRef } from 'react';
+import { React, useState, useEffect, useRef, Component } from 'react';
 import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
 import {
@@ -9,13 +9,21 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
+import Slider from "react-slick";
 import './SingleplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
 
+import MusicCard from '../../components/MusicCard'
 
 import Websocket from '../../webSocket/client/WebSocketClient'
+import { Carousel } from 'react-responsive-carousel';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
+
 
 
 function TitleSingleplay() {
@@ -69,7 +77,32 @@ function SingleplayWaiting(){
               "artist": "Janji",
               "music_url": "../../data/Test2.mp3",
               "json_url": "../../data/Test2.json"
-            }
+              
+            },
+            {
+                "id": 4,
+                "title": "Test3",
+                "artist": "Janji",
+                "music_url": "../../data/Test3.mp3",
+                "json_url": "../../data/Test3.json"
+                
+              },
+              {
+                "id": 5,
+                "title": "Test4",
+                "artist": "Janji",
+                "music_url": "../../data/Test4.mp3",
+                "json_url": "../../data/Test4.json"
+                
+              },
+              {
+                "id": 6,
+                "title": "Test5",
+                "artist": "Janji",
+                "music_url": "../../data/Test5.mp3",
+                "json_url": "../../data/Test5.json"
+                
+              }
             // 필요한 만큼 곡 정보를 추가할 수 있습니다.
           ]
       };
@@ -258,49 +291,32 @@ function SingleplayWaiting(){
         console.log("선택됨");
       };
   
-    
 
     
 
     return(
         <div>
             {/* <ButtonHome/> */}
-            <div className="containerSingleplay">
+            <div className="containerSingleplayWaiting">
                 <TitleSingleplay />
-                <div>
-                <div className="gameContainer">
-                    <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
-                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>
+                <div style={{display:'flex'}}>
+                <div className="gameContainerWaiting">
+                    <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
+                    <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
                 </div>
                 <Websocket />
                 </div>
-            
+                <MusicCard musicList = {data.musicList} />
 
                 <div>
-        <h2>음악 선택</h2>
-        <ul>
-          {musicList.map((music) => (
-            <li key={music.id} onClick={() => handleMusicSelect(music)}>
-              {music.title} - {music.artist}
-            </li>
-          ))}
-        </ul>
-        {selectedMusic && (
-          <div>
-            <h3>선택된 곡:</h3>
-            <p>제목: {selectedMusic.title}</p>
-            <p>아티스트: {selectedMusic.artist}</p>
-            <audio controls src={selectedMusic.music_url}>
-              {/* <source src={selectedMusic.music_url} type="audio/mp3" /> */}
-              {/* <source src={selectedMusic.json_url} type="json" /> */}
-            </audio>
-          </div>
-        )}
+
+        </div>
       </div>
-    </div>
-    </div>
+      </div>
+
 
     )
+    
 }
 
 export default SingleplayWaiting;
