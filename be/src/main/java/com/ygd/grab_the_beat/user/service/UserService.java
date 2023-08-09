@@ -21,7 +21,7 @@ public class UserService {
                 .email(dto.getEmail())
                 // 패스워드 암호화
                 .password(encoder.encode(dto.getPassword()))
-                .build()).getId();
+                .build()).getUserId();
     }
 
     // userId 기준으로 User 탐색

@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 // User 엔티티
-@Table(name = "users")
+@Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -21,8 +21,8 @@ public class User implements UserDetails { // UserDetails를 상속받아 인증
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id;
+    @Column(name = "user_id", updatable = false)
+    private Long userId;
     
     @Column(name = "email", nullable = false, unique = true)
     private String email;
