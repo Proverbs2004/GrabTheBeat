@@ -12,6 +12,12 @@ function MusicCard({ musicList }) {
   
     const handleMusicSelect = (music) => {
       setSelectedMusic(music); // Update the selectedMusic state when a music card is clicked
+      let audio = new Audio(music.music_url);
+      console.log(audio);
+      console.log("여기야여기");
+      audio.play().catch( e=>{  
+        console.log(e)
+        })
     };
   
     const CustomPrevArrow = ({ onClick }) => (
@@ -46,17 +52,9 @@ className="musicCarousel" // Add a class to the Slider component for custom styl
 <p>아티스트: {music.artist}</p>
 {selectedMusic && (
 <div>
-<h3>선택된 곡:</h3>
-<p>제목: {selectedMusic.title}</p>
-<p>아티스트: {selectedMusic.artist}</p>
-<audio controls src={selectedMusic.music_url}>
-{/* <source src={selectedMusic.music_url} type="audio/mp3" /> */}
-{/* <source src={selectedMusic.json_url} type="json" /> */}
-</audio>
 </div>
 
 )}
-{/* Add other music details or any visuals for the card */}
 </div>
 </div>
 ))}
