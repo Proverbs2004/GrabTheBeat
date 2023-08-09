@@ -61,47 +61,49 @@ function SingleplayWaiting(){
               "id": 1,
               "title": "HeroesTonight",
               "artist": "Janji",
-              "music_url": "../data/JanJi_HeroesTonight.mp3",
-              "json_url": "../../data/JanJi_HeroesTonight.json"
+              "music_url": "/data/JanJi_HeroesTonight.mp3",
+              "json_url": "../../data/JanJi_HeroesTonight.json",
+              "pic_url": "/pic/면도킁.png"
             },
             {
               "id": 2,
               "title": "Test1",
               "artist": "JanJi",
               "music_url": "../data/Test1.mp3",
-              "json_url": "../../data/Test1.json"
+              "json_url": "../../data/Test1.json",
+              "pic_url": "/pic/면도킁.png"
             },
             {
               "id": 3,
               "title": "Test2",
               "artist": "Janji",
               "music_url": "../data/Test2.mp3",
-              "json_url": "../../data/Test2.json"
-              
+              "json_url": "../../data/Test2.json",
+              "pic_url": "/pic/면도킁.png"
             },
             {
                 "id": 4,
                 "title": "Test3",
                 "artist": "Janji",
                 "music_url": "../data/Test3.mp3",
-                "json_url": "../../data/Test3.json"
-                
+                "json_url": "../../data/Test3.json",
+                "pic_url": "/pic/면도킁.png"
               },
               {
                 "id": 5,
                 "title": "Test4",
                 "artist": "Janji",
                 "music_url": "../data/Test4.mp3",
-                "json_url": "../../data/Test4.json"
-                
+                "json_url": "../../data/Test4.json",
+                "pic_url": "/pic/면도킁.png"
               },
               {
                 "id": 6,
                 "title": "Test5",
                 "artist": "Janji",
                 "music_url": "../data/Test5.mp3",
-                "json_url": "../../data/Test5.json"
-                
+                "json_url": "../../data/Test5.json",
+                "pic_url": "/pic/면도킁.png"
               }
             // 필요한 만큼 곡 정보를 추가할 수 있습니다.
           ]
