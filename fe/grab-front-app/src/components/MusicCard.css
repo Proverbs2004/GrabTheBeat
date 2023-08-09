@@ -1,9 +1,12 @@
 .sliderContainer {
     /* Set the desired width and height of the slider container. You can adjust these values based on your requirement. */
-    width: 30%;
-    height: 550px;
-    margin: 0 auto; /* Center the container horizontally on the screen. You can adjust the margin as needed. */
-    overflow: hidden; /* Hide any content that overflows the container. */
+    /* width: 30%;
+    min-width: 300px;
+    height: 550px; */
+    /* margin: 0 auto; Center the container horizontally on the screen. You can adjust the margin as needed. */
+    /* overflow: hidden; Hide any content that overflows the container. */
+    height: 400px;
+    padding-top: 50px;
   }
   .musicCard {
 

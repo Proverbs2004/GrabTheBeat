@@ -5,17 +5,15 @@ import "slick-carousel/slick/slick-theme.css";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import './MusicCard.css';
 
-function MusicCard({ musicList }) {
-    const [selectedMusic, setSelectedMusic] = useState(null);
+function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Initialize with 0 or the appropriate value
 
-    const handleMusicSelect = (music) => {
-        setSelectedMusic(music);
-    };
+    
 
     useEffect(() => {
         if (selectedMusic) {
             const audioElement = new Audio(selectedMusic.music_url);
+            audioElement.volume=0.1;
             audioElement.play();
 
             return () => {
@@ -41,7 +39,12 @@ function MusicCard({ musicList }) {
             <FaArrowRight />
         </div>
     );
+    try{
+        console.log(selectedMusic.id);
 
+    }   catch{
+
+    }
     return (
         <div className="sliderContainer">
             <Slider
@@ -61,7 +64,7 @@ function MusicCard({ musicList }) {
                  
                                 <img className="musicCardBackground" alt="noImage" src={music.pic_url} />
                             <h3>{music.title}</h3>
-                            <p>아티스트: {music.artist}</p>
+                            <p>Artist: {music.artist}</p>
                         </div>
                     </div>
                 ))}
