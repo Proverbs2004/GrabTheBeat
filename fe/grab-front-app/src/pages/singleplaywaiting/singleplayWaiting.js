@@ -296,22 +296,21 @@ function SingleplayWaiting(){
 
     
 
-    return(
+      return(
         <div>
             {/* <ButtonHome/> */}
             <div className="containerSingleplayWaiting">
                 <TitleSingleplay />
-                <div style={{display:'flex'}}>
+                <div className='camandmessagebox' style={{display:'flex'}}>
+                <div>
                 <div className="gameContainerWaiting">
                     <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
                     <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
                 </div>
                 <Websocket />
-                </div>
+                </div>  
                 <MusicCard musicList = {data.musicList} />
-
-                <div>
-
+                <button type="submit" className="startbutton" >START</button>
         </div>
       </div>
       </div>

@@ -58,9 +58,8 @@ function MusicCard({ musicList }) {
                 {musicList.map((music) => (
                     <div key={music.id} onClick={() => handleMusicSelect(music)}>
                         <div className="musicCard">
-                            <div className="musicCardBackground">
+                 
                                 <img className="musicCardBackground" alt="noImage" src={music.pic_url} />
-                            </div>
                             <h3>{music.title}</h3>
                             <p>아티스트: {music.artist}</p>
                         </div>
