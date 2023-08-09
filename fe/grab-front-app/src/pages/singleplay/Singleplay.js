@@ -16,8 +16,6 @@ import '../../util/effect.css';
 import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
 import {createEffect} from "../../util/effect.js";
 
-import Chat from '../../components/Chat.js';
-import MusicSelect from '../../components/MusicSelect.js';
 
 // import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
 import redBone from '../../data/DonaldGlover_RedBone.mp3';

@@ -1,66 +1,73 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import Slider from "react-slick";
-import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import './MusicCard.css'
+import './MusicCard.css';
 
 function MusicCard({ musicList }) {
-    const [selectedMusic, setSelectedMusic] = useState(null); // Define selectedMusic state
-  
+    const [selectedMusic, setSelectedMusic] = useState(null);
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Initialize with 0 or the appropriate value
+
     const handleMusicSelect = (music) => {
-      setSelectedMusic(music); // Update the selectedMusic state when a music card is clicked
-      let audio = new Audio(music.music_url);
-      console.log(audio);
-      console.log("여기야여기");
-      audio.play().catch( e=>{  
-        console.log(e)
-        })
+        setSelectedMusic(music);
     };
-  
+
+    useEffect(() => {
+        if (selectedMusic) {
+            const audioElement = new Audio(selectedMusic.music_url);
+            audioElement.play();
+
+            return () => {
+                audioElement.pause();
+            };
+        }
+    }, [selectedMusic]);
+
     const CustomPrevArrow = ({ onClick }) => (
-        <div className="slick-arrow custom-prev-arrow" onClick={onClick}>
-          <FaArrowLeft />
+        <div className="slick-arrow custom-prev-arrow" onClick={() => {
+          handleMusicSelect(musicList[currentSlideIndex - 1]);
+          onClick();
+      }}>
+            <FaArrowLeft />
         </div>
-      );
-    
-      const CustomNextArrow = ({ onClick }) => (
-        <div className="slick-arrow custom-next-arrow" onClick={onClick}>
-          <FaArrowRight />
+    );
+
+    const CustomNextArrow = ({ onClick }) => (
+        <div className="slick-arrow custom-next-arrow" onClick={() => {
+            handleMusicSelect(musicList[currentSlideIndex + 1]);
+            onClick();
+        }}>
+            <FaArrowRight />
         </div>
-      );
-    
+    );
 
     return (
         <div className="sliderContainer">
-
-<Slider
-slidesToShow={1} // Show only 1 music card at a time.
-infinite={true} // Disable infinite loop for the carousel.
-arrows={true} // Show navigation arrows.
-prevArrow={<CustomPrevArrow />}
-nextArrow={<CustomNextArrow />}
-className="musicCarousel" // Add a class to the Slider component for custom styling.
->
-{musicList.map((music) => (
-<div key={music.id} onClick={() => handleMusicSelect(music)}>
-{/* You can create your own music card component here */}
-<div className="musicCard">
-<h3>{music.title}</h3>
-<p>아티스트: {music.artist}</p>
-{selectedMusic && (
-<div>
-</div>
-
-)}
-</div>
-</div>
-))}
-
-</Slider>
-</div>
+            <Slider
+                slidesToShow={1}
+                infinite={true}
+                arrows={true}
+                prevArrow={<CustomPrevArrow />}
+                nextArrow={<CustomNextArrow />}
+                className="musicCarousel"
+                beforeChange={(oldIndex, newIndex) => {
+                    setCurrentSlideIndex(newIndex);
+                }}
+            >
+                {musicList.map((music) => (
+                    <div key={music.id} onClick={() => handleMusicSelect(music)}>
+                        <div className="musicCard">
+                            <div className="musicCardBackground">
+                                <img className="musicCardBackground" alt="noImage" src={music.pic_url} />
+                            </div>
+                            <h3>{music.title}</h3>
+                            <p>아티스트: {music.artist}</p>
+                        </div>
+                    </div>
+                ))}
+            </Slider>
+        </div>
     )
 }
 
