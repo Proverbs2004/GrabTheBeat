@@ -5,7 +5,6 @@ let webSocketServerList = [];
 
 // WebSocketServer 객체 생성.
 export function createSocketServer(code) {
-    console.log("세션 생성 시작");
     const wss = new WebSocketServer({ noServer: true });
 
     // 'connection' 이벤트 발생 시, 수행 할 콜백 함수 매핑
@@ -43,23 +42,18 @@ export function createSocketServer(code) {
         })
     })
 
+    // WebSocketServer 리스트에 WebSocketServer 추가
     webSocketServerList.push({
         serverId: code,
         webSocketServer: wss
     });
     
-    console.log("세션 생성 완료");
     return wss;
 }
 
 // WebSocketServr 객체 제거.
 export function removeSocketServer(code) {
     webSocketServerList = webSocketServerList.filter(wss => wss.serverId !== code);
-}
-
-// WebSocketServer 객체 리스트를 반환.
-export function getSocketServerList() {
-    return webSocketServerList;
 }
 
 // 특정 WebSocketServer 객체 반환.

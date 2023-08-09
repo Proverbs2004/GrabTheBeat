@@ -1,46 +1,28 @@
-const express = require("express")
-const { WebSocketServer } = require("ws")
-const WebSocket = require("ws")
-const app = express()
+import { createServer } from 'http';
+import { parse } from 'url';
+import { dispatchSocketServer } from './socketserver.js';
 
-app.use(express.static("front"))
+// http 서버 생성
+const server = createServer();
 
-app.listen(8000, () => {
-    console.log(`Server Listening on port 8000`)
-})
+server.on('upgrade', function upgrade(request, socket, head) {
+    const { pathname } = parse(request.url);
+    // '/' 제거하여 code 추출
+    const code = pathname.slice(1);
 
-const wss = new WebSocketServer({ port: 8001 })
-
-wss.on('connection', ws => {
-    ws.on('error', console.error);
-
-    // 유저 접속
-    if (ws.readyState === ws.OPEN) {
-        const size = wss.clients.size;
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(`새로운 유저 접속 [현재: ${size}명]`);
-            }
+    // code와 일치하는 WebSocketServer
+    const wss = dispatchSocketServer(code);
+    if (wss !== null && wss !== undefined) {
+        wss.handleUpgrade(request, socket, head, function done(ws) {
+            // connection 이벤트 수행
+            wss.emit('connection', ws, request);
         })
+    } else {
+        socket.destroy();
     }
+});
 
-    // 메시지 전송
-    ws.on('message', (data, isBinary) => {
-        console.log(`Received from client: ${data}`)
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(data, { binary: isBinary });
-            }
-        })
-    });
-
-    // 접속 해제
-    ws.on('close', () => {
-        const size = wss.clients.size;
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(`유저 연결 해제 [현재: ${size}명]`);
-            }
-        })
-    })
+// 클라이언트 요청 준비
+server.listen(8000, () => {
+    console.log(`Server Listening on port 8000`)
 })
