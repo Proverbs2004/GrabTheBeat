@@ -1,39 +1,89 @@
-import WebSocketServer from 'ws';
+import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 
-let socketServerList = [];
+let webSocketServerList = [];
 
 // WebSocketServer 객체 생성.
-export function createSocketServer(sessionId) {
+export function createSocketServer(code) {
     console.log("세션 생성 시작");
-    socketServerList.push({
-        sessionId: sessionId,
-        socketServer: new WebSocketServer({ noServer: true })
+    const wss = new WebSocketServer({ noServer: true });
+
+    // 'connection' 이벤트 발생 시, 수행 할 콜백 함수 매핑
+    wss.on('connection', function connection(ws) {
+        ws.on('error', console.error);
+    
+        // 유저 접속
+        if (ws.readyState === ws.OPEN) {
+            const size = wss.clients.size;
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(`새로운 유저 접속 [현재: ${size}명]`);
+                }
+            })
+        }
+    
+        // 메시지 전송
+        ws.on('message', (data, isBinary) => {
+            console.log(`Received from client: ${data}`)
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(data, { binary: isBinary });
+                }
+            })
+        });
+    
+        // 접속 해제
+        ws.on('close', () => {
+            const size = wss.clients.size;
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(`유저 연결 해제 [현재: ${size}명]`);
+                }
+            })
+        })
+    })
+
+    webSocketServerList.push({
+        serverId: code,
+        webSocketServer: wss
     });
+    
     console.log("세션 생성 완료");
+    return wss;
 }
 
 // WebSocketServr 객체 제거.
-export function removeSocketServer(sessionId) {
-    socketServerList = socketServerList.filter(serverInfo => serverInfo.sessionId !== sessionId);
+export function removeSocketServer(code) {
+    webSocketServerList = webSocketServerList.filter(wss => wss.serverId !== code);
 }
 
 // WebSocketServer 객체 리스트를 반환.
 export function getSocketServerList() {
-    return socketServerList;
+    return webSocketServerList;
 }
 
 // 특정 WebSocketServer 객체 반환.
-export function dispatchSocketServer(sessionId) {
-    // 탐색에 성공한 경우, WebSocketServer 객체 반환.
-    // 탐색에 실패한 경우, undefined 반환?
-    let socketServer = socketServerList.filter(serverInfo => serverInfo.sessionId === sessionId)[0].socketServer;
+export function dispatchSocketServer(code) {
+    // 탐색에 성공한 경우, 기존 WebSocketServer 객체 반환.
+    // 탐색에 실패한 경우, 새로운 WebSocketServer 객체 반환.
 
-    // 해당 sessionId와 일치하는 WebSocketServer가 존재하지 않는 경우, 자동적으로 WebSocketServer를 생성.
-    if (socketServer === null || socketServer === undefined) {
-        console.log("세션 생성 전");
-        socketServer = createSocketServer(sessionId);
-        console.log("세션 생성 후");
+    let wss = null;
+    // webSocketServerList가 비어있으면?
+    if (Array.isArray(webSocketServerList) && webSocketServerList.length === 0) {
+        wss = createSocketServer(code);
+
+        return wss;
     }
 
-    return socketServer;
+    const wssList = webSocketServerList.filter(wss => wss.serverId === code);
+    // 조회 결과가 없다면?
+    if (Array.isArray(wssList) && wssList.length === 0) {
+        wss = createSocketServer(code);
+
+    // 조회 결과가 있다면?
+    } else {
+        wss = wssList[0].webSocketServer;
+    }
+
+    return wss;
 }
