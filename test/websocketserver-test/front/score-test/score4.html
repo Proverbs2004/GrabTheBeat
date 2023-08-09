@@ -39,8 +39,11 @@
 
       ws.onmessage = function (event) {
         // const appendText = event.data;
-        const msg = JSON.parse(event.data);
-        document.getElementById("chatBox").innerHTML += `${msg.name}: ${msg.time}\n`;
+        const clients = JSON.parse(event.data);
+        document.getElementById("chatBox").innerHTML += `========== Interval ==========\n`;
+        clients.forEach(client => {
+          document.getElementById("chatBox").innerHTML += `${client.name}: ${client.score}\n`;
+        });
       };
     </script>
   </head>
