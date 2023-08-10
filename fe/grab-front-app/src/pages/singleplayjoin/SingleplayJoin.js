@@ -2,6 +2,10 @@ import './SingleplayJoin.css';
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect, useCallback } from 'react';
 
+import axios from 'axios';
+import SingleplayWaiting from '../singleplaywaiting/singleplayWaiting';
+const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
+
 function SingleplayJoin() {
     return(
         <div>
@@ -110,6 +114,19 @@ function JoinForm() {
         validate();
     }, [validate]);
 
+    // axios 
+    let roomCode;
+    async function singleJoinGame() {
+        roomCode = await axios.post('https://i9a607.p.ssafy.io/api/rooms');
+        console.log('roomCode : ', roomCode);
+        // const session = await axios.post('http://localhost:4443/openvidu/api/sessions', {}, { headers: {Authorization: 'Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU', 'Content-Type': 'application/json'}});
+        // const session = await axios.post(APPLICATION_SERVER_URL + 'openvidu/api/sessions', {}, { headers: {Authorization: 'Basic T1BFTlZJRFVBUFA6YTYwNw==', 'Content-Type': 'application/json'}});
+        // console.log('session : ', session);
+
+    }
+
+
+
     return (
         <form onSubmit={handleSubmit}>
            
@@ -125,10 +142,14 @@ function JoinForm() {
             />
             {touched.userName && errors.userName && <span><br />{errors.userName}</span>}
             <br />
-            <Link to={`/singleplay?userName=${values.userName}`}>
-                <button type="submit" className="joinbutton">JOIN</button>
+            <Link to={`/singleplaywaiting?userName=${values.userName}`}>
+                <button type="submit" className="joinbutton" onClick={singleJoinGame}>JOIN</button>
             </Link>
-        </form>
+        </form>,
+
+        <div>
+            <SingleplayWaiting  roomCode = {roomCode} />
+        </div>
     )
 }
 

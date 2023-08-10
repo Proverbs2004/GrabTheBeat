@@ -37,7 +37,7 @@ public class RoomService {
     }
 
     @Transactional
-    public String makeRoom() {
+    public Room makeRoom() {
         // 랜덤 방 코드 생성
         String code = RandomCodeUtil.makeRandomCode();
         while(getRoomStatus(code) != RoomStatus.EMPTY) {
@@ -53,7 +53,7 @@ public class RoomService {
                 .build();
         roomRepository.save(room);
 
-        return code;
+        return room;
     }
 
     @Transactional

@@ -14,6 +14,9 @@ import './SingleplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
+import axios from 'axios';
+import {roomCode} from '../singleplaywaiting/singleplayJoin.json';
+
 
 import MusicCard from '../../components/MusicCard'
 
@@ -39,7 +42,7 @@ function TitleSingleplay() {
     )
 }
 
-function SingleplayWaiting(){
+function SingleplayWaiting(props){
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
     const selectedMusicRef = useRef(musicListData.musicList[0]);
 
@@ -383,6 +386,8 @@ function SingleplayWaiting(){
     function playGame() {
         if (audio.current && !isGamePlaying.current) {
 
+            startGame();
+
             updateTimePosArraysAndAudio();
 
             gameStartTime.current = performance.now();
@@ -526,6 +531,10 @@ function SingleplayWaiting(){
                         stopGame={stopGame}/>  
             }
             </div>
+        </div>,
+
+        <div>
+            {props.roomCode}
         </div>
 
     )
@@ -544,5 +553,11 @@ function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScor
         </div>
     )
 }
+
+// axios 
+async function startGame() {
+    console.log(roomCode);
+}
+
 
 export default SingleplayWaiting;
