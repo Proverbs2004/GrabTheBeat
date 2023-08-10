@@ -12,7 +12,7 @@ export default function LoginWaiting() {
     }
 
     function searchParam(key) {
-        return new URLSearchParams(document.location.search).get(key);
+        return new URLSearchParams(window.location.search).get(key);
     }
 
     setTimeout(() => navigate('/'), 3000);

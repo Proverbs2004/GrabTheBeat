@@ -56,6 +56,18 @@ function ButtonGoogle() {
 
 function Home() {
 
+  const token = searchParam('token')
+
+  window.history.replaceState({}, null, window.location.pathname);
+
+  if (token) {
+      localStorage.setItem("access_token", token)
+  }
+
+  function searchParam(key) {
+      return new URLSearchParams(window.location.search).get(key);
+  }
+
   return (
 
     <div className="containerHome">

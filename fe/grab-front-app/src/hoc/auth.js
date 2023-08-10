@@ -23,6 +23,7 @@ function Auth(SpecificComponent, option, adminRoute = null) {
     function AuthenticationCheck(props) {
         const dispatch = useDispatch();
         const navigate = useNavigate();
+        const accessToken = localStorage.getItem("access_token");
 
         // 백엔드에게 요청(Request)하여 유저의 현재 상태를 가져오기 위해 useEffect 사용
         useEffect(() => {

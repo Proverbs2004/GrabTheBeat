@@ -30,9 +30,10 @@ import {
 // }
 
 // 사용자 인증 Action 함수
-export function auth() {
+export function auth(dataToSubmit) {
     // axios를 통해 요청(Request)
-    const request = axios.get("/api/token").then((response) => response.data);
+    const request = axios.post('/api/token', dataToSubmit).then((response) => response.data);
+    console.log(request);
 
     // 서버에서 받은 data를 payload에 담아 reducer로 반환
     return {
