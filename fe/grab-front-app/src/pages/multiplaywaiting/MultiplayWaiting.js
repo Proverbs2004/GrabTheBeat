@@ -10,14 +10,13 @@ import {
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
 import Slider from "react-slick";
-import './SingleplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
 
-import MusicCard from '../../components/MusicCard'
-
-import Websocket from '../../webSocket/client/WebSocketClient'
+import MusicCard from '../../components/MusicCard';
+import './MultiplayWaiting.css';
+import Websocket from '../../webSocket/client/WebSocketClient';
 import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
