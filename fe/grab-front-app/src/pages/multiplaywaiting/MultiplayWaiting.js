@@ -15,7 +15,7 @@ import '../../util/effect.css';
 
 
 
-import Websocket from '../../components/webSocket/client/WebSocketClient'
+// import Websocket from '../../components/webSocket/client/WebSocketClient'
 
 
 function TitleSingleplay() {
@@ -264,7 +264,7 @@ function SingleplayWaiting(){
                     <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
                     <canvas id="canvasZone" ref={canvasElementRef}></canvas>
                 </div>
-                <Websocket />
+                {/* <Websocket /> */}
                 </div>
             
 
