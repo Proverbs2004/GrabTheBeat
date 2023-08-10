@@ -1,5 +1,4 @@
 
-import { Link} from 'react-router-dom';
 import { React, useState, useEffect, useRef } from 'react';
 import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
@@ -9,7 +8,7 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import './Singleplay.css';
+import './gameplay.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
@@ -17,7 +16,7 @@ import {createCircle, createPerfect, createGood, createBad} from "../../util/nod
 import {createEffect} from "../../util/effect.js";
 
 
-// import heroesTonight from '../../data/JanJi_HeroesTonight.mp3';
+
 import redBone from '../../data/DonaldGlover_RedBone.mp3';
 
 import drum from '../../data/drum.mp3';
@@ -25,36 +24,35 @@ import drum from '../../data/drum.mp3';
 // import jsonData from '../../data/JanJi_HeroesTonight.json';
 import jsonData from '../../data/DonaldGlover_RedBone.json';
 
-import Websocket from '../../webSocket/client/WebSocketClient'
-
 
 
 function TitleSingleplay() {
     return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+        <div className="titleSingleplayNoAnim">SINGLE PLAY</div>
     )
 }
 
 
 
 function Singleplay(){
-
+    // const [isGamePlaying, setIsGamePlaying] = useState(0);
+    const [isGamePlayingState, setIsGamePlayingState] = useState(false);
+    const isGamePlaying = useRef(false);
     const [goodScore, setGoodScore] = useState(0);
     const [perfectScore, setPerfectScore] = useState(0);
     const [failedScore, setFailedScore] = useState(0);
     const [highestCombo, setHighestCombo] = useState(0);
     const [comboScore, setComboScore] = useState(0);
+    const targets = useRef([]);
+    const arrayIdx=useRef(0);
     
-    let nowTime=-2;
-    let audio = new Audio(redBone);
+    const nowTime = useRef(-2);
+    const audio = useRef(new Audio(redBone));
     let drumSound = new Audio(drum);
-    let isGamePlaying = false;
-    let gameStartTime = 0;
+    const gameStartTime = useRef(0);
     const startTimeArray = [];
     const positionArray = [];
 
-    let arrayIdx=0;
-    let targets = [];
     let drawingUtils = null;
     let handLandmarker = null;
     let faceLandmarker = null;
@@ -66,9 +64,9 @@ function Singleplay(){
 
     const videoRef = useRef(null);
     const canvasElementRef = useRef(null);
-    const playBtnRef = useRef(null);
+
     let canvasCtx = null;
-    const root = document.getElementById('root');
+    const root = useRef(document.getElementById('root'));
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     
@@ -83,59 +81,73 @@ function Singleplay(){
     function makeNode(){
         
         // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
-        // nowTime*1000 - 100 <= startTimeArray[ArrayIdx] <= nowTime*1000 + 100이 조건을 만족하면 노트를 화면에 생성
+        // nowTime.current*1000 - 100 <= startTimeArray[ArrayIdx.current] <= nowTime.current*1000 + 100이 조건을 만족하면 노트를 화면에 생성
         // 위의 조건을 만족한다는 뜻은 현재 진행시간과 원래 찍혀있는 노드를 비교하여 일치하면 됨
         // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
-        // console.log(startTimeArray[ArrayIdx]);
-        if (nowTime*1000 >=  startTimeArray[arrayIdx] - 1000) {
+        // console.log(startTimeArray[ArrayIdx.current]);
+        if (nowTime.current*1000 >=  startTimeArray[arrayIdx.current] - 1000) {
             const newTarget = {
                 name: 'circle', // 모양은 원
                 elem: null,
                 elemBack: null,
                 elemFill: null,
-                createdTime: startTimeArray[arrayIdx]-1000, // 생성 시간은 data.json
+                createdTime: startTimeArray[arrayIdx.current]-1000, // 생성 시간은 data.json
                 curSize: 0,
                 done: false, // 도형 상태
-                x: positionArray[arrayIdx][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
-                y: positionArray[arrayIdx][1] / 500 // 위와 같음, 이건 y
+                x: positionArray[arrayIdx.current][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
+                y: positionArray[arrayIdx.current][1] / 500 // 위와 같음, 이건 y
             };
-            const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root);
+            const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root.current);
             newTarget.elem = elems[0];
+            console.log(elems[0]);
             newTarget.elemBack = elems[1];
             newTarget.elemFill = elems[2];
-            targets.push(newTarget); 
+            targets.current.push(newTarget); 
             // 모든 작업이 끝나면 다음 노트 확인을 위한 인덱스 변수의 증가    
-            arrayIdx++;
+            arrayIdx.current++;
         }
     }
     
     function predictWebcam(){
+
         let now = performance.now();
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
-        
+
+        console.log(videoRef);
+        console.log("이게 비디오 레프다");
+
+        let a = performance.now();
         // 게임이 실행중일 때 진행
-        if(isGamePlaying){
+        if(isGamePlaying.current){
 
             makeNode();
             manageTargets();
             
-            if(nowTime<0){
-                // nowtime을 -2초부터 0초까지 실행시켜야함
-                nowTime = -2 + (performance.now() - gameStartTime)/1000;
+            if(nowTime.current<0){
+                // nowtime.current을 -2초부터 0초까지 실행시켜야함
+                nowTime.current = -2 + (performance.now() - gameStartTime.current)/1000;
+                // 0초되면 음악재생
+                if(nowTime.current>=0){
+                    audio.current.currentTime = nowTime.current;
+                    audio.current.loop = false;
+                    audio.current.volume = 0.3;
+                    audio.current.play();
+                }
+
             } else {
-                nowTime = audio.currentTime;
-                
+                nowTime.current = audio.current.currentTime;
             }
 
             // 음악이 끝나면 대기상태로 전환
-            if(audio.ended){
-                nowTime=-2;
-                isGamePlaying=false;
-                audio.currentTime=0;
+            if(audio.current.ended){
+                nowTime.current=-2;
+                isGamePlaying.current = false;
+                setIsGamePlayingState(false);
+                audio.current.currentTime=0;
             }
         }
-
+        let b = performance.now();
         // 손그리기
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElementRef.current.width, canvasElementRef.current.height);
@@ -184,7 +196,7 @@ function Singleplay(){
             }
         }
         canvasCtx.restore();
-        
+        let c = performance.now();
         // 캐칭 알고리즘 및 판정, 노드관리
         if(handResults.landmarks.length>0){
             // 양손 대상으로 진행
@@ -209,12 +221,12 @@ function Singleplay(){
                 if(prevInside[i] === false && inside[i] === true){
 
                     // 캐치 이펙트 생성
-                    createEffect(mid.x, mid.y, videoRef.current, root);
+                    createEffect(mid.x, mid.y, videoRef.current, root.current);
                     // 드럼 소리 재생
                     playDrum();
 
                     // 목표물 배열 순회하며 캐치 판정하기
-                    targets.forEach(function(obj){
+                    targets.current.forEach(function(obj){
 
                         // 상태가 yet인 타겟 대상만 검사 
                         if(obj.done === false){
@@ -223,7 +235,7 @@ function Singleplay(){
                             if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
 
                                 // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
-                                if(nowTime < obj.createdTime/1000 + 0.500 || nowTime > obj.createdTime/1000 + 1.500){
+                                if(nowTime.current < obj.createdTime/1000 + 0.500 || nowTime.current > obj.createdTime/1000 + 1.500){
                                     
                                     setComboScore(0);
                                     setFailedScore((prev)=>prev+1);
@@ -233,7 +245,7 @@ function Singleplay(){
                                     obj.elemBack.remove();
                                     setTimeout(()=>{obj.elem.remove()},500);
 
-                                } else if(nowTime > obj.createdTime/1000 + 0.900 && nowTime < obj.createdTime/1000 + 1.100){
+                                } else if(nowTime.current > obj.createdTime/1000 + 0.900 && nowTime.current < obj.createdTime/1000 + 1.100){
 
                                     setPerfectScore((prev)=>prev+1);
                                     setComboScore((prev)=>prev+1);
@@ -313,13 +325,22 @@ function Singleplay(){
         // 손바닥에 손가락이 2개 이상 들어왔는지 반환
         return count >= 2;
     }
-
+    function stopGame(){
+        setIsGamePlayingState(false);
+        isGamePlaying.current=false;
+        audio.current.pause();
+        nowTime.current=-2;
+        audio.current.currentTime=0;
+        
+        targets.current.forEach((t)=>t.elem.remove());
+        targets.current = [];
+        
+    }
     function playGame() {
-        if (audio && !isGamePlaying) {
+        if (audio.current && !isGamePlaying.current) {
 
-            gameStartTime = performance.now();
-            isGamePlaying=true;
-            arrayIdx=0;
+            gameStartTime.current = performance.now();
+            arrayIdx.current=0;
 
             setPerfectScore(0);
             setGoodScore(0);
@@ -327,11 +348,15 @@ function Singleplay(){
             setHighestCombo(0);
             setComboScore(0);
 
-            setTimeout(function(){
-                audio.loop = false;
-                audio.volume = 0.3;
-                audio.play();
-            },2000);
+            setIsGamePlayingState(true);
+            isGamePlaying.current=true;
+
+            // setTimeout(function(){
+            //     audio.current.currentTime = 0;
+            //     audio.current.loop = false;
+            //     audio.current.volume = 0.3;
+            //     audio.current.play();
+            // },2000);
         };
     }
 
@@ -345,11 +370,11 @@ function Singleplay(){
     }
 
     function manageTargets(){
-        targets.forEach((obj) => {
+        targets.current.forEach((obj) => {
             // 처리되지 않은 타겟만 조사
             if (obj.done !== true) {
                 // 타겟이 일정 크기 이상 커지면 자동 비활성화
-                if (obj.done === false && nowTime > obj.createdTime/1000 + 1.500) {
+                if (obj.done === false && nowTime.current > obj.createdTime/1000 + 1.300) {
                     setComboScore(0);
                     setFailedScore((prev)=>prev+1);
                     createBad(obj.elem);
@@ -368,8 +393,6 @@ function Singleplay(){
         const canvasElement = canvasElementRef.current;
         canvasCtx = canvasElement.getContext("2d");
         drawingUtils = new DrawingUtils(canvasCtx);
-        const playBtn = playBtnRef.current;
-        playBtn.addEventListener('click',playGame);
 
         async function initializeData () {
             try{
@@ -404,7 +427,6 @@ function Singleplay(){
                         video.srcObject = stream;
                         video.addEventListener("loadeddata", predictWebcam);
                                 
-                        console.log("using media!");
                             
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
@@ -412,7 +434,6 @@ function Singleplay(){
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
                             
-                            console.log('screen adjusting!');
                         });
                         
                     });
@@ -436,30 +457,55 @@ function Singleplay(){
         
     },[comboScore]);   
     
-
+   
+    
     return(
-        <div>
-            {/* <ButtonHome/> */}
             <div className="containerSingleplay">
                 <TitleSingleplay />
-              
-                <button id="gameStart" ref={playBtnRef}>게임시작</button>
-                <div>
-                    <div>perfect: {perfectScore}</div>
-                    <div>good: {goodScore}</div>
-                    <div>failed: {failedScore}</div>
-                    <div>highest combo: {highestCombo}</div>
-                    <div>current combo: {comboScore}</div>
-                </div>
-                <div>
-                <div className="gameContainer">
-                    <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
-                    <canvas id="canvasZone" ref={canvasElementRef}></canvas>
-                </div>
-                <Websocket />
+                <button onClick={stopGame}>게임강제종료</button>
+                <div className="gameBox">
+                    <div className="gameContainer">
+                        <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
+                        <canvas id="canvasZone" ref={canvasElementRef}></canvas>
+                    </div>
+                    
+                    {!isGamePlayingState
+                    ? <MusicBox
+                        playGame={playGame}/>
+                    : <ScoreBox
+                        perfectScore={perfectScore}
+                        goodScore={goodScore}
+                        failedScore={failedScore}
+                        highestCombo={highestCombo}
+                        comboScore={comboScore}
+                        stopGame={stopGame}/>
+                    }
+                    
+
                 </div>
             </div>
+    )
+}
 
+function MusicBox({playGame}){
+    return(
+        <div className="songTitle">
+            <div className="songTitle">song title: AAA</div>
+            <button id="gameStart" onClick={playGame}>게임시작</button>
+        </div>
+    )
+
+}
+
+function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
+    return(
+        <div className="scoreBox">
+            <div>perfect: {perfectScore}</div>
+            <div>good: {goodScore}</div>
+            <div>failed: {failedScore}</div>
+            <div>highest combo: {highestCombo}</div>
+            <div>current combo: {comboScore}</div>
+            <button id="gameStart" onClick={stopGame}>종료</button>
         </div>
     )
 }
