@@ -8,7 +8,6 @@ import './MusicCard.css';
 function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Initialize with 0 or the appropriate value
 
-    
 
     useEffect(() => {
         if (selectedMusic) {

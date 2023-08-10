@@ -41,6 +41,7 @@ function TitleSingleplay() {
 
 function SingleplayWaiting(){
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
+    const selectedMusicRef = useRef(musicListData.musicList[0]);
 
     const [isGamePlayingState, setIsGamePlayingState] = useState(false);
     const isGamePlaying = useRef(false);
@@ -86,6 +87,8 @@ function SingleplayWaiting(){
 
 
     function fillTimePositionArray(objectData){
+        startTimeArray.current=[];
+        positionArray.current=[];
         for (const obj of objectData) {
             // 시작 시간과 위치만 배열에 담기
             startTimeArray.current.push(obj.startTime);
@@ -363,26 +366,18 @@ function SingleplayWaiting(){
         
         targets.current.forEach((t)=>t.elem.remove());
         targets.current = [];
-        startTimeArray.current = [];
-        positionArray.current = [];
+        // startTimeArray.current = [];
+        // positionArray.current = [];
         
     }
 
     // 이 함수는 개선해야됨
     async function updateTimePosArraysAndAudio() {
-        console.log(selectedMusic);
-        try {
-          const response = await fetch('../../data/JanJi_HeroesTonight.json'); // 비동기 fetch 요청
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const jsonData = await response.json(); // 비동기 JSON 파싱
-          fillTimePositionArray(jsonData.hitObjects);
-          audio.current = new Audio(selectedMusic.music_url);
-        } catch (error) {
-          console.error('There was a problem fetching or parsing the JSON:', error);
-          return null;
-        }
+        const jsonData = await import(selectedMusic.json_url);
+        const objectsData = jsonData.hitObjects;
+        console.log(objectsData);
+        fillTimePositionArray(objectsData);
+        audio.current = new Audio(selectedMusic.music_url);
     }
 
     function playGame() {
@@ -492,13 +487,12 @@ function SingleplayWaiting(){
         
     },[comboScore]); 
 
-    useEffect(()=>{
-        
-    },[selectedMusic]);
+    
 
     const handleMusicSelect = (music) => {
 
         setSelectedMusic(music);
+        selectedMusicRef.current=music;
         console.log(music);
         console.log("선택됨");
     };
