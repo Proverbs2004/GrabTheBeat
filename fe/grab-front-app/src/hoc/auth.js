@@ -1,7 +1,6 @@
 import React, { Component, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { auth } from "../_actions/user_action";
-import { useNavigate } from "react-router-dom";
+import { getRefreshToken } from "../storage/Cookie";
+import axios from "axios";
 
 /**
  * - Auth -
@@ -21,37 +20,29 @@ function Auth(SpecificComponent, option, adminRoute = null) {
 
     // 감쌀 컴포넌트 생성
     function AuthenticationCheck(props) {
-        const dispatch = useDispatch();
-        const navigate = useNavigate();
-        const accessToken = localStorage.getItem("access_token");
-
         // 백엔드에게 요청(Request)하여 유저의 현재 상태를 가져오기 위해 useEffect 사용
         useEffect(() => {
-            dispatch(auth()).then((response) => {
-                console.log(response);
+            let access_token = localStorage.getItem('access_token');
 
-                // 로그인 하지 않은 상태
-                if (!response.payload.isAuth) {
-                    // option이 true인 페이지를 접근하려고 할 때,
-                    // navigate를 통해서 "/login"으로 이동시킴.
-                    if (option) {
-                        navigate("/login");
-                    }
+            axios.post('http://localhost:8080/api/auth', {
+                accessToken: access_token
+            })
+            .then(response => {
+                if (response.status === 200 || response.status === 201) {
+                    access_token = response.data.accessToken;
+                    localStorage.setItem('access_token', access_token);
+                    return;
+                }
 
-                // 로그인 한 상태
-                } else {
-                    // admin이 아닌 유저가 adminPage에 접근하려고 할 때,
-                    // adminRoute가 true인 페이지를 접근하려고 하는데 해당 유저는 Admin이 아닐 때,
-                    // navigate를 통해서 "/login"으로 이동시킴.
-                    if (adminRoute && !response.payload.isAdmin) {
-                        navigate("/");
-
-                    // 로그인한 유저가 출입 불가능한 페이지에 접근하려고 할 때,
-                    } else {
-                        if (!option) {
-                            navigate("/");
-                        }
-                    }
+                const refresh_token = getRefreshToken();
+                if (response.status === 401 && refresh_token) {
+                    axios.post('http://localhost:8080/api/token', {
+                        refreshToken: refresh_token
+                    })
+                        .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
+                            localStorage.setItem('access_token', result.data.accessToken);
+                            return;
+                        })
                 }
             })
         }, []);
