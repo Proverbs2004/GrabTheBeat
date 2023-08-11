@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaAngleLeft, FaArrowRight } from 'react-icons/fa';
+import { CgChevronDoubleLeft, CgChevronDoubleRight } from 'react-icons/cg';
 import './MusicCard.css';
 
 function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
@@ -12,7 +13,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     useEffect(() => {
         if (selectedMusic) {
             const audioElement = new Audio(selectedMusic.music_url);
-            audioElement.volume=0.1;
+            audioElement.volume=0.4;
             audioElement.play();
 
             return () => {
@@ -26,7 +27,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
           handleMusicSelect(musicList[currentSlideIndex - 1]);
           onClick();
       }}>
-            <FaArrowLeft />
+            <CgChevronDoubleLeft />
         </div>
     );
 
@@ -35,7 +36,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
             handleMusicSelect(musicList[currentSlideIndex + 1]);
             onClick();
         }}>
-            <FaArrowRight />
+            <CgChevronDoubleRight />
         </div>
     );
     try{
