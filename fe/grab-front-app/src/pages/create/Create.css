@@ -2,7 +2,7 @@
     font-family: "Press Start 2P";
     font-style: normal;
     font-weight: normal;
-    src: url("../../Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+    src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
   }
   body{
     background-color: black
@@ -37,7 +37,7 @@
     -moz-animation: neon 1s ease infinite;
     -webkit-animation: neon 1s ease infinite;
 }
-.backbutton,
+.backbuttonCreate,
 .playsingle,
 .playmulti{
     font-family: 'Press Start 2P';
@@ -49,12 +49,12 @@
     /* 텍스트의 테두리 색상 설정 */
     -webkit-text-stroke: 1px #FF99FF;
 }
-.backbutton{
+.backbuttonCreate{
     display: inline-flex; /* 가운데 정렬을 위해 inline-flex로 변경 */
     align-items: center; /* 수직 가운데 정렬 */
     justify-content: center; /* 수평 가운데 정렬 */
 }
-.backbutton:hover,
+.backbuttonCreate:hover,
 .playsingle:hover,
 .playmulti:hover{
     fill: #FF99FF;
@@ -63,7 +63,7 @@
     text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
 }
 
-.button-container{
+.button-containerCreate{
     display: flex; /* create game과 join game을 수평으로 배치하기 위해 flex 레이아웃 사용 */
     justify-content: center;
     align-items: center;

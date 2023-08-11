@@ -2,7 +2,7 @@
     font-family: "Press Start 2P";
     font-style: normal;
     font-weight: normal;
-    src: url("../../Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+    src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
   }
   body{
     background-color: black
@@ -30,7 +30,7 @@
 }
 
 
-.backbutton{
+.backbuttonJoin{
     display: inline-flex; /* 가운데 정렬을 위해 inline-flex로 변경 */
     align-items: center; /* 수직 가운데 정렬 */
     justify-content: center; /* 수평 가운데 정렬 */
@@ -53,7 +53,7 @@ input {
     padding: 8px; /* 내부 여백 설정 */
   }
 
-.backbutton{
+.backbuttonJoin{
     font-family: 'Press Start 2P';
     font-size: 40px;
     padding: 20px; /* 선택 사항: 요소들 사이에 마진 추가 */

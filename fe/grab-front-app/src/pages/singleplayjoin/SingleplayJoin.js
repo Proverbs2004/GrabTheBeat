@@ -6,7 +6,7 @@ function SingleplayJoin() {
     return(
         <div>
             <ButtonHome />    
-            <div className="containerSingleplay">
+            <div className="containerSingleplayJoin">
                 <TitleSingleplayJoin />
                 <JoinForm />
             </div>
@@ -16,14 +16,14 @@ function SingleplayJoin() {
 
 function TitleSingleplayJoin() {
     return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+        <div className="titleSingleplayJoin">SINGLE PLAY</div>
     )
 }
 
 function ButtonHome() {
     return (
         <Link to="/" >
-        <button className="backbutton" >
+        <button className="backbuttonSingleplayJoin" >
             <svg className="icon" width="100" height="100" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                 <path d="M30.83 14.83l-2.83-2.83-12 12 12 12 2.83-2.83-9.17-9.17" fill="#transparent" stroke="#ff99ff" strokeWidth="0.5"/>
                 <path d="M0 0h48v48h-48z" fill="none"/>
@@ -125,8 +125,8 @@ function JoinForm() {
             />
             {touched.userName && errors.userName && <span><br />{errors.userName}</span>}
             <br />
-            <Link to={`/singleplaywaiting?userName=${values.userName}`}>
-                <button type="submit" className="joinbutton">JOIN</button>
+            <Link to={`/singleplay?userName=${values.userName}`}>
+                <button type="submit" className="joinbuttonSingleplayJoin">JOIN</button>
             </Link>
         </form>
     )

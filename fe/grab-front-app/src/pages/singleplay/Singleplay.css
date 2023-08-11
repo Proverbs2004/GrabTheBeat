@@ -21,14 +21,14 @@ body{
   font-family: 'Press Start 2P';
 }
 
-.containerSingleplayWaiting {
+.containerSingleplay {
   
   /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
   max-width: 1536px; /* 최대 너비를 1536px로 제한 */
   max-height: 864px;
   text-align: center;
 }
-.titleSingleplayWaiting{
+.titleSingleplay{
   color: #FF99FF;
   font-family: 'Press Start 2P';
   font-size: 400%;
@@ -40,19 +40,19 @@ body{
   -moz-animation: neon 1s ease infinite;
   -webkit-animation: neon 1s ease infinite;
 }
-.camandmessagebox{
+.camandmessageboxSingleplay{
   margin-left: 6%;
   height: 700px;
   width: 1600px;
 }
-.subContainer{
+.subContainerSingleplay{
   height: 650px;
   width: 500px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
-.mainSection{
+.mainSectionSingleplay{
   display: flex;
   flex-direction: column;
   
@@ -80,7 +80,7 @@ position: absolute;
 
 }
 
-.gameContainerWaiting {
+.gameContainerWaitingSingleplay {
 
 width: 800px;
 aspect-ratio: 16/9;
@@ -92,7 +92,7 @@ justify-content: center;
 position: relative; /* 부모 요소에 position: relative; 설정 */
 
 }
-.startbutton{
+.startbuttonSingleplay{
   font-family: 'Press Start 2P';
   font-size: 300%;
   color: #FF99FF;
@@ -106,7 +106,7 @@ position: relative; /* 부모 요소에 position: relative; 설정 */
   margin: auto;
   
 }
-.startbutton:hover{
+.startbuttonSingleplay:hover{
   color: #6C1F65;
   background-color: #FF99FF;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
