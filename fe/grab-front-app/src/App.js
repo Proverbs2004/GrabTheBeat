@@ -22,7 +22,7 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/singleplayJoin" element={<SingleplayJoin />} />
           <Route path="/singleplay" element={<Singleplay />} />
-          <Route path="/singleplaywresult" element={<SingleplayResult />} />
+          <Route path="/singleplayresult" element={<SingleplayResult />} />
           <Route path="/multiplay" element={<Multiplay />} />
         </Routes>
       </BrowserRouter>

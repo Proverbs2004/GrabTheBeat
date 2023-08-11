@@ -1,4 +1,4 @@
-// import { Link, json} from 'react-router-dom';
+import { Link, json} from 'react-router-dom';
 // import { useLocation } from 'react-router-dom';
 import { React, useState, useEffect, useRef, Component } from 'react';
 import { drawConnectors} from '@mediapipe/drawing_utils';
@@ -30,19 +30,20 @@ import drum from 'data/drum.mp3';
 import redBone from 'data/DonaldGlover_RedBone.mp3';
 import redBoneData from 'data/DonaldGlover_RedBone.json';
 
-function TitleSingleplay() {
-    return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+    function TitleSingleplay() {
+        return (
+            <div className="titleSingleplay">SINGLE PLAY</div>
         )
     }
     
-    function SingleplayWaiting(){
+    function Singleplay(){
     console.log('hihihihi');
     const musicList = musicListData.musicList;
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
     const selectedMusicRef = useRef(musicListData.musicList[0]);
 
     const [isGamePlayingState, setIsGamePlayingState] = useState(false);
+    const [isGameEnd, setIsGameEnd] = useState(false);
     const isGamePlaying = useRef(false);
     const [goodScore, setGoodScore] = useState(0);
     const [perfectScore, setPerfectScore] = useState(0);
@@ -78,7 +79,11 @@ function TitleSingleplay() {
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     
-    
+
+    function redirectToSinglePlayResult() {
+        // '/singleplayresult' 경로로 이동
+        window.location.href = '/singleplayresult';
+    }
       
     // const hitObjects = useRef(redBoneData.hitObjects);
 
@@ -172,7 +177,8 @@ function TitleSingleplay() {
             if(audio.current.ended){
                 nowTime.current=-2;
                 isGamePlaying.current = false;
-                setIsGamePlayingState(false);
+                // setIsGamePlayingState(false);
+                setIsGameEnd(true);
                 audio.current.currentTime=0;
             }
         }
@@ -500,45 +506,45 @@ function TitleSingleplay() {
 
         setSelectedMusic(music);
         selectedMusicRef.current=music;
-        console.log(music);
-        console.log("선택됨");
+
     };
 
-
-    return(
+    return (
         <div className="containerSingleplay">
-            {/* <ButtonHome/> */}
-            <TitleSingleplay />
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className="gameContainerWaiting">
-                        <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
-                        <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
-                    </div>
-                </div>
-                {!isGamePlayingState
-                ?
-                <div className='subContainer'>
-                    <MusicCard musicList = {musicList} selectedMusic={selectedMusic} handleMusicSelect= {handleMusicSelect} />
-                    <button type="submit" className="startbutton" onClick={playGame} >START</button>
-                </div>
-                :
-                <ScoreBox
-                        perfectScore={perfectScore}
-                        goodScore={goodScore}
-                        failedScore={failedScore}
-                        highestCombo={highestCombo}
-                        comboScore={comboScore}
-                        stopGame={stopGame}/>  
-            }
+          <TitleSingleplay />
+          <div className='camandmessagebox' style={{display:'flex'}}>
+            <div className='mainSection'>
+              <div className="gameContainerWaiting">
+                <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
+                <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
+              </div>
             </div>
+            {isGamePlayingState ? (
+              <ScoreBox
+                perfectScore={perfectScore}
+                goodScore={goodScore}
+                failedScore={failedScore}
+                highestCombo={highestCombo}
+                comboScore={comboScore}
+                stopGame={stopGame}
+                isGamePlayingState={isGamePlayingState} 
+                isGameEnd={isGameEnd} 
+                redirectToSinglePlayResult={redirectToSinglePlayResult}
+              />
+            ) : (
+              <div className='subContainer'>
+                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                <button type="submit" className="startbutton" onClick={playGame}>START</button>
+              </div>
+            )}
+          </div>
         </div>
+      );
 
-    )
     
 }
 
-function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
+function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame, isGamePlayingState, isGameEnd, redirectToSinglePlayResult}){
     return(
         <div className="scoreBox">
             <div className='perfect'>perfect: {perfectScore}</div>
@@ -546,9 +552,18 @@ function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScor
             <div className='failed'>failed: {failedScore}</div>
             <div className='highestcombo'>highest combo: {highestCombo}</div>
             <div className='currentcombo'> current combo: {comboScore}</div>
+            
+            {isGamePlayingState && isGameEnd 
+            ?
+            (
+              <button onClick={redirectToSinglePlayResult} id="gamequit">Result</button>
+            )
+            :
             <button id="gamequit" onClick={stopGame}>QUIT</button>
+            }
+    
         </div>
     )
 }
 
-export default SingleplayWaiting;
+export default Singleplay;

@@ -44,7 +44,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
         return () => {
                     audioElement.pause();
-                    console.log('music pause');
                 };
             // if (selectedMusic) {
             //     const audioElement = new Audio(selectedMusic.music_url);
@@ -67,23 +66,10 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
     }, [selectedMusic]);
 
-
-    // const CustomPrevArrow = ({ onClick }) => (
-
-        
-
-    //     <div className="slick-arrow custom-prev-arrow" onClick={() => {
-    //       handleMusicSelect(musicList[currentSlideIndex - 1]);
-    //       onClick();
-    //   }}>
-    //         <CgChevronDoubleLeft />
-    //     </div>
-    // );
+    
     function CustomPrevArrow ({ onClick }){
         let idx=musicList.length-1;
         if(currentSlideIndex!==0)idx=currentSlideIndex-1;
-        // console.log(idx);
-        // console.log(musicList[idx]);
 
         return(
             <div className="slick-arrow custom-prev-arrow" onClick={() => {
@@ -96,16 +82,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
 
 
-
-
-    // const CustomNextArrow = ({ onClick }) => (
-    //     <div className="slick-arrow custom-next-arrow" onClick={() => {
-    //         handleMusicSelect(musicList[currentSlideIndex + 1]);
-    //         onClick();
-    //     }}>
-    //         <CgChevronDoubleRight />
-    //     </div>
-    // );
     function CustomNextArrow ({ onClick }){
         let idx=0;
         if(currentSlideIndex!==musicList.length-1)idx=currentSlideIndex+1;
