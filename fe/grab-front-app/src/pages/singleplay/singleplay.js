@@ -10,27 +10,28 @@ import {
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
 import Slider from "react-slick";
-import '../../util/node.css';
-import '../../util/effect.css';
+import './Singleplay.css';
+import 'util/node.css';
+import 'util/effect.css';
 
 
-import MusicCard from '../../components/MusicCard';
-import './MultiplayWaiting.css';
-import Websocket from '../../webSocket/client/WebSocketClient';
+import MusicCard from 'components/MusicCard';
+
+import Websocket from 'components/webSocket/client/WebSocketClient';
 import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
-import musicListData from '../../data/musicListData.json';
+import musicListData from 'data/musicListData.json';
 
 import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
-import {createEffect} from "../../util/effect.js";
+import {createEffect} from "util/effect.js";
 
-import drum from '../../data/drum.mp3';
+import drum from 'data/drum.mp3';
 
-import redBone from '../../data/DonaldGlover_RedBone.mp3';
-import redBoneData from '../../data/DonaldGlover_RedBone.json';
+import redBone from 'data/DonaldGlover_RedBone.mp3';
+import redBoneData from 'data/DonaldGlover_RedBone.json';
 
 function TitleSingleplay() {
     return (
@@ -498,37 +499,22 @@ function SingleplayWaiting(){
 
 
     return(
-        <div className="containerSingleplayWaiting">
+        <div className="containerSingleplay">
             {/* <ButtonHome/> */}
             <TitleSingleplay />
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className='multicontainer'>
-                    <div className="gameContainerWaiting">
+            <div className='camandmessageboxSingleplay' style={{display:'flex'}}>
+                <div className='mainSectionSingleplay'>
+                    <div className="gameContainerWaitingSingleplay">
                         <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
                         <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
-                    </div>
-                    <div className='bigbox'>
-                    <div style={{display:'flex'}}>
-                    <div className='cambox1'>cambox1</div>
-                    <div className='cambox2'>cambox2</div>
-                    </div>
-                    <div style={{display:'flex'}}>
-                    <div className='cambox3'>cambox3</div>
-                    <div className='cambox4'>cambox4</div>
-                    </div>
-                    </div>
-
-
-
                     </div>
                     <Websocket />
                 </div>
                 {!isGamePlayingState
                 ?
-                <div className='subContainer'>
+                <div className='subContainerSingleplay'>
                     <MusicCard musicList = {musicList} selectedMusic={selectedMusic} handleMusicSelect= {handleMusicSelect} />
-                    <button type="submit" className="startbutton" onClick={playGame} >START</button>
+                    <button type="submit" className="startbuttonSingleplay" onClick={playGame} >START</button>
                 </div>
                 :
                 <ScoreBox
@@ -548,7 +534,7 @@ function SingleplayWaiting(){
 
 function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
     return(
-        <div className="scoreBox">
+        <div className="scoreBoxSingleplay">
             <div>perfect: {perfectScore}</div>
             <div>good: {goodScore}</div>
             <div>failed: {failedScore}</div>

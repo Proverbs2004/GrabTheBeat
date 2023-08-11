@@ -1,6 +1,10 @@
-import { Link, json} from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { React, useState, useEffect, useRef, Component } from 'react';
+import { OpenVidu } from 'openvidu-browser';
+import axios from 'axios';
+import { React, useState, useEffect, useRef } from 'react';
+import './App.css';
+import UserVideoComponent from './UserVideoComponent';
+
+
 import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
 import {
@@ -9,40 +13,25 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import Slider from "react-slick";
-import './SingleplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
-
-
-import MusicCard from '../../components/MusicCard'
-
-import Websocket from '../../webSocket/client/WebSocketClient'
-import { Carousel } from 'react-responsive-carousel';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-
-import musicListData from '../../data/musicListData.json';
 
 import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
 import {createEffect} from "../../util/effect.js";
 
-import drum from '../../data/drum.mp3';
-
 import redBone from '../../data/DonaldGlover_RedBone.mp3';
-import redBoneData from '../../data/DonaldGlover_RedBone.json';
+import drum from '../../data/drum.mp3';
+import jsonData from '../../data/DonaldGlover_RedBone.json';
 
-function TitleSingleplay() {
-    return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
-    )
-}
 
-function SingleplayWaiting(){
-    const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
-    const selectedMusicRef = useRef(musicListData.musicList[0]);
 
+
+const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
+
+
+
+function Singleplay(){
+    // const [isGamePlaying, setIsGamePlaying] = useState(0);
     const [isGamePlayingState, setIsGamePlayingState] = useState(false);
     const isGamePlaying = useRef(false);
     const [goodScore, setGoodScore] = useState(0);
@@ -52,15 +41,13 @@ function SingleplayWaiting(){
     const [comboScore, setComboScore] = useState(0);
     const targets = useRef([]);
     const arrayIdx=useRef(0);
-
-
+    
     const nowTime = useRef(-2);
     const audio = useRef(new Audio(redBone));
-
     let drumSound = new Audio(drum);
     const gameStartTime = useRef(0);
-    const startTimeArray = useRef([]);
-    const positionArray = useRef([]);
+    const startTimeArray = [];
+    const positionArray = [];
 
     let drawingUtils = null;
     let handLandmarker = null;
@@ -79,45 +66,136 @@ function SingleplayWaiting(){
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     
-    // const [musicList, setMusicList] = useState([]);
-    
-    const musicList = musicListData.musicList;
-      
-    const hitObjects = useRef(redBoneData.hitObjects);
 
 
-    function fillTimePositionArray(objectData){
-        startTimeArray.current=[];
-        positionArray.current=[];
-        for (const obj of objectData) {
-            // 시작 시간과 위치만 배열에 담기
-            startTimeArray.current.push(obj.startTime);
-            positionArray.current.push(obj.position); 
+
+    /////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+    const [mySessionId, setMySessionId] = useState('SessionA');
+    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100));
+    const [session, setSession] = useState(undefined);
+    const [mainStreamManager, setMainStreamManager] = useState(undefined);
+    const [publisher, setPublisher] = useState(undefined);
+    const [subscribers, setSubscribers] = useState([]);
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', onBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', onBeforeUnload);
+        };
+    }, []);
+
+    const onBeforeUnload = () => {
+        leaveSession();
+    };
+
+    const handleChangeSessionId = (e) => {
+        setMySessionId(e.target.value);
+    };
+
+    const handleChangeUserName = (e) => {
+        setMyUserName(e.target.value);
+    };
+
+    const handleMainVideoStream = (stream) => {
+        if (mainStreamManager !== stream) {
+            setMainStreamManager(stream);
         }
+    };
+
+    const deleteSubscriber = (streamManager) => {
+        setSubscribers(prevSubscribers => prevSubscribers.filter(sub => sub !== streamManager));
+    };
+
+
+    
+
+    const leaveSession = () => {
+        if (session) {
+            session.disconnect();
+        }
+
+        setSession(undefined);
+        setSubscribers([]);
+        setMySessionId('SessionA');
+        setMyUserName('Participant' + Math.floor(Math.random() * 100));
+        setMainStreamManager(undefined);
+        setPublisher(undefined);
+    };
+
+    const createSession = async (sessionId) => {
+        try {
+            const response = await axios.post(
+                APPLICATION_SERVER_URL + 'openvidu/api/sessions',
+                { customSessionId: sessionId },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic T1BFTlZJRFVBUFA6YTYwNw==',
+                    }
+                }
+            );
+            return response.data.sessionId;
+        } catch (error) {
+            if (error.response && error.response.status === 409) {
+                return sessionId;
+            }
+            throw error;
+        }
+    };
+
+    const createToken = async (sessionId) => {
+        const response = await axios.post(
+            APPLICATION_SERVER_URL + 'openvidu/api/sessions/' + sessionId + '/connection',
+            {},
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic T1BFTlZJRFVBUFA6YTYwNw==',
+                }
+            }
+        );
+        return response.data;
+    };
+    /////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+
+
+
+
+
+    // 데이터를 배열에 담기
+    const hitObjects = jsonData.hitObjects;
+    for (const obj of hitObjects) {
+        // 시작 시간과 위치만 배열에 담기
+        startTimeArray.push(obj.startTime);
+        positionArray.push(obj.position); 
     }
-    fillTimePositionArray(hitObjects.current);
+
 
     function makeNode(){
         
-        // startTimeArray.current 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
-        // nowTime.current*1000 - 100 <= startTimeArray.current[ArrayIdx.current] <= nowTime.current*1000 + 100이 조건을 만족하면 노트를 화면에 생성
+        // startTimeArray 배열을 순회하며 현재 시간과 비교하여 해당 시간에 맞는 타겟들을 추가합니다.
+        // nowTime.current*1000 - 100 <= startTimeArray[ArrayIdx.current] <= nowTime.current*1000 + 100이 조건을 만족하면 노트를 화면에 생성
         // 위의 조건을 만족한다는 뜻은 현재 진행시간과 원래 찍혀있는 노드를 비교하여 일치하면 됨
         // 구간(-100 ~ 100)의 단위 100은  0.1초를 의미 -> 0.2초의 구간 안에 잡히면 data.json에 있는 노트 시간으로 노트 생성 -> 노트 생성 오차가 생기지 않음
-        // console.log(startTimeArray.current[ArrayIdx.current]);
-        if (nowTime.current*1000 >=  startTimeArray.current[arrayIdx.current] - 1000) {
+        // console.log(startTimeArray[ArrayIdx.current]);
+        if (nowTime.current*1000 >=  startTimeArray[arrayIdx.current] - 1000) {
             const newTarget = {
                 name: 'circle', // 모양은 원
                 elem: null,
                 elemBack: null,
                 elemFill: null,
-                createdTime: startTimeArray.current[arrayIdx.current]-1000, // 생성 시간은 data.json
+                createdTime: startTimeArray[arrayIdx.current]-1000, // 생성 시간은 data.json
                 curSize: 0,
                 done: false, // 도형 상태
-                x: positionArray.current[arrayIdx.current][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
-                y: positionArray.current[arrayIdx.current][1] / 500 // 위와 같음, 이건 y
+                x: positionArray[arrayIdx.current][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
+                y: positionArray[arrayIdx.current][1] / 500 // 위와 같음, 이건 y
             };
             const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root.current);
             newTarget.elem = elems[0];
+            console.log(elems[0]);
             newTarget.elemBack = elems[1];
             newTarget.elemFill = elems[2];
             targets.current.push(newTarget); 
@@ -125,28 +203,13 @@ function SingleplayWaiting(){
             arrayIdx.current++;
         }
     }
-    function manageTargets(){
-        targets.current.forEach((obj) => {
-            // 처리되지 않은 타겟만 조사
-            if (obj.done !== true) {
-                // 타겟이 일정 크기 이상 커지면 자동 비활성화
-                if (obj.done === false && nowTime.current > obj.createdTime/1000 + 1.300) {
-                    setComboScore(0);
-                    setFailedScore((prev)=>prev+1);
-                    createBad(obj.elem);
-                    obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
-                    obj.elemBack.remove();
-                    obj.done = true;
-                    setTimeout(()=>{obj.elem.remove()},500);
-                }
-            }
-        });
-    }
+    
     function predictWebcam(){
 
         let now = performance.now();
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
+
 
         let a = performance.now();
         // 게임이 실행중일 때 진행
@@ -358,7 +421,6 @@ function SingleplayWaiting(){
     }
     function stopGame(){
         setIsGamePlayingState(false);
-        
         isGamePlaying.current=false;
         audio.current.pause();
         nowTime.current=-2;
@@ -366,29 +428,13 @@ function SingleplayWaiting(){
         
         targets.current.forEach((t)=>t.elem.remove());
         targets.current = [];
-        // startTimeArray.current = [];
-        // positionArray.current = [];
         
     }
-
-    // 이 함수는 개선해야됨
-    async function updateTimePosArraysAndAudio() {
-        const jsonData = await import(selectedMusic.json_url);
-        const objectsData = jsonData.hitObjects;
-        console.log(objectsData);
-        fillTimePositionArray(objectsData);
-        audio.current = new Audio(selectedMusic.music_url);
-    }
-
     function playGame() {
         if (audio.current && !isGamePlaying.current) {
 
-            updateTimePosArraysAndAudio();
-
             gameStartTime.current = performance.now();
             arrayIdx.current=0;
-
-            // fillTimePositionArray();
 
             setPerfectScore(0);
             setGoodScore(0);
@@ -399,14 +445,9 @@ function SingleplayWaiting(){
             setIsGamePlayingState(true);
             isGamePlaying.current=true;
 
-            // setTimeout(function(){
-            //     audio.current.currentTime = 0;
-            //     audio.current.loop = false;
-            //     audio.current.volume = 0.3;
-            //     audio.current.play();
-            // },2000);
         };
     }
+
     function playDrum() {
         if (drumSound) {
             drumSound.currentTime = 0;
@@ -415,6 +456,48 @@ function SingleplayWaiting(){
             drumSound.play();
         }
     }
+
+    function manageTargets(){
+        targets.current.forEach((obj) => {
+            // 처리되지 않은 타겟만 조사
+            if (obj.done !== true) {
+                // 타겟이 일정 크기 이상 커지면 자동 비활성화
+                if (obj.done === false && nowTime.current > obj.createdTime/1000 + 1.300) {
+                    setComboScore(0);
+                    setFailedScore((prev)=>prev+1);
+                    createBad(obj.elem);
+                    obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
+                    obj.elemBack.remove();
+                    obj.done = true;
+                    setTimeout(()=>{obj.elem.remove()},500);
+                }
+            }
+        });
+    }
+
+    function MusicBox({playGame}){
+        return(
+            <div className="songTitle">
+                <div className="songTitle">song title: AAA</div>
+                <button id="gameStart" onClick={playGame}>게임시작</button>
+            </div>
+        )
+    
+    }
+    
+    function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
+        return(
+            <div className="scoreBox">
+                <div>perfect: {perfectScore}</div>
+                <div>good: {goodScore}</div>
+                <div>failed: {failedScore}</div>
+                <div>highest combo: {highestCombo}</div>
+                <div>current combo: {comboScore}</div>
+                <button id="gameStart" onClick={stopGame}>종료</button>
+            </div>
+        )
+    }
+    
 
     useEffect(()=>{
         const video = videoRef.current;
@@ -458,9 +541,7 @@ function SingleplayWaiting(){
                             
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-                            
-                            canvasElement.style.width = video.videoWidth;
-                            canvasElement.style.height = video.videoHeight;
+                            canvasElement.style.width = video.videoWidth;                                canvasElement.style.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
                             
@@ -479,70 +560,173 @@ function SingleplayWaiting(){
         initializeData();
 
     },[])
-
+        
     useEffect(()=>{
         if(comboScore>highestCombo){
             setHighestCombo(comboScore);
         }
         
-    },[comboScore]); 
+    },[comboScore]);   
 
+
+    const joinSession = async (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
     
-
-    const handleMusicSelect = (music) => {
-
-        setSelectedMusic(music);
-        selectedMusicRef.current=music;
-        console.log(music);
-        console.log("선택됨");
+        try {
+            const ov = new OpenVidu();
+            const FRAME_RATE = 10;
+            const myHtmlTarget = document.getElementById("video-container");
+    
+            console.log("조인세션 되는 중");
+    
+            const mySession = ov.initSession();
+    
+            mySession.on('streamCreated', (event) => {
+                const subscriber = mySession.subscribe(event.stream, undefined);
+                setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+            });
+    
+            mySession.on('streamDestroyed', (event) => {
+                deleteSubscriber(event.stream.streamManager);
+            });
+    
+            const sessionId = await createSession(mySessionId);
+            const token = await createToken(sessionId);
+    
+            mySession.connect(token.token, { clientData: myUserName });
+    
+            const mediaStream = await ov.getUserMedia({
+                audioSource: false,
+                videoSource: undefined,
+                resolution: '1280x720',
+                frameRate: FRAME_RATE
+            });
+    
+            let videoTrack = mediaStream.getVideoTracks()[0];
+            let video = document.createElement('video');
+            video.srcObject = new MediaStream([videoTrack]);
+            
+            let canvas = canvasElementRef.current;
+            // let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            ctx.filter = 'grayscale(100%)';
+            video.addEventListener('play', () => {
+                let loop = () => {
+                    if (!video.paused && !video.ended) {
+                        ctx.drawImage(video, 0, 0, 300, 170);
+                        setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
+                    }
+                };
+                loop();
+            });
+            video.play();
+    
+            let grayVideoTrack = canvas.captureStream(FRAME_RATE).getVideoTracks()[0];
+            let publisher = ov.initPublisher(
+                myHtmlTarget,
+                {
+                    audioSource: false,
+                    videoSource: grayVideoTrack
+                }
+            );
+            mySession.publish(publisher);
+    
+            const devices = await ov.getDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+            const currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+    
+            // 여기서 세션 연결 후 상태 업데이트 및 UI 렌더링을 진행
+            setSession(mySession);
+            setMainStreamManager(publisher);
+            setPublisher(publisher);
+        } catch (error) {
+            console.log('There was an error:', error);
+        }
     };
-
-
-    return(
-        <div className="containerSingleplayWaiting">
-            {/* <ButtonHome/> */}
-            <TitleSingleplay />
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className="gameContainerWaiting">
-                        <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
-                        <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
-                    </div>
-                    <Websocket />
-                </div>
-                {!isGamePlayingState
-                ?
-                <div className='subContainer'>
-                    <MusicCard musicList = {musicList} selectedMusic={selectedMusic} handleMusicSelect= {handleMusicSelect} />
-                    <button type="submit" className="startbutton" onClick={playGame} >START</button>
-                </div>
-                :
-                <ScoreBox
-                        perfectScore={perfectScore}
-                        goodScore={goodScore}
-                        failedScore={failedScore}
-                        highestCombo={highestCombo}
-                        comboScore={comboScore}
-                        stopGame={stopGame}/>  
-            }
-            </div>
-        </div>
-
-    )
     
-}
-
-function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
+    
+   
+    
     return(
-        <div className="scoreBox">
-            <div>perfect: {perfectScore}</div>
-            <div>good: {goodScore}</div>
-            <div>failed: {failedScore}</div>
-            <div>highest combo: {highestCombo}</div>
-            <div>current combo: {comboScore}</div>
-            <button id="gameStart" onClick={stopGame}>종료</button>
-        </div>
+            <div className="containerSingleplay">
+                <div className="gameBox">
+                    <div className="gameContainer">
+                        <video id="videoZone" ref={videoRef} autoPlay playsInline></video>
+                        <canvas id="canvasZone" ref={canvasElementRef}></canvas>
+                    </div>
+                </div>
+
+
+                <div className="container">
+            {session === undefined ? (
+                <div id="join">
+                    <div id="join-dialog" className="jumbotron vertical-center">
+                        <form className="form-group" onSubmit={joinSession}>
+                            <p>
+                                <label>Participant: </label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    id="userName"
+                                    value={myUserName}
+                                    onChange={handleChangeUserName}
+                                    required
+                                />
+                            </p>
+                            <p>
+                                <label> Session: </label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    id="sessionId"
+                                    value={mySessionId}
+                                    onChange={handleChangeSessionId}
+                                    required
+                                />
+                            </p>
+                            <p className="text-center">
+                                <input className="btn btn-lg btn-success" name="commit" type="submit" value="JOIN" />
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            ) : null}
+
+            {session !== undefined ? (
+                <div id="session">
+                    <div id="session-header">
+                        <h1 id="session-title">{mySessionId}</h1>
+                        <input
+                            className="btn btn-large btn-danger"
+                            type="button"
+                            id="buttonLeaveSession"
+                            onClick={leaveSession}
+                            value="Leave session"
+                        />
+                    </div>
+
+                    <div id="video-container" className="col-md-6">
+                        {publisher !== undefined ? (
+                            <div className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(publisher)}>
+                                <UserVideoComponent streamManager={publisher} />
+                            </div>
+                        ) : null}
+
+                        {subscribers.map((sub, i) => (
+                            <div key={sub.id} className="stream-container col-md-6 col-xs-6" onClick={() => handleMainVideoStream(sub)}>
+                                <span>{sub.id}</span>
+                                <UserVideoComponent key={sub.id} streamManager={sub} />
+                            </div>
+                        ))}
+                        
+                    </div>
+                </div>
+        ) : null}
+    </div>
+
+            </div>
     )
 }
 
-export default SingleplayWaiting;
+export default Singleplay;
