@@ -15,17 +15,14 @@ import 'util/node.css';
 import 'util/effect.css';
 
 
-import MusicCard from 'components/MusicCard';
+import MusicCard from 'components/MusicCard'
 
-import Websocket from 'components/webSocket/client/WebSocketClient';
 import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-
 import musicListData from 'data/musicListData.json';
 
-import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
+import {createCircle, createPerfect, createGood, createBad} from "util/node.js";
 import {createEffect} from "util/effect.js";
 
 import drum from 'data/drum.mp3';
@@ -502,19 +499,18 @@ function SingleplayWaiting(){
         <div className="containerSingleplay">
             {/* <ButtonHome/> */}
             <TitleSingleplay />
-            <div className='camandmessageboxSingleplay' style={{display:'flex'}}>
-                <div className='mainSectionSingleplay'>
-                    <div className="gameContainerWaitingSingleplay">
+            <div className='camandmessagebox' style={{display:'flex'}}>
+                <div className='mainSection'>
+                    <div className="gameContainerWaiting">
                         <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
                         <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
                     </div>
-                    <Websocket />
                 </div>
                 {!isGamePlayingState
                 ?
-                <div className='subContainerSingleplay'>
+                <div className='subContainer'>
                     <MusicCard musicList = {musicList} selectedMusic={selectedMusic} handleMusicSelect= {handleMusicSelect} />
-                    <button type="submit" className="startbuttonSingleplay" onClick={playGame} >START</button>
+                    <button type="submit" className="startbutton" onClick={playGame} >START</button>
                 </div>
                 :
                 <ScoreBox
@@ -534,13 +530,13 @@ function SingleplayWaiting(){
 
 function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame}){
     return(
-        <div className="scoreBoxSingleplay">
-            <div>perfect: {perfectScore}</div>
-            <div>good: {goodScore}</div>
-            <div>failed: {failedScore}</div>
-            <div>highest combo: {highestCombo}</div>
-            <div>current combo: {comboScore}</div>
-            <button id="gameStart" onClick={stopGame}>종료</button>
+        <div className="scoreBox">
+            <div className='perfect'>perfect: {perfectScore}</div>
+            <div className='good'>good: {goodScore}</div>
+            <div className='failed'>failed: {failedScore}</div>
+            <div className='highestcombo'>highest combo: {highestCombo}</div>
+            <div className='currentcombo'> current combo: {comboScore}</div>
+            <button id="gamequit" onClick={stopGame}>QUIT</button>
         </div>
     )
 }

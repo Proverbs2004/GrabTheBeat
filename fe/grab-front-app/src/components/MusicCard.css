@@ -1,56 +1,53 @@
 .sliderContainer {
-    /* Set the desired width and height of the slider container. You can adjust these values based on your requirement. */
-    /* width: 30%;
-    min-width: 300px;
-    height: 550px; */
-    /* margin: 0 auto; Center the container horizontally on the screen. You can adjust the margin as needed. */
-    /* overflow: hidden; Hide any content that overflows the container. */
-    height: 400px;
-    padding-top: 50px;
-  }
-  .musicCard {
+  /* Set the desired width and height of the slider container. You can adjust these values based on your requirement. */
+  /* width: 30%;
+  min-width: 300px;
+  height: 550px; */
+  /* margin: 0 auto; Center the container horizontally on the screen. You can adjust the margin as needed. */
+  /* overflow: hidden; Hide any content that overflows the container. */
+  height: 400px;
 
-  }
-  
-  .musicCard:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
+}
+.musicCard {
 
-  /* SingleplayWaiting.css */
+}
+
+/* SingleplayWaiting.css */
 .custom-prev-arrow,
 .custom-next-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 24px;
-  color: #ff99ff;
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+cursor: pointer;
+font-size: 60px;
+color: #ff99ff;
 
-  border-radius: 50%;
-  padding: 8px;
-  z-index: 1;
-  transition: background-color 0.3s ease;
+border-radius: 50%;
+padding: 8px;
+z-index: 1;
+transition: background-color 0.3s ease;
+
 }
 
 .custom-prev-arrow {
-  left: 5px;
+left: 1%;
 }
 .custom-next-arrow {
-  right: 5px;
+right: 1%;
 }
 /* .custom-prev-arrow:hover {
-  box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
 }
 
 .custom-next-arrow:hover {
-  box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
 } */
 
 .musicCardBackground{
-  width: 300px;
+width: 300px;
 }
 
 img {
-  margin: auto;
-  display: block;
+margin: auto;
+display: block;
 }
