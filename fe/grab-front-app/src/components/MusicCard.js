@@ -10,37 +10,42 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Initialize with 0 or the appropriate value
     const canPlayMusic = useRef(false);
 
-    // window.addEventListener('onbeforeactivate',()=>{
-    //     canPlayMusic.current=true;
-        
-    // });
+    const [hidden, setHidden] = useState(false);
 
-    // useEffect(()=>{
-    //     canPlayMusic.current=true;
-    // });
+    const audioElement = new Audio(selectedMusic.music_url);
+
+    const handleClick = () => {
+        audioElement.volume=0.4;
+            audioElement.play();
+        setHidden(true);
+    };
+    const divStyle = {
+        // alignItems: 'center',
+        paddingTop: 500,
+        justifyContent: 'center',  
+        fontSize: 'xxx-large',
+        width: 450,
+        height: 600,
+        position: 'absolute',
+        backgroundColor: 'black',
+        opacity: 0.8,
+        zIndex: 3,
+        display: hidden ? 'none' : 'flex',
+      };
 
     console.log(canPlayMusic.current);
 
     useEffect(() => {
 
-        setTimeout(()=>{
-            if (selectedMusic) {
-                const audioElement = new Audio(selectedMusic.music_url);
-                
-                audioElement.volume=0.4;
+        if(hidden){
+            audioElement.volume=0.4;
+            audioElement.play();
+        }
 
-                console.log('music playing');
-                console.log(selectedMusic.music_url);
-                audioElement.play();
-    
-                return () => {
+        return () => {
                     audioElement.pause();
                     console.log('music pause');
                 };
-            }
-        },500);
-
-
             // if (selectedMusic) {
             //     const audioElement = new Audio(selectedMusic.music_url);
             //     console.log(audioElement);
@@ -59,7 +64,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
             //         console.log('music pause');
             //     };
             // }
-            
+
     }, [selectedMusic]);
 
 
@@ -125,6 +130,8 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
     }
     return (
+        <>
+        <div style={divStyle} onClick={handleClick}>CLICK?</div>
         <div className="sliderContainer">
             <Slider
                 slidesToShow={1}
@@ -149,6 +156,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
                 ))}
             </Slider>
         </div>
+        </>
     )
 }
 
