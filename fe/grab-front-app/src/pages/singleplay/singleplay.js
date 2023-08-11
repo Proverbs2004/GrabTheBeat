@@ -1,5 +1,5 @@
-import { Link, json} from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+// import { Link, json} from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { React, useState, useEffect, useRef, Component } from 'react';
 import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
@@ -9,7 +9,7 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import Slider from "react-slick";
+// import Slider from "react-slick";
 import './Singleplay.css';
 import 'util/node.css';
 import 'util/effect.css';
@@ -17,7 +17,7 @@ import 'util/effect.css';
 
 import MusicCard from 'components/MusicCard'
 
-import { Carousel } from 'react-responsive-carousel';
+// import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import musicListData from 'data/musicListData.json';
@@ -33,10 +33,12 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
 function TitleSingleplay() {
     return (
         <div className="titleSingleplay">SINGLE PLAY</div>
-    )
-}
-
-function SingleplayWaiting(){
+        )
+    }
+    
+    function SingleplayWaiting(){
+    console.log('hihihihi');
+    const musicList = musicListData.musicList;
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
     const selectedMusicRef = useRef(musicListData.musicList[0]);
 
@@ -76,14 +78,12 @@ function SingleplayWaiting(){
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     
-    // const [musicList, setMusicList] = useState([]);
     
-    const musicList = musicListData.musicList;
       
-    const hitObjects = useRef(redBoneData.hitObjects);
-
+    // const hitObjects = useRef(redBoneData.hitObjects);
 
     function fillTimePositionArray(objectData){
+        console.log('filling arrays');
         startTimeArray.current=[];
         positionArray.current=[];
         for (const obj of objectData) {
@@ -92,7 +92,9 @@ function SingleplayWaiting(){
             positionArray.current.push(obj.position); 
         }
     }
-    fillTimePositionArray(hitObjects.current);
+
+    // fillTimePositionArray(hitObjects.current);
+
 
     function makeNode(){
         
@@ -145,7 +147,6 @@ function SingleplayWaiting(){
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
 
-        let a = performance.now();
         // 게임이 실행중일 때 진행
         if(isGamePlaying.current){
 
@@ -175,7 +176,6 @@ function SingleplayWaiting(){
                 audio.current.currentTime=0;
             }
         }
-        let b = performance.now();
         // 손그리기
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElementRef.current.width, canvasElementRef.current.height);
@@ -224,7 +224,6 @@ function SingleplayWaiting(){
             }
         }
         canvasCtx.restore();
-        let c = performance.now();
         // 캐칭 알고리즘 및 판정, 노드관리
         if(handResults.landmarks.length>0){
             // 양손 대상으로 진행
@@ -370,11 +369,28 @@ function SingleplayWaiting(){
 
     // 이 함수는 개선해야됨
     async function updateTimePosArraysAndAudio() {
-        const jsonData = await import(selectedMusic.json_url);
-        const objectsData = jsonData.hitObjects;
-        console.log(objectsData);
-        fillTimePositionArray(objectsData);
-        audio.current = new Audio(selectedMusic.music_url);
+        // const jsonData = await import(selectedMusic.json_url);
+        // const objectsData = jsonData.hitObjects;
+        // console.log(objectsData);
+        // fillTimePositionArray(objectsData);
+        // audio.current = new Audio(selectedMusic.music_url);
+
+        let fuck = null;
+        if(selectedMusicRef.current.id===0){
+            fuck = await import("../../data/JanJi_HeroesTonight.json");        
+        } else if(selectedMusicRef.current.id===1) {
+            fuck = await import("../../data/DonaldGlover_RedBone.json");  
+        } else if(selectedMusicRef.current.id===2) {
+            fuck = await import("../../data/Test2.json");  
+        } else if(selectedMusicRef.current.id===3) {
+            fuck = await import("../../data/Test3.json");  
+        } else if(selectedMusicRef.current.id===4) {
+            fuck = await import("../../data/Test4.json");  
+        }
+        fillTimePositionArray(fuck.hitObjects);
+
+        audio.current = new Audio(selectedMusicRef.current.music_url);
+
     }
 
     function playGame() {
@@ -396,12 +412,6 @@ function SingleplayWaiting(){
             setIsGamePlayingState(true);
             isGamePlaying.current=true;
 
-            // setTimeout(function(){
-            //     audio.current.currentTime = 0;
-            //     audio.current.loop = false;
-            //     audio.current.volume = 0.3;
-            //     audio.current.play();
-            // },2000);
         };
     }
     function playDrum() {
@@ -482,7 +492,7 @@ function SingleplayWaiting(){
             setHighestCombo(comboScore);
         }
         
-    },[comboScore]); 
+    },[comboScore]);
 
     
 
