@@ -32,7 +32,7 @@ import drum from '../../data/drum.mp3';
 
 import redBone from '../../data/DonaldGlover_RedBone.mp3';
 import redBoneData from '../../data/DonaldGlover_RedBone.json';
-import UserVideoComponent from '../../components/openVidu/UserVideoComponent';
+import UserVideoComponent from '../../components/openVidu2/UserVideoComponent';
 
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
@@ -51,16 +51,50 @@ function MultiplayWaiting(){
     const [session, setSession] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
-      
+
+    const location = useLocation();
+    const from = location.state.from;
+    const code = location.state.code;
+    const name = location.state.name;
+
+    const musicList = musicListData.musicList;
+    const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
+    const selectedMusicRef = useRef(musicListData.musicList[0]);
+    const audio = useRef(new Audio(redBone));
+    const isGamePlaying = useRef(false);
+    const gameStartTime = useRef(0);
+    const arrayIdx = useRef(0);
+    const [isGamePlayingState, setIsGamePlayingState] = useState(false);
+    const startTimeArray = useRef([]);
+    const positionArray = useRef([]);
+    
     useEffect(()=>{
+        console.log('from useeffect ', from)
         window.addEventListener('beforeunload', onBeforeUnload);
 
+        console.log('useEffect')
         return () => {
             window.removeEventListener('beforeunload', onBeforeUnload);
         };
 
     },[])
 
+    useEffect(() => {
+        console.log('from useeffect from ', from)
+        const handleFunctionCall = () => {
+            if (from === 'create') {
+              // 'a' 페이지에서 왔을 경우 실행할 함수
+              console.log('from에 따라 joinsession')
+              joinSession();
+            } else if (from === 'join') {
+              // 'b' 페이지에서 왔을 경우 실행할 함수
+              console.log('from에 따라 entersession')
+              enterSession();
+            }
+          };
+      
+          handleFunctionCall();
+    }, [from]);
 
     const onBeforeUnload = () => {
         leaveSession();
@@ -90,8 +124,8 @@ function MultiplayWaiting(){
         return result;
     }
 
-    const joinSession = async (event) => {
-        event.preventDefault(); // Prevent the default form submission behavior
+    const joinSession = async () => {
+        // event.preventDefault(); // Prevent the default form submission behavior
     
         const ov = new OpenVidu();
         console.log("조인세션 되는 중");
@@ -100,7 +134,10 @@ function MultiplayWaiting(){
     
             mySession.on('streamCreated', (event) => {
                 const subscriber = mySession.subscribe(event.stream, undefined);
+                
                 setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+                
+                console.log('subscribers ', subscribers);
             });
     
             mySession.on('streamDestroyed', (event) => {
@@ -115,7 +152,7 @@ function MultiplayWaiting(){
             mySession.connect(token.token, { clientData: myUserName });
     
             const publisher = await ov.initPublisherAsync(undefined, {
-                audioSource: undefined,
+                audioSource: false,
                 videoSource: undefined,
                 publishAudio: true,
                 publishVideo: true,
@@ -136,31 +173,35 @@ function MultiplayWaiting(){
         }
     };
     
-    const enterSession = async (event) => {
-        event.preventDefault(); // Prevent the default form submission behavior
+    const enterSession = async () => {
+        // event.preventDefault(); // Prevent the default form submission behavior
     
         const ov = new OpenVidu();
-        console.log("조인세션 되는 중");
+        console.log("엔터세션 되는 중");
         try {
             const mySession = ov.initSession();
     
             mySession.on('streamCreated', (event) => {
                 const subscriber = mySession.subscribe(event.stream, undefined);
                 setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
+                
             });
-    
+            console.log('subscribers ', subscribers);
             mySession.on('streamDestroyed', (event) => {
                 deleteSubscriber(event.stream.streamManager);
             });
     
-            const sessionId = document.getElementById('sessionCode').value;
+            // const sessionId = document.getElementById('sessionCode').value;
+            const sessionId = code;
+            console.log('code ', code)
             console.log('enter session id', sessionId);
             const token = await createToken(sessionId);
     
-            mySession.connect(token.token, { clientData: myUserName });
+            
+            mySession.connect(token.token, { clientData: name });
     
             const publisher = await ov.initPublisherAsync(undefined, {
-                audioSource: undefined,
+                audioSource: false,
                 videoSource: undefined,
                 publishAudio: true,
                 publishVideo: true,
@@ -172,6 +213,8 @@ function MultiplayWaiting(){
     
             mySession.publish(publisher);
     
+            setMyUserName(name);
+            setMySessionId(sessionId);
             // 여기서 세션 연결 후 상태 업데이트 및 UI 렌더링을 진행
             setSession(mySession);
             // setMainStreamManager(publisher);
@@ -232,6 +275,63 @@ function MultiplayWaiting(){
         return response.data;
     };
 
+    const handleMusicSelect = (music) => {
+
+        setSelectedMusic(music);
+        selectedMusicRef.current=music;
+
+    };
+
+    function playGame() {
+        if (audio.current && !isGamePlaying.current) {
+
+            updateTimePosArraysAndAudio();
+
+            gameStartTime.current = performance.now();
+            arrayIdx.current=0;
+
+
+            setIsGamePlayingState(true);
+            isGamePlaying.current=true;
+
+        };
+    }
+
+    async function updateTimePosArraysAndAudio() {
+        // const jsonData = await import(selectedMusic.json_url);
+        // const objectsData = jsonData.hitObjects;
+        // console.log(objectsData);
+        // fillTimePositionArray(objectsData);
+        // audio.current = new Audio(selectedMusic.music_url);
+
+        let fuck = null;
+        if(selectedMusicRef.current.id===0){
+            fuck = await import("../../data/JanJi_HeroesTonight.json");        
+        } else if(selectedMusicRef.current.id===1) {
+            fuck = await import("../../data/DonaldGlover_RedBone.json");  
+        } else if(selectedMusicRef.current.id===2) {
+            fuck = await import("../../data/Test2.json");  
+        } else if(selectedMusicRef.current.id===3) {
+            fuck = await import("../../data/Test3.json");  
+        } else if(selectedMusicRef.current.id===4) {
+            fuck = await import("../../data/Test4.json");  
+        }
+        fillTimePositionArray(fuck.hitObjects);
+
+        audio.current = new Audio(selectedMusicRef.current.music_url);
+
+    }
+
+    function fillTimePositionArray(objectData){
+        console.log('filling arrays');
+        startTimeArray.current=[];
+        positionArray.current=[];
+        for (const obj of objectData) {
+            // 시작 시간과 위치만 배열에 담기
+            startTimeArray.current.push(obj.startTime);
+            positionArray.current.push(obj.position); 
+        }
+    }
 
 
     return(
@@ -241,49 +341,45 @@ function MultiplayWaiting(){
                 <br />
                 {myUserName}
             </div>
-            {/* <ButtonHome/> */}
-            <button onClick={joinSession}>openvidu</button>
-            <input id='sessionCode'></input>
-            <button onClick={enterSession}>enter</button>
+            
             <TitleSingleplay />
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
-                    <div className="gameContainerWaiting">
-                        <UserVideoComponent streamManager={publisher} />
+                    {/* <div className="gameContainerWaiting">
+                        {<UserVideoComponent streamManager={publisher} /> }
+                    </div> */}
+                    <div className='subContainer'>
+                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
                     </div>
                     <div className='bigbox'>
                     <div style={{display:'flex'}}>
                         <div className='cambox1'>cambox1
-                            {subscribers[0] !== undefined ?
+                            <UserVideoComponent streamManager={publisher} />
+                            {/* {subscribers[0] !== undefined ?
                             <UserVideoComponent streamManager={subscribers[0]} />
-                            : null }
+                            : null } */}
                         </div>
                         <div className='cambox2'>cambox2
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[1]} />
+                            {subscribers[0] !== undefined ?
+                            <UserVideoComponent streamManager={subscribers[0]} />
                             : null }
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
                         <div className='cambox3'>cambox3
-                        <div className='cambox2'>cambox2
+                            {subscribers[1] !== undefined ?
+                            <UserVideoComponent streamManager={subscribers[1]} />
+                            : null }
+                        </div>
+                        <div className='cambox4'>cambox4
                             {subscribers[2] !== undefined ?
                             <UserVideoComponent streamManager={subscribers[2]} />
                             : null }
                         </div>
-                        </div>
-                        <div className='cambox4'>cambox4
-                        <div className='cambox2'>cambox2
-                            {subscribers[3] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[3]} />
-                            : null }
-                        </div>
-                        </div>
                     </div>
                     </div>
-
-
 
                     </div>
                     <Websocket />
