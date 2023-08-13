@@ -27,6 +27,9 @@ export function createSocketServer(code) {
             })
         }
     
+        /**
+         * data: chat_message
+         */
         // 메시지 전송
         ws.on('message', (data, isBinary) => {
             console.log(`Received from client: ${data}`)

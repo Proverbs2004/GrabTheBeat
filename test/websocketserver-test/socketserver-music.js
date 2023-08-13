@@ -28,37 +28,14 @@ export function createSocketServer(code) {
         }
     
         /**
-         * data: {
-         *     name: client_name
-         *     score: client_score
-         * }
+         * data: music_index
          */
         // 메시지 전송
         ws.on('message', (data, isBinary) => {
             console.log(`Received from client: ${data}`)
-
-            const clientScore = JSON.parse(data);
-            webSocketServerList.forEach((wss, index) => {
-                if (wss.serverId === clientScore.serverId) {
-                    const clientList = webSocketServerList[index].clients.filter(client => client.name === clientScore.name);
-
-                    if (!Array.isArray(clientList) || clientList.length === 0) {
-                        webSocketServerList[index].clients.push(clientScore);
-                    } else {
-                        wss.clients.forEach((client, clientIndex) => {
-                            if (client.name === clientScore.name) {
-                                webSocketServerList[index].clients[clientIndex].score = clientScore.score;
-                            }
-                        });
-                    }
-                }
-            })
-
-            const wssList = webSocketServerList.filter(wss => wss.serverId === clientScore.serverId);
-            const clients = JSON.stringify(wssList[0].clients);
             wss.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(clients, { binary: isBinary });
+                    client.send(data, { binary: isBinary });
                 }
             })
         });
