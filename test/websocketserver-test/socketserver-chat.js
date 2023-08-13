@@ -10,6 +10,12 @@ export function createSocketServer(code) {
     // 'connection' 이벤트 발생 시, 수행 할 콜백 함수 매핑
     wss.on('connection', function connection(ws) {
         ws.on('error', console.error);
+
+        // 서버 인원이 4명 초과되면, 연결 해제.
+        if (wss.clients.size > 4) {
+            ws.close();
+            return;
+        }
     
         // 유저 접속
         if (ws.readyState === ws.OPEN) {
@@ -49,11 +55,6 @@ export function createSocketServer(code) {
     });
     
     return wss;
-}
-
-// WebSocketServer 객체 제거.
-export function removeSocketServer(code) {
-    webSocketServerList = webSocketServerList.filter(wss => wss.serverId !== code);
 }
 
 // 특정 WebSocketServer 객체 반환.

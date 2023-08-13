@@ -11,6 +11,12 @@ export function createSocketServer(code) {
     wss.on('connection', function connection(ws) {
         ws.on('error', console.error);
     
+        // 서버 인원이 4명 초과되면, 연결 해제.
+        if (wss.clients.size > 4) {
+            ws.close();
+            return;
+        }
+
         // 유저 접속
         if (ws.readyState === ws.OPEN) {
             const size = wss.clients.size;
@@ -70,11 +76,6 @@ export function createSocketServer(code) {
     });
     
     return wss;
-}
-
-// WebSocketServr 객체 제거.
-export function removeSocketServer(code) {
-    webSocketServerList = webSocketServerList.filter(wss => wss.serverId !== code);
 }
 
 // 특정 WebSocketServer 객체 반환.
