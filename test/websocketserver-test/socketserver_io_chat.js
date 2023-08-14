@@ -13,6 +13,7 @@ export function dispatchChatEvent(chatServer, socket) {
         chatServer.to(roomId).emit('message', data);
     })
 
+    // 연결 해제
     socket.on('disconnect', () => {
         socket.leave(roomId);
     })
