@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthUserByAccessToken {
+public class AuthUserByAccessTokenRequest {
 
     private String accessToken;
 
