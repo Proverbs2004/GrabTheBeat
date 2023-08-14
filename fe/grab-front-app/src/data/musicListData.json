@@ -39,6 +39,14 @@
             "music_url": "data/Aimyon_AiWoTsutaetaidatoka.mp3",
             "json_url": "data/Aimyon_AiWoTsutaetaidatoka.json",
             "pic_url": "/pic/aimyon.jpg"
+          },
+          {
+            "id": 4,
+            "title": "test",
+            "artist": "test",
+            "music_url": "data/Test4.mp3",
+            "json_url": "data/Test4.json",
+            "pic_url": "/pic/면도킁.png"
           }
       ]
   }
