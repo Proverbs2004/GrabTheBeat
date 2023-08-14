@@ -10,20 +10,16 @@ import Singleplay from './pages/singleplay/singleplay';
 import SingleplayResult from './pages/singleresult/SingleplayResult';
 // import Multiplay from './pages/multiplay/Multiplay';
 // import MultiplayWaiting from 'pages/multiplay/MultiplayWaiting';
-import Auth from 'hoc/auth';
 
 
 
 function App() {
-    const AuthCreate = Auth(Create);
-
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/create" element={<Create />} /> */}
-          <Route path="/create" element={<AuthCreate />} /> 
+          <Route path="/create" element={<Create />} />
           <Route path="/join" element={<Join />} />
           <Route path="/singleplayJoin" element={<SingleplayJoin />} />
           <Route path="/singleplay" element={<Singleplay />} />
