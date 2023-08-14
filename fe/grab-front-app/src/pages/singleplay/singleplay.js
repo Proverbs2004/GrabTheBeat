@@ -1,5 +1,5 @@
 import { Link, json} from 'react-router-dom';
-// import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { React, useState, useEffect, useRef, Component } from 'react';
 import { drawConnectors} from '@mediapipe/drawing_utils';
 import { HAND_CONNECTIONS } from '@mediapipe/hands';
@@ -25,6 +25,7 @@ import musicListData from 'data/musicListData.json';
 import {createCircle, createPerfect, createGood, createBad} from "util/node.js";
 import {createEffect} from "util/effect.js";
 
+import Loading from 'pages/loading/Loading';
 import drum from 'data/drum.mp3';
 
 import redBone from 'data/DonaldGlover_RedBone.mp3';
@@ -78,7 +79,11 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     const root = useRef(document.getElementById('root'));
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
-    
+    const [isVideoLoading, setIsVideoLoading] = useState(true);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const userName = queryParams.get('userName');
+
 
     function redirectToSinglePlayResult() {
         // '/singleplayresult' 경로로 이동
@@ -489,7 +494,14 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
             }
             
         };
+        setTimeout(() => {
+            const handleVideoLoaded = () => {
+                setIsVideoLoading(false);
+              };
+            handleVideoLoaded(); 
+        }, 5000);
         initializeData();
+
 
     },[])
 
@@ -512,13 +524,21 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     return (
         <div className="containerSingleplay">
           <TitleSingleplay />
-          <div className='camandmessagebox' style={{display:'flex'}}>
-            <div className='mainSection'>
-              <div className="gameContainerWaiting">
-                <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
-                <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
+          {isVideoLoading
+          ?
+          <div style={{ zIndex: 3 }}>
+            <Loading/>
+          </div>
+          :
+            <></>
+           }
+          <div className="camandmessagebox" style={{ display: 'flex' }}>
+              <div className="mainSection">
+                <div className="gameContainerWaiting">
+                  <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
+                  <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
+                </div>
               </div>
-            </div>
             {isGamePlayingState ? (
               <ScoreBox
                 perfectScore={perfectScore}
@@ -527,43 +547,79 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                 highestCombo={highestCombo}
                 comboScore={comboScore}
                 stopGame={stopGame}
-                isGamePlayingState={isGamePlayingState} 
-                isGameEnd={isGameEnd} 
+                isGamePlayingState={isGamePlayingState}
+                isGameEnd={isGameEnd}
+                userName={userName}
                 redirectToSinglePlayResult={redirectToSinglePlayResult}
+                pic_url={selectedMusic.pic_url}
               />
             ) : (
-              <div className='subContainer'>
-                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
-                <button type="submit" className="startbutton" onClick={playGame}>START</button>
+              <div className="subContainer">
+                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
+                <button type="submit" className="startbutton" onClick={playGame}>
+                  START
+                </button>
               </div>
             )}
           </div>
         </div>
       );
-
-    
+      
+      
 }
 
-function ScoreBox({perfectScore, goodScore, failedScore, highestCombo, comboScore, stopGame, isGamePlayingState, isGameEnd, redirectToSinglePlayResult}){
-    return(
-        <div className="scoreBox">
-            <div className='perfect'>perfect: {perfectScore}</div>
-            <div className='good'>good: {goodScore}</div>
-            <div className='failed'>failed: {failedScore}</div>
-            <div className='highestcombo'>highest combo: {highestCombo}</div>
-            <div className='currentcombo'> current combo: {comboScore}</div>
-            
-            {isGamePlayingState && isGameEnd 
-            ?
-            (
-              <button onClick={redirectToSinglePlayResult} id="gamequit">Result</button>
-            )
-            :
-            <button id="gamequit" onClick={stopGame}>QUIT</button>
+
+function ScoreBox({
+    perfectScore,
+    goodScore,
+    failedScore,
+    highestCombo,
+    comboScore,
+    stopGame,
+    isGamePlayingState,
+    isGameEnd,
+    userName,
+    pic_url
+  }) {
+
+    console.log(pic_url);
+    console.log("랄라");
+    console.log(pic_url);
+    
+    return (
+      <div className="scoreBox">
+        <div className="perfect">perfect: {perfectScore}</div>
+        <div className="good">good: {goodScore}</div>
+        <div className="failed">failed: {failedScore}</div>
+        <div className="highestcombo">highest combo: {highestCombo}</div>
+        <div className="currentcombo"> current combo: {comboScore}</div>
+  
+        {isGamePlayingState && isGameEnd ? (
+          <Link
+            to={
+              '/singleplayresult'
             }
-    
-        </div>
-    )
-}
+            state={{
+                perfectScore: perfectScore,
+                goodScore: goodScore,
+                failedScore: failedScore,
+                highestCombo: highestCombo,
+                comboScore: comboScore,
+                userName: userName,
+                pic_url: pic_url
+            }}
+          >
+            <button id="gamequit">Result</button>
+          </Link>
+        ) : (
+          <button id="gamequit" onClick={stopGame}>
+            QUIT
+          </button>
+        )}
+      </div>
+    );
+  }
+
+
 
 export default Singleplay;
