@@ -12,11 +12,12 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
     const [hidden, setHidden] = useState(false);
 
+    const startAudio = useRef(new Audio(selectedMusic.music_url));
     const audioElement = new Audio(selectedMusic.music_url);
 
     const handleClick = () => {
-        audioElement.volume=0.4;
-            audioElement.play();
+        startAudio.current.volume=0.4;
+        startAudio.current.play();
         setHidden(true);
     };
     const divStyle = {
@@ -36,15 +37,17 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     console.log(canPlayMusic.current);
 
     useEffect(() => {
-
+        startAudio.current.pause();
         if(hidden){
+            console.log('audio play');
             audioElement.volume=0.4;
             audioElement.play();
         }
 
         return () => {
-                    audioElement.pause();
-                };
+            audioElement.pause();
+            console.log('audio pause');
+        };
             // if (selectedMusic) {
             //     const audioElement = new Audio(selectedMusic.music_url);
             //     console.log(audioElement);
