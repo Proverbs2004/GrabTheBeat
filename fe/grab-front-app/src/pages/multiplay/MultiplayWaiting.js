@@ -39,9 +39,9 @@ import axios from 'axios';
 
 const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
-function TitleSingleplay() {
+function TitleMultiplay() {
     return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+        <div className="TitleMultiplay">MULTIPLAY</div>
     )
 }
 
@@ -335,55 +335,32 @@ function MultiplayWaiting(){
 
 
     return(
-        <div className="containerSingleplayWaiting">
-            <div>
+        <div className="containerMultiplay">
+            <TitleMultiplay />
+            <div className='roominfo'>
                 {mySessionId}
                 <br />
                 {myUserName}
             </div>
-            
-            <TitleSingleplay />
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
                     {/* <div className="gameContainerWaiting">
                         {<UserVideoComponent streamManager={publisher} /> }
                     </div> */}
-                    <div className='subContainer'>
-                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
-                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
-                    </div>
-                    <div className='bigbox'>
-                    <div style={{display:'flex'}}>
-                        <div className='cambox1'>cambox1
+                        <div className='cambox'>
                             <UserVideoComponent streamManager={publisher} />
                             {/* {subscribers[0] !== undefined ?
                             <UserVideoComponent streamManager={subscribers[0]} />
                             : null } */}
                         </div>
-                        <div className='cambox2'>cambox2
-                            {subscribers[0] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[0]} />
-                            : null }
-                        </div>
-                    </div>
-                    <div style={{display:'flex'}}>
-                        <div className='cambox3'>cambox3
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[1]} />
-                            : null }
-                        </div>
-                        <div className='cambox4'>cambox4
-                            {subscribers[2] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[2]} />
-                            : null }
-                        </div>
-                    </div>
-                    </div>
-
                     </div>
                     <Websocket />
                 </div>
+                <div className='subContainer'>
+                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
+                    </div>  
             </div>
         </div>
 
