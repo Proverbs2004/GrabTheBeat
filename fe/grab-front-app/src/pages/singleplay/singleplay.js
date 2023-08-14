@@ -387,11 +387,11 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         } else if(selectedMusicRef.current.id===1) {
             fuck = await import("../../data/DonaldGlover_RedBone.json");  
         } else if(selectedMusicRef.current.id===2) {
-            fuck = await import("../../data/Test2.json");  
+            fuck = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
         } else if(selectedMusicRef.current.id===3) {
-            fuck = await import("../../data/Test3.json");  
+            fuck = await import("../../data/Coolio_GangstasParadise.json");  
         } else if(selectedMusicRef.current.id===4) {
-            fuck = await import("../../data/Test4.json");  
+            fuck = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
         }
         fillTimePositionArray(fuck.hitObjects);
 
