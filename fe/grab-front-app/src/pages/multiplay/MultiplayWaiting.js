@@ -399,14 +399,14 @@ function MultiplayWaiting(){
 
             mySession.connect(token.token, { clientData: myUserName })
                 .then(async () => {
-                    const mediaStream = await ov.getUserMedia({
-                        audioSource: false,
-                        videoSource: undefined,
-                        resolution: '320x180',
-                        frameRate: FRAME_RATE
-                    });
+                    // const mediaStream = await ov.getUserMedia({
+                    //     audioSource: false,
+                    //     videoSource: undefined,
+                    //     resolution: '320x180',
+                    //     frameRate: 10000
+                    // });
             
-                    let videoTrack = mediaStream.getVideoTracks()[0];
+                    // let videoTrack = mediaStream.getVideoTracks()[0];
                     // let video = document.createElement('video');
                     let video = document.getElementById('videoZone');
                     // video.srcObject = new MediaStream([videoTrack]);
@@ -418,7 +418,7 @@ function MultiplayWaiting(){
                     video.addEventListener('play', () => {
                         let loop = () => {
                             if (!video.paused && !video.ended) {
-                                ctx.drawImage(video, 0, 0, 300, 170);
+                                // ctx.drawImage(video, 0, 0, 300, 170);
                                 setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
                             }
                         };
@@ -525,14 +525,14 @@ function MultiplayWaiting(){
 
             mySession.connect(token.token, { clientData: myUserName })
                 .then(async () => {
-                    const mediaStream = await ov.getUserMedia({
-                        audioSource: false,
-                        videoSource: undefined,
-                        resolution: '320x180',
-                        frameRate: FRAME_RATE
-                    });
+                    // const mediaStream = await ov.getUserMedia({
+                    //     audioSource: false,
+                    //     videoSource: undefined,
+                    //     resolution: '320x180',
+                    //     frameRate: FRAME_RATE
+                    // });
             
-                    let videoTrack = mediaStream.getVideoTracks()[0];
+                    // let videoTrack = mediaStream.getVideoTracks()[0];
                     let video = document.getElementById('videoZone');
                     // video.srcObject = new MediaStream([videoTrack]);
                     
@@ -543,7 +543,7 @@ function MultiplayWaiting(){
                     video.addEventListener('play', () => {
                         let loop = () => {
                             if (!video.paused && !video.ended) {
-                                ctx.drawImage(video, 0, 0, 300, 170);
+                                // ctx.drawImage(video, 0, 0, 300, 170);
                                 setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
                             }
                         };
