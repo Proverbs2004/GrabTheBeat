@@ -75,15 +75,17 @@ const sendMessage = () => {
     <div>
       <div className="containersingleroom">
         <div className="chatbox">
-          
-          <div id="chat-log" className="chatlogbox">
+          <div className='listandlog'style={{display:'flex'}}>
+        <div className='list'>list</div>
+          <div id="chat-log" className="chatlogbox" >
+
             {chatHistory.map((message, index) => (
             <div key={index} className="chatmessage">
               {message}
             </div>
             ))}
           </div>
-          
+          </div>
           <div>
           <input
             type="text"
