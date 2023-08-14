@@ -139,7 +139,7 @@ function JoinForm() {
             />
             {touched.userName && errors.userName && <span><br />{errors.userName}</span>}
             <br />
-            <Link to='/multiplay'>
+            <Link to={'/multiplayWaiting'} state={{ from: 'join', code: values.code, name: values.userName }} >
             <button type="submit" className="joinbutton" >JOIN</button>
             </Link>
         </form>
