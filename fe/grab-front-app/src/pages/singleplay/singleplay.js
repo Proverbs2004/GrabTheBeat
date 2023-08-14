@@ -148,6 +148,12 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     }
     function predictWebcam(){
 
+        // 뒤로가기 했을때 오류 안뜨게 하는 코드
+        // video 태그가 값이 true가 아니면 끝내버림
+        if(!videoRef.current){
+            return;
+        }
+
         let now = performance.now();
         handResults = handLandmarker.detectForVideo(videoRef.current, now);
         faceResults = faceLandmarker.detectForVideo(videoRef.current, now);
