@@ -27,6 +27,12 @@
     max-height: 200px; /* 스크롤 높이를 제한하여 너무 많은 메시지가 쌓이는 것을 방지 */
     
   }
+  .list{
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    width: 20%;
+  }
   /* 스크롤바 스타일 변경 */
   .chatlogbox::-webkit-scrollbar {
     width: 15px;

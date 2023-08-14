@@ -1,0 +1,41 @@
+
+.LoadingBox {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #37474F;
+    margin: 0;
+  }
+  
+    #outer {
+      stroke: white;
+    }
+    .loader {
+      width: 200px;
+    }
+    h3 {
+      font-family: sans-serif;
+      color: #cdfff8;
+      text-align: center;
+    }
+    svg {
+      filter: drop-shadow(  -1px -1px 5px cyan );
+    }
+    
+    h3 {
+      text-shadow: 1px 1px 5px #cdfff8;
+    }
+  
+    .cls-1 {
+      fill: #cdfff8;
+    }
+    
+    .cls-2 {
+      fill: #cdfff8;
+    }
+  
+    .cls-3 {
+      fill:#cdfff8;
+    }

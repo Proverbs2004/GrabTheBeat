@@ -119,16 +119,3 @@ body{
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
     box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
 }
-
-.scoreinfo {
-    display: flex;
-    justify-content: space-between;
-    /* 추가적인 스타일링을 원하면 여기에 추가 */
-  }
-  
-  .rank, .username, .score, .point {
-    /* 각 요소들에 대한 스타일링을 설정 */
-    flex: 1; /* 각 요소를 동일한 폭으로 설정 */
-    /* 필요한 스타일을 추가 */
-  }
-  
