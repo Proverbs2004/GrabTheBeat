@@ -1,51 +1,51 @@
 {
     "musicList": [
         {
-          "id": 1,
+          "id": 0,
           "title": "HeroesTonight",
           "artist": "Janji",
-          "music_url": "../data/JanJi_HeroesTonight.mp3",
-          "json_url": "../../data/JanJi_HeroesTonight.json",
+          "music_url": "data/JanJi_HeroesTonight.mp3",
+          "json_url": "data/JanJi_HeroesTonight.json",
           "pic_url": "/pic/면도킁.png"
         },
         {
-          "id": 2,
+          "id": 1,
           "title": "RedBone",
           "artist": "DonaldGlover",
-          "music_url": "../data/DonaldGlover_RedBone.mp3",
-          "json_url": "../../data/JanJi_HeroesTonight.json",
+          "music_url": "data/DonaldGlover_RedBone.mp3",
+          "json_url": "data/JanJi_HeroesTonight.json",
           "pic_url": "/pic/redbone.jpg"
         },
         {
-          "id": 3,
+          "id": 2,
           "title": "Test2",
           "artist": "Janji",
-          "music_url": "../data/Test2.mp3",
-          "json_url": "../../data/Test2.json",
+          "music_url": "data/Test2.mp3",
+          "json_url": "data/Test2.json",
           "pic_url": "/pic/면도킁.png"
         },
         {
-            "id": 4,
+            "id": 3,
             "title": "Test3",
             "artist": "Janji",
-            "music_url": "../data/Test3.mp3",
-            "json_url": "../../data/Test3.json",
+            "music_url": "data/Test3.mp3",
+            "json_url": "data/Test3.json",
+            "pic_url": "/pic/면도킁.png"
+          },
+          {
+            "id": 4,
+            "title": "Test4",
+            "artist": "Janji",
+            "music_url": "data/Test4.mp3",
+            "json_url": "data/Test4.json",
             "pic_url": "/pic/면도킁.png"
           },
           {
             "id": 5,
-            "title": "Test4",
-            "artist": "Janji",
-            "music_url": "../data/Test4.mp3",
-            "json_url": "../../data/Test4.json",
-            "pic_url": "/pic/면도킁.png"
-          },
-          {
-            "id": 6,
             "title": "Test5",
             "artist": "Janji",
-            "music_url": "../data/Test5.mp3",
-            "json_url": "../../data/Test5.json",
+            "music_url": "data/Test5.mp3",
+            "json_url": "data/Test5.json",
             "pic_url": "/pic/면도킁.png"
           }
       ]

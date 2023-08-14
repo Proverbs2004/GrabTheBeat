@@ -51,8 +51,21 @@ export function createSocketServer(code) {
     return wss;
 }
 
-// WebSocketServr 객체 제거.
+// 웹 소켓 서버 셧다운.
+export function shutdownSocketServer(wss) {
+    wss.clients.forEach(ws => {
+        ws.close();
+    })
+    wss.close();
+}
+
+// WebSocketServer 객체 제거.
 export function removeSocketServer(code) {
+    webSocketServerList.forEach(wss => {
+        if (wss.serverId === code) {
+            shutdownSocketServer(wss);
+        }
+    })
     webSocketServerList = webSocketServerList.filter(wss => wss.serverId !== code);
 }
 

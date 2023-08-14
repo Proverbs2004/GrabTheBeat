@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { parse } from 'url';
-import { dispatchSocketServer } from './socketserver.js';
+// import { dispatchSocketServer } from './socketserver.js';
 import { dispatchChatServer } from './socketserver-chat.js';
 import { dispatchScoreServer } from './socketserver-score.js';
 
@@ -26,7 +26,7 @@ chatServer.on('upgrade', function upgrade(request, socket, head) {
 
 // 클라이언트 요청 준비
 chatServer.listen(8000, () => {
-    console.log(`Server Listening on port 8000`)
+    console.log(`Server Listening on port 8000 - Chatting Server`)
 })
 
 
@@ -48,9 +48,10 @@ scoreServer.on('upgrade', function upgrade(request, socket, head) {
     } else {
         socket.destroy();
     }
+    
 });
 
 // 클라이언트 요청 준비
 scoreServer.listen(8001, () => {
-    console.log(`Server Listening on port 8001`)
+    console.log(`Server Listening on port 8001 - Score Server`)
 })

@@ -8,7 +8,8 @@ import Join from './pages/join/Join';
 import SingleplayJoin from './pages/singleplayjoin/SingleplayJoin';
 import Singleplay from './pages/singleplay/singleplay';
 import SingleplayResult from './pages/singleresult/SingleplayResult';
-import Multiplay from './pages/multiplay/Multiplay';
+// import Multiplay from './pages/multiplay/Multiplay';
+// import MultiplayWaiting from 'pages/multiplay/MultiplayWaiting';
 
 
 
@@ -23,7 +24,7 @@ function App() {
           <Route path="/singleplayJoin" element={<SingleplayJoin />} />
           <Route path="/singleplay" element={<Singleplay />} />
           <Route path="/singleplaywresult" element={<SingleplayResult />} />
-          <Route path="/multiplay" element={<Multiplay />} />
+          {/* <Route path="/multiplaywaiting" element={<MultiplayWaiting />} /> */}
         </Routes>
       </BrowserRouter>
     </div>
