@@ -1,57 +1,35 @@
 import { createServer } from 'http';
-import { parse } from 'url';
-// import { dispatchSocketServer } from './socketserver.js';
-import { dispatchChatServer } from './socketserver-chat.js';
-import { dispatchScoreServer } from './socketserver-score.js';
+import { Server } from 'socket.io';
 
-// http 서버 생성
-const chatServer = createServer();
+import { dispatchChatEvent } from './socketserver_io_chat.js';
 
-chatServer.on('upgrade', function upgrade(request, socket, head) {
-    const { pathname } = parse(request.url);
-    // '/' 제거하여 code 추출
-    const code = pathname.slice(1);
-
-    // code와 일치하는 WebSocketServer
-    const wss = dispatchChatServer(code);
-    if (wss !== null && wss !== undefined) {
-        wss.handleUpgrade(request, socket, head, function done(ws) {
-            // connection 이벤트 수행
-            wss.emit('connection', ws, request);
-        })
-    } else {
-        socket.destroy();
+const WEB_URL = "http://127.0.0.1:5500";
+const httpServer = createServer();
+const io = new Server(httpServer, {
+    cors: {
+        origin: WEB_URL,
+        methods: ['GET', 'POST']
     }
 });
 
-// 클라이언트 요청 준비
-chatServer.listen(8000, () => {
-    console.log(`Server Listening on port 8000 - Chatting Server`)
+const chatServer = io.of('/chat');
+
+httpServer.listen(3000, () => {
+    console.log("connected port 3000");
 })
 
+io.on("connection", socket => {
+    console.log("connected client by Socket.io");
 
-// http 서버 생성
-const scoreServer = createServer();
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
 
-scoreServer.on('upgrade', function upgrade(request, socket, head) {
-    const { pathname } = parse(request.url);
-    // '/' 제거하여 code 추출
-    const code = pathname.slice(1);
-
-    // code와 일치하는 WebSocketServer
-    const wss = dispatchScoreServer(code);
-    if (wss !== null && wss !== undefined) {
-        wss.handleUpgrade(request, socket, head, function done(ws) {
-            // connection 이벤트 수행
-            wss.emit('connection', ws, request);
-        })
-    } else {
-        socket.destroy();
-    }
-    
+    socket.on('message', (data) => {
+        io.emit('message', data);
+    })
 });
 
-// 클라이언트 요청 준비
-scoreServer.listen(8001, () => {
-    console.log(`Server Listening on port 8001 - Score Server`)
-})
+chatServer.on('connection', (socket) => {
+    dispatchChatEvent(chatServer, socket);
+});
