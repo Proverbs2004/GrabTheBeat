@@ -13,7 +13,7 @@
   }
   50% {
     text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
-    color: #955d95;
+    color: #FF99FF;
   }
 }
 .LoadingBox {
@@ -38,7 +38,7 @@
       text-align: center;
     }
     svg {
-      filter: drop-shadow(  -1px -1px 5px cyan );
+      filter: drop-shadow(  -1px -1px 5px #ff99ff);
     }
     
     h3 {

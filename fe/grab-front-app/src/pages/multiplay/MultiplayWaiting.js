@@ -496,7 +496,7 @@ useEffect(()=>{
                 
                 // Activate the webcam stream.
                 navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                    video.srcObject = stream;
+                    // video.srcObject = stream;
                     video.addEventListener("loadeddata", predictWebcam);
                             
                         
@@ -736,7 +736,7 @@ const handleMusicSelect = (music) => {
                         };
                         loop();
                     });
-                    video.play();
+                    // video.play();
             
                     let grayVideoTrack = canvas.captureStream(FRAME_RATE).getVideoTracks()[0];
                     let publisher = ov.initPublisher(

@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import Header from 'pages/header/Header';
 import './Create.css';
 
 function Create () {
     return (
         <div>
+          <div style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1rem'
+          }}>
             <ButtonBack />    
+            <Header />
+          </div>
             <div className="containerCreate">
                 <CreateTitle />
                 <div>

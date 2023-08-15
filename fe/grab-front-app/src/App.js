@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import './App.css';
+// import Header from 'pages/header/Header';
+// import { Provider } from 'react-redux';
+// import store from './store';
+// import Counter from './components/Counter';
+
 
 import Home from './pages/home/Home';
 import Create from './pages/create/Create';
@@ -30,6 +35,7 @@ function App() {
   }, []);
 
   return (
+    
     <div className="App">
       <BrowserRouter>
         {isLoading ? (
