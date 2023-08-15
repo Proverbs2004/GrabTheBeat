@@ -599,9 +599,12 @@ const handleMusicSelect = (music) => {
                             
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-                            canvasElement.style.width = video.videoWidth;                                canvasElement.style.height = video.videoHeight;
+                            video.width = video.videoWidth;
+                            video.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
+                            canvasElement.style.width = video.videoWidth+'px';
+                            canvasElement.style.height = video.videoHeight+'px';
                             
                         });
                         

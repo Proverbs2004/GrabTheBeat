@@ -1,6 +1,6 @@
 
 
-export function createCircle(x, y, video, root){
+export function createCircle(x, y, canvas, root){
 
     let circle = document.createElement('div');
     let circleBack = document.createElement('div');
@@ -15,7 +15,7 @@ export function createCircle(x, y, video, root){
     circle.appendChild(circleBack);
     root.appendChild(circle);
     
-    setGamePosition(video, circle, x, y, 60, 60);
+    setGamePosition(canvas, circle, x, y, 60, 60);
 
     return [circle, circleBack, circleFill];
 }
@@ -47,8 +47,8 @@ export function createBad(circle){
 
 function setGamePosition(frame, el, x, y, w, h){
     const rect = frame.getBoundingClientRect();
-    const newX = window.scrollX + rect.left + ((1.0 - x) * frame.videoWidth) - w/2;
-    const newY = window.scrollY + rect.top + (y * frame.videoHeight) - h/2;
+    const newX = window.scrollX + rect.left + ((1.0 - x) * frame.width) - w/2;
+    const newY = window.scrollY + rect.top + (y * frame.height) - h/2;
     el.style.left = newX + 'px';
     el.style.top = newY + 'px';
   
