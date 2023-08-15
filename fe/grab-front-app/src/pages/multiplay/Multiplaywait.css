@@ -21,19 +21,14 @@
     font-family: 'Press Start 2P';
   }
   
-  .containerMultiplay {
+  .containerSingleplay {
     
     /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
     max-width: 1536px; /* 최대 너비를 1536px로 제한 */
     max-height: 864px;
     text-align: center;
   }
-  .roominfo{
-    position: fixed;
-    top:0px;
-    right: 0px;
-  }
-  .TitleMultiplay{
+  .titleSingleplay{
     color: #FF99FF;
     font-family: 'Press Start 2P';
     font-size: 400%;
@@ -44,12 +39,6 @@
     animation: neon 1s ease infinite;
     -moz-animation: neon 1s ease infinite;
     -webkit-animation: neon 1s ease infinite;
-  }
-  .cambox{
-    border: 2.5px solid #ff99ff;
-    border-radius: 10px;
-    aspect-ratio: 16/9;
-
   }
   .camandmessagebox{
     margin-left: 6%;
@@ -64,9 +53,8 @@
   .mainSection{
     display: flex;
     flex-direction: column;
-
-}
     
+  }
   #videoZoneWaiting {
   height: 100%;
   clear: both;

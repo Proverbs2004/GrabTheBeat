@@ -39,9 +39,9 @@ import axios from 'axios';
 
 const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
-function TitleSingleplay() {
+function TitleMultiplay() {
     return (
-        <div className="titleSingleplay">SINGLE PLAY</div>
+        <div className="TitleMultiplay">MULTIPLAY</div>
     )
 }
 
@@ -733,14 +733,13 @@ function MultiplayWaiting(){
 
 
     return(
-        <div className="containerSingleplayWaiting">
-            <div>
+        <div className="containerMultiplay">
+            <TitleMultiplay />
+            <div className='roominfo'>
                 {mySessionId}
                 <br />
                 {myUserName}
             </div>
-            
-            <TitleSingleplay />
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
@@ -784,6 +783,10 @@ function MultiplayWaiting(){
                     </div>
                     <Websocket />
                 </div>
+                <div className='subContainer'>
+                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
+                    </div>  
             </div>
         </div>
 

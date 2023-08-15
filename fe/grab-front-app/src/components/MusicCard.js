@@ -11,12 +11,18 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const canPlayMusic = useRef(false);
 
     const [hidden, setHidden] = useState(false);
+    // const audioElement = (new Audio(selectedMusic.music_url);
+    const audioElementRef = useRef(new Audio(selectedMusic.music_url));
+    
+    console.log(audioElementRef.current);
+    console.log("여기여기");
 
-    const audioElement = new Audio(selectedMusic.music_url);
+
+
 
     const handleClick = () => {
-        audioElement.volume=0.4;
-            audioElement.play();
+        audioElementRef.current.volume=0.4;
+        audioElementRef.current.play();
         setHidden(true);
     };
     const divStyle = {
@@ -37,13 +43,16 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
     useEffect(() => {
 
+        audioElementRef.current.pause();
+        audioElementRef.current.src = selectedMusic.music_url;
+        
         if(hidden){
-            audioElement.volume=0.4;
-            audioElement.play();
+            audioElementRef.current.volume=0.4;
+            audioElementRef.current.play();
         }
 
         return () => {
-                    audioElement.pause();
+            audioElementRef.current.pause();
                 };
             // if (selectedMusic) {
             //     const audioElement = new Audio(selectedMusic.music_url);
@@ -125,7 +134,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
                         <div className="musicCard">
                  
                                 <img className="musicCardBackground" alt="noImage" src={music.pic_url} />
-                            <h3>{music.title}</h3>
+                            <h2>{music.title}</h2>
                             <p>Artist: {music.artist}</p>
                         </div>
                     </div>
