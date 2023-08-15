@@ -397,7 +397,7 @@ function MultiplayWaiting(){
             const token = await createToken(sessionId);
             setMySessionId(sessionId);
 
-            mySession.connect(token.token, { clientData: myUserName })
+            mySession.connect(token.token, { clientData: name })
                 .then(async () => {
                     // const mediaStream = await ov.getUserMedia({
                     //     audioSource: false,
@@ -437,6 +437,7 @@ function MultiplayWaiting(){
 
                     mySession.publish(publisher);
                     setSession(mySession);
+                    setMyUserName(name);
                     // setMainStreamManager(publisher);
                     setPublisher(publisher);
                 })
@@ -523,7 +524,7 @@ function MultiplayWaiting(){
             const token = await createToken(sessionId);
     
 
-            mySession.connect(token.token, { clientData: myUserName })
+            mySession.connect(token.token, { clientData: name })
                 .then(async () => {
                     // const mediaStream = await ov.getUserMedia({
                     //     audioSource: false,
@@ -565,6 +566,7 @@ function MultiplayWaiting(){
                     // setMainStreamManager(publisher);
                     setPublisher(publisher);
                     setMyUserName(name);
+                    console.log('name ', name)
                     setMySessionId(sessionId);
                 })
                 .catch((error) => {

@@ -42,7 +42,7 @@ function ButtonPlaysingle() {
 function ButtonPlaymulti () {
     return (
         <div>
-          <Link to={'/multiplaywaiting'} state={{ from: 'create' } }>
+          <Link to={'/multiplayJoin'}>
             <button className="playmulti" style={{ marginleft: '200px' }}>PLAY<br />MULTI</button>
           </Link>
         </div>
