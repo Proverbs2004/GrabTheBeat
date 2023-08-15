@@ -10,8 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "engine.io": "^6.5.2",
     "express": "^4.18.2",
     "http": "^0.0.1-security",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "ws": "^8.13.0"
   }
 }

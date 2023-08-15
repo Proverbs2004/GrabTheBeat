@@ -3,15 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Websocket 실습</title>
+    <title>Document</title>
+    <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
-      const ws = new WebSocket("ws://localhost:8000/bar");
+      // import { io } from 'socket.io-client';
+      const socket = io("http://localhost:3000/chat?roomId=bar");
 
       function sendMsg() {
         const name = document.getElementById("name").value;
         const msg = document.getElementById("msg").value;
         document.getElementById("msg").value = "";
-        ws.send(`${name}: ${msg}`);
+        socket.emit("message", name + ": " + msg);
       }
 
       function pressEnterKey() {
@@ -19,14 +21,15 @@
           const name = document.getElementById("name").value;
           const msg = document.getElementById("msg").value;
           document.getElementById("msg").value = "";
-          ws.send(`${name}: ${msg}`);
+          socket.emit("message", name + ": " + msg);
         }
       }
 
-      ws.onmessage = function (event) {
-        const appendText = event.data;
+      socket.on("message", (data) => {
+        console.log(data);
+        const appendText = data;
         document.getElementById("chatBox").innerHTML += `${appendText}\n`;
-      };
+      });
     </script>
   </head>
   <body>
