@@ -9,6 +9,7 @@ import SingleplayJoin from './pages/singleplayjoin/SingleplayJoin';
 import Singleplay from './pages/singleplay/singleplay';
 import SingleplayResult from './pages/singleresult/SingleplayResult';
 import Multiplay from './pages/multiplay/MultiplayWaiting';
+import Multiplayw from './pages/multiplay/Multiplaywait';
 import Loading from './pages/loading/Loading';
 
 function App() {
@@ -39,7 +40,8 @@ function App() {
             <Route path="/singleplayJoin" element={<SingleplayJoin />} />
             <Route path="/singleplay" element={<Singleplay />} />
             <Route path="/singleplayresult" element={<SingleplayResult />} />
-            <Route path="/multiplay" element={<Multiplay />} />
+            <Route path="/multiplaywaiting" element={<Multiplay />} />
+            <Route path="/multiplaywaitingw" element={<Multiplayw />} />
             {/* Fallback route for unknown paths */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
@@ -54,7 +56,7 @@ function fetchData() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
-    }, 2000);
+    }, 3000);
   });
 }
 

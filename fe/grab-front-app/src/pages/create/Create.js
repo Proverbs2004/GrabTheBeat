@@ -11,7 +11,7 @@ function Create () {
                 <CreateTitle />
                 <div>
                     <ButtonSinlgeMultiContainer />
-                    <MakeRandomCode />
+                    {/* <MakeRandomCode /> */}
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@ function ButtonPlaysingle() {
 function ButtonPlaymulti () {
     return (
         <div>
-          <Link to={'/multiplayWaiting'} state={{ from: 'create' } }>
+          <Link to={'/multiplaywaiting'} state={{ from: 'create' } }>
             <button className="playmulti" style={{ marginleft: '200px' }}>PLAY<br />MULTI</button>
           </Link>
         </div>

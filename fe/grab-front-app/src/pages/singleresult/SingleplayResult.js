@@ -41,7 +41,7 @@ function SingleplayResult() {
                 
                 <div className="comboinfo">
                     <div className="imagearea">
-                        <img src={'../../../public/' + resultData.pic_url} alt="사진" />
+                        <img src={ resultData.pic_url} alt="사진" style={{width:250, height:250}}/>
                     </div>
                     <div className="comboarea">
                     <br />
