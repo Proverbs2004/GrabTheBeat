@@ -8,6 +8,7 @@ import Join from './pages/join/Join';
 import SingleplayJoin from './pages/singleplayjoin/SingleplayJoin';
 import Singleplay from './pages/singleplay/singleplay';
 import SingleplayResult from './pages/singleresult/SingleplayResult';
+import MultiplayJoin from './pages/multiplayjoin/MultiplayJoin';
 import Multiplay from './pages/multiplay/MultiplayWaiting';
 import Multiplayw from './pages/multiplay/Multiplaywait';
 import Loading from './pages/loading/Loading';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/singleplayJoin" element={<SingleplayJoin />} />
             <Route path="/singleplay" element={<Singleplay />} />
             <Route path="/singleplayresult" element={<SingleplayResult />} />
+            <Route path="/multiplayJoin" element={<MultiplayJoin />} />
             <Route path="/multiplaywaiting" element={<Multiplay />} />
             <Route path="/multiplaywaitingw" element={<Multiplayw />} />
             {/* Fallback route for unknown paths */}
