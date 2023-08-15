@@ -276,68 +276,68 @@ function MultiplayWaiting(){
                 if(prevInside[i] === false && inside[i] === true){
 
                 // 캐치 이펙트 생성
-    createEffect(mid.x, mid.y, videoRef.current, root.current);
-    // 드럼 소리 재생
-    playDrum();
+                createEffect(mid.x, mid.y, canvasElementRef.current, root.current);
+                // 드럼 소리 재생
+                playDrum();
 
-    // 목표물 배열 순회하며 캐치 판정하기
-    targets.current.forEach(function(obj){
+                // 목표물 배열 순회하며 캐치 판정하기
+                targets.current.forEach(function(obj){
 
-        // 상태가 yet인 타겟 대상만 검사 
-        if(obj.done === false){
+                    // 상태가 yet인 타겟 대상만 검사 
+                    if(obj.done === false){
 
-            // 캐치했을 때 알고리즘 조건문
-            if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
+                        // 캐치했을 때 알고리즘 조건문
+                        if((obj.x<mid.x+0.1 && obj.x>mid.x-0.1) && (obj.y<mid.y+0.1 && obj.y>mid.y-0.1)){
 
-                // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
-                if(nowTime.current < obj.createdTime/1000 + 0.500 || nowTime.current > obj.createdTime/1000 + 1.500){
-                    
-                    setComboScore(0);
-                    setFailedScore((prev)=>prev+1);
-                    createBad(obj.elem);
-                    obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
-                    obj.done = true;
-                    obj.elemBack.remove();
-                    setTimeout(()=>{obj.elem.remove()},500);
+                            // 적정 크기때 캐치하면 catched, 너무 빠르거나 느리면 failed
+                            if(nowTime.current < obj.createdTime/1000 + 0.500 || nowTime.current > obj.createdTime/1000 + 1.500){
+                                
+                                setComboScore(0);
+                                setFailedScore((prev)=>prev+1);
+                                createBad(obj.elem);
+                                obj.elemFill.style.animation =  'failedCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500);
 
-                } else if(nowTime.current > obj.createdTime/1000 + 0.900 && nowTime.current < obj.createdTime/1000 + 1.100){
+                            } else if(nowTime.current > obj.createdTime/1000 + 0.900 && nowTime.current < obj.createdTime/1000 + 1.100){
 
-                    setPerfectScore((prev)=>prev+1);
-                    setComboScore((prev)=>prev+1);
-                    createPerfect(obj.elem);
-                    obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
-                    obj.done = true;
-                    obj.elemBack.remove();
-                    setTimeout(()=>{obj.elem.remove()},500);
+                                setPerfectScore((prev)=>prev+1);
+                                setComboScore((prev)=>prev+1);
+                                createPerfect(obj.elem);
+                                obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500);
 
-                } 
-                else {
+                            } 
+                            else {
 
-                    setGoodScore((prev)=>prev+1);
-                    setComboScore((prev)=>prev+1);
-                    createGood(obj.elem);
-                    obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
-                    obj.done = true;
-                    obj.elemBack.remove();
-                    setTimeout(()=>{obj.elem.remove()},500);
+                                setGoodScore((prev)=>prev+1);
+                                setComboScore((prev)=>prev+1);
+                                createGood(obj.elem);
+                                obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500);
+                            }
+                        }
+
+                    }
+
+                })
                 }
+
+        // 기존 주먹 여부 변경
+        prevInside[i] = inside[i];
             }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
         }
 
-    })
-}
-
-// 기존 주먹 여부 변경
-prevInside[i] = inside[i];
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-}
-
-window.requestAnimationFrame(predictWebcam);
-}
+        window.requestAnimationFrame(predictWebcam);
+    }
     
     
     // 알고리즘 도우미 함수
@@ -503,10 +503,12 @@ useEffect(()=>{
                     // 웹캠 켜지면 캔버스 위치 고정
                     video.addEventListener('canplay', ()=>{
                         
-                        canvasElement.style.width = video.videoWidth;
-                        canvasElement.style.height = video.videoHeight;
+                        video.width = video.videoWidth;
+                        video.height = video.videoHeight;
                         canvasElement.width = video.videoWidth;
                         canvasElement.height = video.videoHeight;
+                        canvasElement.style.width = video.videoWidth+'px';
+                        canvasElement.style.height = video.videoHeight+'px';
                         
                     });
                     
@@ -1009,7 +1011,8 @@ const handleMusicSelect = (music) => {
                     </div> */}
                     <div className='bigbox'>
                     <div id="video-container" className="col-md-6" style={{display:'flex'}}>
-                        <div className='cambox1'>cambox1
+                        <div className='cambox'>
+                            <div className='camboxNumber'>cambox1</div>
                             <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
                             <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
                             {/* <UserVideoComponent streamManager={publisher} /> */}
@@ -1017,21 +1020,24 @@ const handleMusicSelect = (music) => {
                             <UserVideoComponent streamManager={subscribers[0]} />
                             : null } */}
                         </div>
-                        <div className='cambox2'>cambox2
+                        <div className='cambox'>
+                            <div className='camboxNumber'>cambox2</div>
                             {subscribers[0] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[0]}/>
+                            <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
                             : null }
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
-                        <div className='cambox3'>cambox3
+                        <div className='cambox'>
+                            <div className='camboxNumber'>cambox3</div>
                             {subscribers[1] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[1]}/>
+                            <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
                             : null }
                         </div>
-                        <div className='cambox4'>cambox4
+                        <div className='cambox'>
+                            <div className='camboxNumber'>cambox4</div>
                             {subscribers[2] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[2]}/>
+                            <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
                             : null }
                         </div>
                     </div>

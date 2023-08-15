@@ -54,6 +54,10 @@ body{
     aspect-ratio: 16/9;
 }
 
+.camboxNumber{
+    position: absolute;
+}
+
 .camandmessagebox{
     margin-left: 6%;
 }
@@ -71,7 +75,7 @@ body{
     flex-direction: column;
 }
     
-#videoZoneWaiting {
+/* #videoZoneWaiting {
 	transform: rotateY(180deg);
 	-webkit-transform: rotateY(180deg);
 	-moz-transform: rotateY(180deg);
@@ -79,15 +83,34 @@ body{
 	z-index: -2;
 	position: absolute;
   
+} */
+
+.userVideo {
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -2;
+	/* filter: contrast(100.0) brightness(0.0) grayscale(100%); 이미 필터링 해서 오면 필요없음*/
+	/* position: absolute; 이거하면 다른 요소랑 위치 충돌 안함. 나란히 놓으려면 필요없음*/
+  
 }
 
-#canvasZoneWaiting {
+/* #canvasZoneWaiting {
 	height: 100%;
 	transform: rotateY(180deg);
 	-webkit-transform: rotateY(180deg);
 	-moz-transform: rotateY(180deg);
 	z-index: -1;
 	position: absolute;
+	border: 1px solid #FF99FF;
+} */
+
+#canvasZone {
+	height: 100%;
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -1;
 	border: 1px solid #FF99FF;
 }
   
@@ -158,4 +181,4 @@ body{
 .custom-next-arrow:hover {
 background-color: #f0f0f0;
 } */
-  
+

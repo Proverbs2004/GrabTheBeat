@@ -11,7 +11,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const canPlayMusic = useRef(false);
 
     const [hidden, setHidden] = useState(false);
-    // const audioElement = (new Audio(selectedMusic.music_url);
+    
     const audioElementRef = useRef(new Audio(selectedMusic.music_url));
 
 
@@ -23,8 +23,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
         setHidden(true);
     };
     const divStyle = {
-        // alignItems: 'center',
-        paddingTop: 500,
         justifyContent: 'center',  
         fontSize: 'xxx-large',
         width: 450,
@@ -34,6 +32,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
         opacity: 0.8,
         zIndex: 3,
         display: hidden ? 'none' : 'flex',
+        alignItems: 'center',
       };
 
     console.log(canPlayMusic.current);
@@ -50,25 +49,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
         return () => {
             audioElementRef.current.pause();
-                };
-            // if (selectedMusic) {
-            //     const audioElement = new Audio(selectedMusic.music_url);
-            //     console.log(audioElement);
-                
-            //     audioElement.volume=0;
-
-            //     setTimeout(() => {
-            //         console.log('music playing');
-            //         console.log(selectedMusic.music_url);
-            //         audioElement.volume=0.4;
-            //         audioElement.play();
-            //     }, 1000);
-    
-            //     return () => {
-            //         audioElement.pause();
-            //         console.log('music pause');
-            //     };
-            // }
+        };
 
     }, [selectedMusic]);
 
