@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket 실습</title>
+    <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script>
+      const chatSocket = io("http://localhost:3000/chat", {
+        query: {
+          roomId: "foo",
+        },
+      });
+      const scoreSocket = io("http://localhost:3000/score", {
+        query: {
+          roomId: "foo",
+        },
+      });
+
+      function sendMsg() {
+        const name = document.getElementById("name").value;
+        const msg = document.getElementById("msg").value;
+        document.getElementById("msg").value = "";
+        chatSocket.emit("message", {
+          userName: "foo2",
+          message: msg,
+        });
+      }
+
+      function pressEnterKey() {
+        if (window.event.keyCode === 13) {
+          sendMsg();
+        }
+      }
+
+      chatSocket.on("message", (data) => {
+        const appendText = JSON.stringify(data);
+        document.getElementById("chatBox").innerHTML += `${appendText}\n`;
+      });
+
+      scoreSocket.emit("join", {
+        userName: "foo2",
+      });
+
+      scoreSocket.on("join", (data) => {
+        const appendText = JSON.stringify(data);
+        document.getElementById("chatBox").innerHTML += `${appendText}\n`;
+      });
+
+      // scoreSocket.on("score", (data) => {
+      //   const appendText = JSON.stringify(data);
+      //   document.getElementById("chatBox").innerHTML += `${appendText}\n`;
+      // });
+
+      // let score = 0;
+
+      // setInterval(function () {
+      //   const data = {
+      //     score: score,
+      //   };
+      //   scoreSocket.emit("score", data);
+      //   score++;
+      // }, 1000);
+    </script>
+  </head>
+  <body>
+    <h1>Websocket 실습 과제</h1>
+    <div>
+      <textarea name="chatBox" id="chatBox" style="width: 500px; height: 200px" readonly></textarea>
+    </div>
+    <div>
+      <input type="text" name="name" id="name" style="width: 100px" />
+      <input type="text" name="msg" id="msg" style="width: 300px" onkeypress="pressEnterKey()" />
+      <button onclick="sendMsg()">전송</button>
+    </div>
+  </body>
+</html>
