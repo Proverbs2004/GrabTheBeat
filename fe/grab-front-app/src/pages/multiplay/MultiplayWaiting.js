@@ -272,10 +272,10 @@ function MultiplayWaiting(){
                 inside[i] = isInside(palm, tips);
 
                 
- // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
- if(prevInside[i] === false && inside[i] === true){
+                // 손을 쥐거나 펴서 이전과의 손 상태가 바뀌었는지 여부 판별로 그랩 적용
+                if(prevInside[i] === false && inside[i] === true){
 
-    // 캐치 이펙트 생성
+                // 캐치 이펙트 생성
     createEffect(mid.x, mid.y, videoRef.current, root.current);
     // 드럼 소리 재생
     playDrum();
@@ -982,56 +982,6 @@ const handleMusicSelect = (music) => {
         return response.data;
     };
 
-    function playGame() {
-        if (audio.current && !isGamePlaying.current) {
-
-            updateTimePosArraysAndAudio();
-
-            gameStartTime.current = performance.now();
-            arrayIdx.current=0;
-
-
-            setIsGamePlayingState(true);
-            isGamePlaying.current=true;
-
-        };
-    }
-
-    async function updateTimePosArraysAndAudio() {
-        // const jsonData = await import(selectedMusic.json_url);
-        // const objectsData = jsonData.hitObjects;
-        // console.log(objectsData);
-        // fillTimePositionArray(objectsData);
-        // audio.current = new Audio(selectedMusic.music_url);
-
-        let fuck = null;
-        if(selectedMusicRef.current.id===0){
-            fuck = await import("../../data/JanJi_HeroesTonight.json");        
-        } else if(selectedMusicRef.current.id===1) {
-            fuck = await import("../../data/DonaldGlover_RedBone.json");  
-        } else if(selectedMusicRef.current.id===2) {
-            fuck = await import("../../data/Test2.json");  
-        } else if(selectedMusicRef.current.id===3) {
-            fuck = await import("../../data/Test3.json");  
-        } else if(selectedMusicRef.current.id===4) {
-            fuck = await import("../../data/Test4.json");  
-        }
-        // fillTimePositionArray(fuck.hitObjects);
-
-        audio.current = new Audio(selectedMusicRef.current.music_url);
-
-    }
-
-    // function fillTimePositionArray(objectData){
-    //     console.log('filling arrays');
-    //     startTimeArray.current=[];
-    //     positionArray.current=[];
-    //     for (const obj of objectData) {
-    //         // 시작 시간과 위치만 배열에 담기
-    //         startTimeArray.current.push(obj.startTime);
-    //         positionArray.current.push(obj.position); 
-    //     }
-    // }
 
 
     return(
