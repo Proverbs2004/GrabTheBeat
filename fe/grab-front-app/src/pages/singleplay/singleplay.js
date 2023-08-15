@@ -71,7 +71,6 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
 
     const videoRef = useRef(null);
     const canvasElementRef = useRef(null);
-    const contaierRef = useRef(null);
 
     let canvasCtx = null;
     const root = useRef(document.getElementById('root'));
@@ -377,8 +376,8 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         
         targets.current.forEach((t)=>t.elem.remove());
         targets.current = [];
-        // startTimeArray.current = [];
-        // positionArray.current = [];
+        
+        handleMusicSelect(musicList[0]);
         
     }
 
@@ -508,6 +507,10 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         }, 5000);
         initializeData();
 
+        return ()=>{
+            // 컴포넌트 디스마운트 시 타겟들 없애기
+            targets.current.forEach((t)=>t.elem.remove());
+        }
 
     },[])
 
@@ -528,47 +531,50 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     };
 
     return (
-        <div className="containerSingleplay">
-          <TitleSingleplay />
-          {isVideoLoading
-          ?
-          <div style={{ zIndex: 3 }}>
-            <Loading/>
-          </div>
-          :
-            <></>
-           }
-          <div className="camandmessagebox" style={{ display: 'flex' }}>
-              <div className="mainSection">
-                <div className="gameContainerWaiting">
-                  <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
-                  <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
+        <>
+            {isVideoLoading ? <Loading/> : <></>}
+            <div className="containerSingleplay">
+                <TitleSingleplay />
+                {/* {isVideoLoading
+                ?
+                <div>
+                    <Loading/>
                 </div>
-              </div>
-            {isGamePlayingState ? (
-              <ScoreBox
-                perfectScore={perfectScore}
-                goodScore={goodScore}
-                failedScore={failedScore}
-                highestCombo={highestCombo}
-                comboScore={comboScore}
-                stopGame={stopGame}
-                isGamePlayingState={isGamePlayingState}
-                isGameEnd={isGameEnd}
-                userName={userName}
-                redirectToSinglePlayResult={redirectToSinglePlayResult}
-                pic_url={selectedMusic.pic_url}
-              />
-            ) : (
-              <div className="subContainer">
-                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbutton" onClick={playGame}>
-                  START
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+                :
+                    <></>
+                } */}
+                <div className="camandmessagebox" style={{ display: 'flex' }}>
+                    <div className="mainSection">
+                        <div className="gameContainerWaiting">
+                        <video id="videoZoneWaiting" ref={videoRef} autoPlay playsInline></video>
+                        <canvas id="canvasZoneWaiting" ref={canvasElementRef}></canvas>
+                        </div>
+                    </div>
+                {isGamePlayingState ? (
+                <ScoreBox
+                    perfectScore={perfectScore}
+                    goodScore={goodScore}
+                    failedScore={failedScore}
+                    highestCombo={highestCombo}
+                    comboScore={comboScore}
+                    stopGame={stopGame}
+                    isGamePlayingState={isGamePlayingState}
+                    isGameEnd={isGameEnd}
+                    userName={userName}
+                    redirectToSinglePlayResult={redirectToSinglePlayResult}
+                    pic_url={selectedMusic.pic_url}
+                />
+                ) : (
+                <div className="subContainer">
+                    <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
+                    <button type="submit" className="startbutton" onClick={playGame}>
+                    START
+                    </button>
+                </div>
+                )}
+            </div>
+            </div>
+        </>
       );
       
       
