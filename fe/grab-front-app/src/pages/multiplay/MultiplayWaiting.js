@@ -134,7 +134,7 @@ function MultiplayWaiting(){
                 x: positionArray.current[arrayIdx.current][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
                 y: positionArray.current[arrayIdx.current][1] / 500 // 위와 같음, 이건 y
             };
-            const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root.current);
+            const elems = createCircle(newTarget.x, newTarget.y, canvasElementRef.current, root.current);
             newTarget.elem = elems[0];
             newTarget.elemBack = elems[1];
             newTarget.elemFill = elems[2];
@@ -1044,7 +1044,7 @@ const handleMusicSelect = (music) => {
                     </div>
 
                     </div>
-                    <Websocket />
+                    <Websocket userName={myUserName} sessionId={mySessionId}  />
                 </div>
                 {isGamePlayingState ? (
               <ScoreBox
