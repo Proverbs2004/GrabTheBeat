@@ -46,11 +46,14 @@ function SingleplayResult() {
                     <div className="comboarea">
                     <br />
                     <br />
-                    <div>Perfect Score: {resultData.perfectScore}</div><br />  
-                    <div>goodScore: {resultData.goodScore}</div><br />
-                    <div>failedScore: {resultData.failedScore}</div><br />
-                    <div>highestCombo: {resultData.highestCombo}</div><br />
-                    <div>comboScore: {resultData.comboScore}</div><br /></div>
+                    
+                    <div>&nbsp;PERFECT {resultData.perfectScore}</div><br />  
+                    <div>&nbsp;GOOD: {resultData.goodScore}</div><br />
+                    <div>&nbsp;FAIL: {resultData.failedScore}</div><br />
+                    <div>&nbsp;HIGHEST COMBO: {resultData.highestCombo}</div><br />
+                    <div>&nbsp;LAST COMBO: {resultData.comboScore}</div><br />
+            
+                </div>
                 </div>
 
             <Link to='/'>
