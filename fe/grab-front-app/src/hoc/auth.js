@@ -24,27 +24,39 @@ function Auth(SpecificComponent, option, adminRoute = null) {
         useEffect(() => {
             let access_token = localStorage.getItem('access_token');
 
+            if (access_token) {
             axios.post('http://localhost:8080/api/auth', {
                 accessToken: access_token
             })
-            .then(response => {
-                if (response.status === 200 || response.status === 201) {
+                .then(response => {
                     access_token = response.data.accessToken;
                     localStorage.setItem('access_token', access_token);
                     return;
-                }
-
-                const refresh_token = getRefreshToken();
-                if (response.status === 401 && refresh_token) {
-                    axios.post('http://localhost:8080/api/token', {
-                        refreshToken: refresh_token
-                    })
-                        .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
-                            localStorage.setItem('access_token', result.data.accessToken);
-                            return;
+                })
+                .catch(error => {
+                    const refresh_token = getRefreshToken();
+                    if (error.response.status === 401 && refresh_token) {
+                        axios.post('http://localhost:8080/api/token', {
+                            refreshToken: refresh_token
                         })
-                }
-            })
+                            .then(result => {
+                                localStorage.setItem('access_token', result.data.accessToken);
+                                return;
+                            })
+                    }
+                });
+            }
+
+                // const refresh_token = getRefreshToken();
+                // if (response.status === 401 && refresh_token) {
+                //     axios.post('http://localhost:8080/api/token', {
+                //         refreshToken: refresh_token
+                //     })
+                //         .then(result => { // 재발급이 성공하면 로컬 스토리지값을 새로운 액세스 토큰으로 교체
+                //             localStorage.setItem('access_token', result.data.accessToken);
+                //             return;
+                //         })
+                // }
         }, []);
 
         return <SpecificComponent />;
