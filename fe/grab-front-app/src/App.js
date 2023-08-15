@@ -10,6 +10,7 @@ import Singleplay from './pages/singleplay/singleplay';
 import SingleplayResult from './pages/singleresult/SingleplayResult';
 import Multiplay from './pages/multiplay/MultiplayWaiting';
 import Multiplayw from './pages/multiplay/Multiplaywait';
+import MultiplayResult from './pages/multiplayresult/MultiplayResult';
 import Loading from './pages/loading/Loading';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/singleplayresult" element={<SingleplayResult />} />
             <Route path="/multiplaywaiting" element={<Multiplay />} />
             <Route path="/multiplaywaitingw" element={<Multiplayw />} />
+            <Route path="/multiplayresult" element={<MultiplayResult />} />
             {/* Fallback route for unknown paths */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

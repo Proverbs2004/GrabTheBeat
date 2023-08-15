@@ -13,9 +13,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const [hidden, setHidden] = useState(false);
     // const audioElement = (new Audio(selectedMusic.music_url);
     const audioElementRef = useRef(new Audio(selectedMusic.music_url));
-    
-    console.log(audioElementRef.current);
-    console.log("여기여기");
 
 
 
