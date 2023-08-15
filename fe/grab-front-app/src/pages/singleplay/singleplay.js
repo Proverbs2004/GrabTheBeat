@@ -9,7 +9,6 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
-// import Slider from "react-slick";
 import './Singleplay.css';
 import 'util/node.css';
 import 'util/effect.css';
@@ -17,7 +16,6 @@ import 'util/effect.css';
 
 import MusicCard from 'components/MusicCard'
 
-// import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import musicListData from 'data/musicListData.json';
@@ -74,6 +72,7 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
 
     const videoRef = useRef(null);
     const canvasElementRef = useRef(null);
+    const contaierRef = useRef(null);
 
     let canvasCtx = null;
     const root = useRef(document.getElementById('root'));
@@ -125,7 +124,7 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                 x: positionArray.current[arrayIdx.current][0] / 500, // Data.json의 posion정보를 받아와서 0~1 사이의 값으로 반환, 이건 x축
                 y: positionArray.current[arrayIdx.current][1] / 500 // 위와 같음, 이건 y
             };
-            const elems = createCircle(newTarget.x, newTarget.y, videoRef.current, root.current);
+            const elems = createCircle(newTarget.x, newTarget.y, canvasElementRef.current, root.current);
             newTarget.elem = elems[0];
             newTarget.elemBack = elems[1];
             newTarget.elemFill = elems[2];
@@ -211,32 +210,32 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_LEFT_EYE,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_LEFT_EYEBROW,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_FACE_OVAL,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
                 drawingUtils.drawConnectors(
                     landmarks,
                     FaceLandmarker.FACE_LANDMARKS_LIPS,
-                    { color: "rgb(255, 0, 255)" }
+                    { color: "rgb(255, 0, 255)"}
                 );
             }
         }
@@ -265,7 +264,7 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                 if(prevInside[i] === false && inside[i] === true){
 
                     // 캐치 이펙트 생성
-                    createEffect(mid.x, mid.y, videoRef.current, root.current);
+                    createEffect(mid.x, mid.y, canvasElementRef.current, root.current);
                     // 드럼 소리 재생
                     playDrum();
 
@@ -482,11 +481,13 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                             
                         // 웹캠 켜지면 캔버스 위치 고정
                         video.addEventListener('canplay', ()=>{
-                            
-                            canvasElement.style.width = video.videoWidth;
-                            canvasElement.style.height = video.videoHeight;
+                            video.width = video.videoWidth;
+                            video.height = video.videoHeight;
                             canvasElement.width = video.videoWidth;
                             canvasElement.height = video.videoHeight;
+                            canvasElement.style.width = video.videoWidth+'px';
+                            canvasElement.style.height = video.videoHeight+'px';
+
                             
                         });
                         

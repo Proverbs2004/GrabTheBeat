@@ -50,46 +50,37 @@ body{
   flex-direction: column;
   justify-content: space-around;
 }
-.mainSection{
-  display: flex;
-  flex-direction: column;
-  
-}
+
 #videoZoneWaiting {
-height: 100%;
-clear: both;
 transform: rotateY(180deg);
 -webkit-transform: rotateY(180deg);
 -moz-transform: rotateY(180deg);
 filter: contrast(100.0) brightness(0.0) grayscale(100%);
 z-index: -2;
 position: absolute;
-
 }
-#canvasZoneWaiting {
-height: 100%;
-clear: both;
-transform: rotateY(180deg);
--webkit-transform: rotateY(180deg);
--moz-transform: rotateY(180deg);
-z-index: -1;
 
-position: absolute;
+#canvasZoneWaiting {
+	height: 100%;
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -1;
+	position: absolute;
+	border: 1px solid #FF99FF;
 
 }
 
 .gameContainerWaiting {
-
-width: 950px;
-aspect-ratio: 16/9;
-border: 2.5px solid #ff99ff;
-border-radius: 10px;
-align-content: center;
-display: flex;
-justify-content: center;
-position: relative; /* 부모 요소에 position: relative; 설정 */
-
+	width: 950px;
+	aspect-ratio: 16/9;
+	border: 2.5px solid #ff99ff;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
+
 .startbutton{
   font-family: 'Press Start 2P';
   font-size: 300%;
