@@ -15,8 +15,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const audioElementRef = useRef(new Audio(selectedMusic.music_url));
 
 
-
-
     const handleClick = () => {
         audioElementRef.current.volume=0.4;
         audioElementRef.current.play();
@@ -35,8 +33,6 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
         zIndex: 3,
         display: hidden ? 'none' : 'flex',
       };
-
-    console.log(canPlayMusic.current);
 
     useEffect(() => {
 
