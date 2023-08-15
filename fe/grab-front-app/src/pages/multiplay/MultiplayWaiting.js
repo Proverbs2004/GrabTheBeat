@@ -853,18 +853,18 @@ const handleMusicSelect = (music) => {
                     
                     let canvas = canvasElementRef.current;
                     // let canvas = document.createElement('canvas');
-                    let ctx = canvas.getContext('2d');
-                    ctx.filter = 'grayscale(100%)';
-                    video.addEventListener('play', () => {
-                        let loop = () => {
-                            if (!video.paused && !video.ended) {
-                                // ctx.drawImage(video, 0, 0, 300, 170);
-                                setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
-                            }
-                        };
-                        loop();
-                    });
-                    video.play();
+                    // let ctx = canvas.getContext('2d');
+                    // // ctx.filter = 'grayscale(100%)';
+                    // video.addEventListener('play', () => {
+                    //     let loop = () => {
+                    //         if (!video.paused && !video.ended) {
+                    //             // ctx.drawImage(video, 0, 0, 300, 170);
+                    //             setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
+                    //         }
+                    //     };
+                    //     loop();
+                    // });
+                    // video.play();
             
                     let grayVideoTrack = canvas.captureStream(FRAME_RATE).getVideoTracks()[0];
                     let publisher = ov.initPublisher(
@@ -1010,9 +1010,9 @@ const handleMusicSelect = (music) => {
                         <button type="submit" className="startbutton" onClick={playGame}>START</button>
                     </div> */}
                     <div className='bigbox'>
-                    <div id="video-container" className="col-md-6" style={{display:'flex'}}>
+                    <div id="video-container" className="col-md-6" style={{ display:'flex'}}>
                         <div className='cambox'>
-                            <div className='camboxNumber'>cambox1</div>
+                            <div className='camboxNumber'></div>
                             <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
                             <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
                             {/* <UserVideoComponent streamManager={publisher} /> */}
@@ -1021,7 +1021,7 @@ const handleMusicSelect = (music) => {
                             : null } */}
                         </div>
                         <div className='cambox'>
-                            <div className='camboxNumber'>cambox2</div>
+                            <div className='camboxNumber'></div>
                             {subscribers[0] !== undefined ?
                             <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
                             : null }
@@ -1029,13 +1029,13 @@ const handleMusicSelect = (music) => {
                     </div>
                     <div style={{display:'flex'}}>
                         <div className='cambox'>
-                            <div className='camboxNumber'>cambox3</div>
+                            <div className='camboxNumber'></div>
                             {subscribers[1] !== undefined ?
                             <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
                             : null }
                         </div>
                         <div className='cambox'>
-                            <div className='camboxNumber'>cambox4</div>
+                            <div className='camboxNumber'></div>
                             {subscribers[2] !== undefined ?
                             <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
                             : null }
