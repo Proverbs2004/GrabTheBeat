@@ -2,8 +2,10 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 
 import { dispatchChatEvent } from './socketserver_io_chat.js';
+import { dispatchScoreEvent } from './socketserver_io_score.js';
 
-const WEB_URL = "http://127.0.0.1:5500";
+// 서버 설정 및 생성
+const WEB_URL = "http://127.0.0.1:5500";    // CORS Origins URL
 const httpServer = createServer();
 const io = new Server(httpServer, {
     cors: {
@@ -12,24 +14,30 @@ const io = new Server(httpServer, {
     }
 });
 
-const chatServer = io.of('/chat');
+// 서버 분기: 해당 Path로 연결을 시도하는 경우, 해당 분기 서버로 할당
+const chatServer = io.of('/chat');      // 해당 '/chat' Path로 연결
+const scoreServer = io.of('/score');    // 해당 '/score' Path로 연결
 
+// Http Server 포트 3000번 사용
 httpServer.listen(3000, () => {
-    console.log("connected port 3000");
+    console.log("Listening on port 3000");
 })
 
-io.on("connection", socket => {
-    console.log("connected client by Socket.io");
+// Socket.io Server(Main Server) connection 발생 시,
+io.on('connection', socket => {
+    console.log("Client connected to the Socket.io Server");
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('Client disconnected');
     });
-
-    socket.on('message', (data) => {
-        io.emit('message', data);
-    })
 });
 
+// Chat Server에 connection 발생 시,
 chatServer.on('connection', (socket) => {
     dispatchChatEvent(chatServer, socket);
+});
+
+// Score Server에 connection 발생 시,
+scoreServer.on('connection', (socket) => {
+    dispatchScoreEvent(scoreServer, socket);
 });
