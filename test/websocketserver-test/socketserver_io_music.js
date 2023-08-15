@@ -1,6 +1,6 @@
 let roomInfo = {};
 
-export function dispatchChatEvent(server, socket) {
+export function dispatchMusicEvent(server, socket) {
     /**
      * headers: /* the headers of the initial request
      * query: /* the query params of the initial request
@@ -16,8 +16,9 @@ export function dispatchChatEvent(server, socket) {
     const clientId = socket.id;             // 클라이언트의 고유한 id
     const query = socket.handshake.query;   // URI의 쿼리 파라미터 값
     const roomId = query.roomId;            // 쿼리 파라미터의 roomId
-    console.log(`Client(${clientId}) connected to Chat Server(${roomId})`);
+    console.log(`Client(${clientId}) connected to Music Server(${roomId})`);
 
+    // 방이 없는 경우, 방을 생성하여 목록에 추가
     if (!roomInfo[roomId]) {
         roomInfo[roomId] = {
             clients: [],
@@ -32,28 +33,27 @@ export function dispatchChatEvent(server, socket) {
     // 연결
     socket.join(roomId);
 
-    roomInfo[roomId].clients.push({
+    // 클라이언트 목록에 추가
+    const newClient = {
         clientId: clientId,
-    });
+    };
+    roomInfo[roomId].clients.push(newClient);
 
-    // message라는 이벤트가 발생하면
-    // message라는 이벤트를 방 내에 있는 모든 클라이언트에게 전달.
+    // 변경된 음악 정보를 그대로 다른 플레이어에게 전달
     /**
      * on (input)
      * data: {
-     *     userName: 플레이어의 이름
-     *     message: 메시지 내용
+     *     musicIndex: 음악 리스트에서 해당 음악의 인덱스
      * }
      * 
-     * emit (output)
+     * emit (input)
      * data: {
-     *     userName: 플레이어의 이름
-     *     message: 메시지 내용
+     *     musicIndex: 음악 리스트에서 해당 음악의 인덱스
      * }
      */
-    socket.on('message', (data) => {
-        server.to(roomId).emit('message', data);
-    });
+    socket.on('music', (data) => {
+        server.to(roomId).emit('music', data);
+    })
 
     // 연결 해제
     socket.on('disconnect', () => {
@@ -64,8 +64,8 @@ export function dispatchChatEvent(server, socket) {
         // 모든 클라이언트가 나가면, 방 정보 데이터 삭제
         if (roomInfo[roomId].clients.length === 0)
             delete roomInfo[roomId];
-
-        console.log(`Client(${clientId}) disconnected to Chat Server(${roomId})`);
+        
+        console.log(`Client(${clientId}) disconnected to Music Server(${roomId})`);
         socket.leave(roomId);
-    });
+    })
 }

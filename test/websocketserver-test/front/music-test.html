@@ -6,12 +6,7 @@
     <title>Websocket 실습</title>
     <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
-      const chatSocket = io("http://localhost:3000/chat", {
-        query: {
-          roomId: "foo",
-        },
-      });
-      const scoreSocket = io("http://localhost:3000/score", {
+      const musicSocket = io("http://localhost:3000/music", {
         query: {
           roomId: "foo",
         },
@@ -21,9 +16,8 @@
         const name = document.getElementById("name").value;
         const msg = document.getElementById("msg").value;
         document.getElementById("msg").value = "";
-        chatSocket.emit("message", {
-          userName: "foo2",
-          message: msg,
+        musicSocket.emit("music", {
+          musicIndex: parseInt(msg),
         });
       }
 
@@ -33,34 +27,10 @@
         }
       }
 
-      chatSocket.on("message", (data) => {
+      musicSocket.on("music", (data) => {
         const appendText = JSON.stringify(data);
         document.getElementById("chatBox").innerHTML += `${appendText}\n`;
       });
-
-      scoreSocket.emit("join", {
-        userName: "foo2",
-      });
-
-      scoreSocket.on("join", (data) => {
-        const appendText = JSON.stringify(data);
-        document.getElementById("chatBox").innerHTML += `${appendText}\n`;
-      });
-
-      // scoreSocket.on("score", (data) => {
-      //   const appendText = JSON.stringify(data);
-      //   document.getElementById("chatBox").innerHTML += `${appendText}\n`;
-      // });
-
-      // let score = 0;
-
-      // setInterval(function () {
-      //   const data = {
-      //     score: score,
-      //   };
-      //   scoreSocket.emit("score", data);
-      //   score++;
-      // }, 1000);
     </script>
   </head>
   <body>

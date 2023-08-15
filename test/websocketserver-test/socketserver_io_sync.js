@@ -1,6 +1,6 @@
 let roomInfo = {};
 
-export function dispatchScoreEvent(server, socket) {
+export function dispatchSyncEvent(server, socket) {
     /**
      * headers: /* the headers of the initial request
      * query: /* the query params of the initial request
@@ -16,7 +16,7 @@ export function dispatchScoreEvent(server, socket) {
     const clientId = socket.id;             // 클라이언트의 고유한 id
     const query = socket.handshake.query;   // URI의 쿼리 파라미터 값
     const roomId = query.roomId;            // 쿼리 파라미터의 roomId
-    console.log(`Client(${clientId}) connected to Score Server(${roomId})`);
+    console.log(`Client(${clientId}) connected to Sync Server(${roomId})`);
 
     // 방이 없는 경우, 방을 생성하여 목록에 추가
     if (!roomInfo[roomId]) {
@@ -36,8 +36,9 @@ export function dispatchScoreEvent(server, socket) {
     // 클라이언트 목록에 추가
     const newClient = {
         clientId: clientId,
-        userName: undefined,
-        score: 0,
+        userName: "",
+        readyStart: false,
+        readyEnd: false,
     };
     roomInfo[roomId].clients.push(newClient);
 
@@ -69,34 +70,81 @@ export function dispatchScoreEvent(server, socket) {
         }
     })
 
-    // 플레이어로부터 받은 스코어 점수 저장
-    // 갱신된 플레이어의 점수를 각 클라이언트에게 전달
+    // 해당 플레어이어의 상태를 시작 가능(ready) 상태 임을 확인
+    // 모든 플레이어가 시작 가능(ready) 상태 임을 확인하면 게임을 시작(start)하라는 명령을 전달
     /**
      * on (input)
-     * data: {
-     *     score: 갱신할 플레이어의 점수
-     * }
+     * data: empty
      * 
      * emit (output)
-     * data : [
-     *     {
-     *         clientId: 클라이언트의 고유한 id
-     *         userName: 플레이어의 이름
-     *         score: 현재 플레이어의 점수
-     *     },
-     *     ...
-     * ]
+     * data: {
+     *     start: true
+     * }
      */
-    socket.on('score', (data) => {
+    socket.on('start', () => {
         const index = roomInfo[roomId].clients.findIndex((client) => client.clientId === clientId);
 
-        // 찾지 못하면 -1을 반환하므로,
-        // 찾았다면, 모든 클라이언트의 점수를 각 클라이언트에게 전달
         if (index !== -1) {
-            roomInfo[roomId].clients[index].score = data.score;
-            server.to(roomId).emit('score', roomInfo[roomId].clients);
+            roomInfo[roomId].clients[index].readyStart = true;
+            let isOk = true;
+            roomInfo[roomId].clients.forEach(client => {
+                if (!client.readyStart) {
+                    isOk = false;
+                }
+            });
+
+            if (isOk) {
+                server.to(roomId).emit('start', {
+                    start: true,
+                });
+            }
         }
-    });
+    })
+
+    // 해당 플레어이어의 상태를 종료 가능(ready) 상태 임을 확인
+    // 모든 플레이어가 종료 가능(ready) 상태 임을 확인하면 게임을 종료(end)하라는 명령을 전달
+    /**
+     * on (input)
+     * data: empty
+     * 
+     * emit (output)
+     * data: {
+     *     end: true
+     * }
+     */
+    socket.on('end', () => {
+        const index = roomInfo[roomId].clients.findIndex((client) => client.clientId === clientId);
+
+        if (index !== -1) {
+            roomInfo[roomId].clients[index].readyEnd = true;
+            let isOk = true;
+            roomInfo[roomId].clients.forEach(client => {
+                if (!client.readyEnd) {
+                    isOk = false;
+                }
+            });
+
+            if (isOk) {
+                server.to(roomId).emit('end', {
+                    end: true,
+                });
+            }
+        }
+    })
+
+    // 해당 플레어이어의 상태를 모두 false로 초기화
+    /**
+     * on (input)
+     * data: empty
+     */
+    socket.on('init', () => {
+        const index = roomInfo[roomId].clients.findIndex((client) => client.clientId === clientId);
+
+        if (index !== -1) {
+            roomInfo[roomId].clients[index].readyStart = false;
+            roomInfo[roomId].clients[index].readyEnd = false;
+        }
+    })
 
     // 연결 해제
     socket.on('disconnect', () => {
@@ -108,7 +156,7 @@ export function dispatchScoreEvent(server, socket) {
         if (roomInfo[roomId].clients.length === 0)
             delete roomInfo[roomId];
         
-        console.log(`Client(${clientId}) disconnected to Score Server(${roomId})`);
+        console.log(`Client(${clientId}) disconnected to Sync Server(${roomId})`);
         socket.leave(roomId);
     })
 }
