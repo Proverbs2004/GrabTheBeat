@@ -52,7 +52,6 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     const targets = useRef([]);
     const arrayIdx=useRef(0);
 
-
     const nowTime = useRef(-2);
     const audio = useRef(new Audio(redBone));
 
@@ -589,9 +588,6 @@ function ScoreBox({
     pic_url
   }) {
 
-    console.log(pic_url);
-    console.log("랄라");
-    console.log(pic_url);
     
     return (
       <div className="scoreBox">
