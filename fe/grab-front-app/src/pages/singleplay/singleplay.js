@@ -459,53 +459,59 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
                 });
                 faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
                     baseOptions: {
-                      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-                      delegate: "GPU"
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                        delegate: "GPU"
                     },
                     outputFaceBlendshapes: true,
                     runningMode: 'VIDEO',
                     numFaces: 1
                 });
-
-                if(hasGetUserMedia){
-                   
-                    const constraints = {video: true};
-                    
-                    // Activate the webcam stream.
-                    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                        video.srcObject = stream;
-                        video.addEventListener("loadeddata", predictWebcam);
-                                
-                            
-                        // 웹캠 켜지면 캔버스 위치 고정
-                        video.addEventListener('canplay', ()=>{
-                            video.width = video.videoWidth;
-                            video.height = video.videoHeight;
-                            canvasElement.width = video.videoWidth;
-                            canvasElement.height = video.videoHeight;
-                            canvasElement.style.width = video.videoWidth+'px';
-                            canvasElement.style.height = video.videoHeight+'px';
-
-                            
-                        });
-                        
-                    });
-                }
-                return handLandmarker;
-                
                 
             } catch(error) {
                 console.error("Error loading hand landmarkers", error);
             }
-            
+
+            return handLandmarker;
         };
-        setTimeout(() => {
-            const handleVideoLoaded = () => {
-                setIsVideoLoading(false);
-              };
-            handleVideoLoaded(); 
-        }, 5000);
         initializeData();
+
+        async function startCamera() {
+
+            if(hasGetUserMedia){
+                    
+                const constraints = {video: true};
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = stream;
+            
+                    await new Promise((resolve) => {
+                        video.addEventListener("loadeddata", resolve);
+                    });
+                
+                    video.width = video.videoWidth;
+                    video.height = video.videoHeight;
+                    canvasElement.width = video.videoWidth;
+                    canvasElement.height = video.videoHeight;
+                    canvasElement.style.width = video.videoWidth + 'px';
+                    canvasElement.style.height = video.videoHeight + 'px';
+                    
+                    console.log('Canvas setting done');
+                    
+                    // 웹캠이 재생되는 것이 확실한 후에 predictWebcam을 호출
+                    predictWebcam();
+                    
+                    setIsVideoLoading(false);
+
+                } catch (error) {
+                    console.error('Error starting camera:', error);                    
+                }
+            }   
+        }
+        startCamera();
+
+
+        
 
         return ()=>{
             // 컴포넌트 디스마운트 시 타겟들 없애기

@@ -28,6 +28,7 @@ import musicListData from '../../data/musicListData.json';
 import {createCircle, createPerfect, createGood, createBad} from "../../util/node.js";
 import {createEffect} from "../../util/effect.js";
 
+import Loading from 'pages/loading/Loading';
 import drum from '../../data/drum.mp3';
 
 import redBone from '../../data/DonaldGlover_RedBone.mp3';
@@ -409,154 +410,166 @@ function MultiplayWaiting(){
 
     //     };
     // }
-  // 이 함수는 개선해야됨
-  async function updateTimePosArraysAndAudio() {
-    // const jsonData = await import(selectedMusic.json_url);
-    // const objectsData = jsonData.hitObjects;
-    // console.log(objectsData);
-    // fillTimePositionArray(objectsData);
-    // audio.current = new Audio(selectedMusic.music_url);
+    // 이 함수는 개선해야됨
+    async function updateTimePosArraysAndAudio() {
+        // const jsonData = await import(selectedMusic.json_url);
+        // const objectsData = jsonData.hitObjects;
+        // console.log(objectsData);
+        // fillTimePositionArray(objectsData);
+        // audio.current = new Audio(selectedMusic.music_url);
 
-    let fuck = null;
-    if(selectedMusicRef.current.id===0){
-        fuck = await import("../../data/JanJi_HeroesTonight.json");        
-    } else if(selectedMusicRef.current.id===1) {
-        fuck = await import("../../data/DonaldGlover_RedBone.json");  
-    } else if(selectedMusicRef.current.id===2) {
-        fuck = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
-    } else if(selectedMusicRef.current.id===3) {
-        fuck = await import("../../data/Coolio_GangstasParadise.json");  
-    } else if(selectedMusicRef.current.id===4) {
-        fuck = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
+        let fuck = null;
+        if(selectedMusicRef.current.id===0){
+            fuck = await import("../../data/JanJi_HeroesTonight.json");        
+        } else if(selectedMusicRef.current.id===1) {
+            fuck = await import("../../data/DonaldGlover_RedBone.json");  
+        } else if(selectedMusicRef.current.id===2) {
+            fuck = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
+        } else if(selectedMusicRef.current.id===3) {
+            fuck = await import("../../data/Coolio_GangstasParadise.json");  
+        } else if(selectedMusicRef.current.id===4) {
+            fuck = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
+        }
+        fillTimePositionArray(fuck.hitObjects);
+
+        audio.current = new Audio(selectedMusicRef.current.music_url);
+
     }
-    fillTimePositionArray(fuck.hitObjects);
 
-    audio.current = new Audio(selectedMusicRef.current.music_url);
+    function playGame() {
+        if (audio.current && !isGamePlaying.current) {
 
-}
+            updateTimePosArraysAndAudio();
 
-function playGame() {
-    if (audio.current && !isGamePlaying.current) {
+            gameStartTime.current = performance.now();
+            arrayIdx.current=0;
 
-        updateTimePosArraysAndAudio();
+            // fillTimePositionArray();
 
-        gameStartTime.current = performance.now();
-        arrayIdx.current=0;
+            setPerfectScore(0);
+            setGoodScore(0);
+            setFailedScore(0);
+            setHighestCombo(0);
+            setComboScore(0);
 
-        // fillTimePositionArray();
+            setIsGamePlayingState(true);
+            isGamePlaying.current=true;
 
-        setPerfectScore(0);
-        setGoodScore(0);
-        setFailedScore(0);
-        setHighestCombo(0);
-        setComboScore(0);
-
-        setIsGamePlayingState(true);
-        isGamePlaying.current=true;
-
-    };
-}
-function playDrum() {
-    if (drumSound) {
-        drumSound.currentTime = 0;
-        drumSound.loop = false;
-        drumSound.volume = 1;
-        drumSound.play();
+        };
     }
-}
+    function playDrum() {
+        if (drumSound) {
+            drumSound.currentTime = 0;
+            drumSound.loop = false;
+            drumSound.volume = 1;
+            drumSound.play();
+        }
+    }
 
-useEffect(()=>{
-    const video = videoRef.current;
-    const canvasElement = canvasElementRef.current;
-    canvasCtx = canvasElement.getContext("2d");
-    drawingUtils = new DrawingUtils(canvasCtx);
+    useEffect(()=>{
+        const video = videoRef.current;
+        const canvasElement = canvasElementRef.current;
+        canvasCtx = canvasElement.getContext("2d");
+        drawingUtils = new DrawingUtils(canvasCtx);
 
-    async function initializeData () {
-        try{
-            const vision = await FilesetResolver.forVisionTasks(
-                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-            );
+        async function initializeData () {
+            try{
+                const vision = await FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+                );
 
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                baseOptions: {
-                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-                    delegate: "GPU"
-                },
-                runningMode: 'VIDEO',
-                numHands: 2
-            });
-            faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-                baseOptions: {
-                  modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-                  delegate: "GPU"
-                },
-                outputFaceBlendshapes: true,
-                runningMode: 'VIDEO',
-                numFaces: 1
-            });
+                handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                        delegate: "GPU"
+                    },
+                    runningMode: 'VIDEO',
+                    numHands: 2
+                });
+                faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                        delegate: "GPU"
+                    },
+                    outputFaceBlendshapes: true,
+                    runningMode: 'VIDEO',
+                    numFaces: 1
+                });
+                
+            } catch(error) {
+                console.error("Error loading hand landmarkers", error);
+            }
+
+            return handLandmarker;
+        };
+        initializeData();
+
+        
+        async function startCamera() {
 
             if(hasGetUserMedia){
-               
-                const constraints = {video: true};
-                
-                // Activate the webcam stream.
-                navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                    // video.srcObject = stream;
-                    video.addEventListener("loadeddata", predictWebcam);
-                            
-                        
-                    // 웹캠 켜지면 캔버스 위치 고정
-                    video.addEventListener('canplay', ()=>{
-                        
-                        video.width = video.videoWidth;
-                        video.height = video.videoHeight;
-                        canvasElement.width = video.videoWidth;
-                        canvasElement.height = video.videoHeight;
-                        canvasElement.style.width = video.videoWidth+'px';
-                        canvasElement.style.height = video.videoHeight+'px';
-                        
-                    });
                     
-                });
-            }
-            return handLandmarker;
+                const constraints = {video: true};
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = stream;
             
-            
-        } catch(error) {
-            console.error("Error loading hand landmarkers", error);
+                    await new Promise((resolve) => {
+                        video.addEventListener("loadeddata", resolve);
+                    });
+                
+                    video.width = video.videoWidth;
+                    video.height = video.videoHeight;
+                    canvasElement.width = video.videoWidth;
+                    canvasElement.height = video.videoHeight;
+                    canvasElement.style.width = video.videoWidth + 'px';
+                    canvasElement.style.height = video.videoHeight + 'px';
+                    
+                    console.log('Canvas setting done');
+                    
+                    // 웹캠이 재생되는 것이 확실한 후에 predictWebcam을 호출
+                    predictWebcam();
+                    
+                    setIsVideoLoading(false);
+
+                } catch (error) {
+                    console.error('Error starting camera:', error);                    
+                }
+            }   
+        }
+        startCamera();
+
+
+        
+
+        return ()=>{
+            // 컴포넌트 디스마운트 시 타겟들 없애기
+            targets.current.forEach((t)=>t.elem.remove());
+        }
+
+    },[])
+
+    useEffect(()=>{
+        if(comboScore>highestCombo){
+            setHighestCombo(comboScore);
         }
         
+    },[comboScore]);
+
+
+
+    const handleMusicSelect = (music) => {
+
+        setSelectedMusic(music);
+        selectedMusicRef.current=music;
+        
+        // socket 서버에 바꾼 음악 인덱스 전달
+        musicSocket.current.emit('music', music.id);
+        console.log('emit music : ', music.id);
+
     };
-    setTimeout(() => {
-        const handleVideoLoaded = () => {
-            setIsVideoLoading(false);
-          };
-        handleVideoLoaded(); 
-    }, 5000);
-    initializeData();
 
-
-},[])
-
-useEffect(()=>{
-    if(comboScore>highestCombo){
-        setHighestCombo(comboScore);
-    }
-    
-},[comboScore]);
-
-
-
-const handleMusicSelect = (music) => {
-
-    setSelectedMusic(music);
-    selectedMusicRef.current=music;
-    
-    // socket 서버에 바꾼 음악 인덱스 전달
-    musicSocket.current.emit('music', music.id);
-    console.log('emit music : ', music.id);
-
-};
     function MusicBox({playGame}){
         return(
             <div className="songTitle">
@@ -590,46 +603,56 @@ const handleMusicSelect = (music) => {
                 });
                 faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
                     baseOptions: {
-                      modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-                      delegate: "GPU"
+                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
+                        delegate: "GPU"
                     },
                     outputFaceBlendshapes: true,
                     runningMode: 'VIDEO',
                     numFaces: 1
                 });
-
-                if(hasGetUserMedia){
-                   
-                    const constraints = {video: true};
-                    
-                    // Activate the webcam stream.
-                    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                        video.srcObject = stream;
-                        video.addEventListener("loadeddata", predictWebcam);
-                                
-                            
-                        // 웹캠 켜지면 캔버스 위치 고정
-                        video.addEventListener('canplay', ()=>{
-                            video.width = video.videoWidth;
-                            video.height = video.videoHeight;
-                            canvasElement.width = video.videoWidth;
-                            canvasElement.height = video.videoHeight;
-                            canvasElement.style.width = video.videoWidth+'px';
-                            canvasElement.style.height = video.videoHeight+'px';
-                            
-                        });
-                        
-                    });
-                }
-                return handLandmarker;
-                
                 
             } catch(error) {
                 console.error("Error loading hand landmarkers", error);
             }
-            
+
+            return handLandmarker;
         };
         initializeData();
+
+        async function startCamera() {
+
+            if(hasGetUserMedia){
+                    
+                const constraints = {video: true};
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    video.srcObject = stream;
+            
+                    await new Promise((resolve) => {
+                        video.addEventListener("loadeddata", resolve);
+                    });
+                
+                    video.width = video.videoWidth;
+                    video.height = video.videoHeight;
+                    canvasElement.width = video.videoWidth;
+                    canvasElement.height = video.videoHeight;
+                    canvasElement.style.width = video.videoWidth + 'px';
+                    canvasElement.style.height = video.videoHeight + 'px';
+                    
+                    console.log('Canvas setting done');
+                    
+                    // 웹캠이 재생되는 것이 확실한 후에 predictWebcam을 호출
+                    predictWebcam();
+                    
+                    setIsVideoLoading(false);
+
+                } catch (error) {
+                    console.error('Error starting camera:', error);                    
+                }
+            }   
+        }
+        startCamera();
 
         console.log('from useeffect ', from)
         window.addEventListener('beforeunload', onBeforeUnload);
@@ -637,6 +660,7 @@ const handleMusicSelect = (music) => {
         console.log('useEffect')
         return () => {
             window.removeEventListener('beforeunload', onBeforeUnload);
+            targets.current.forEach((t)=>t.elem.remove());
         };
 
     },[])
@@ -1051,84 +1075,87 @@ const handleMusicSelect = (music) => {
 
 
     return(
-        <div className="containerMultiplay">
-            <TitleMultiplay />
-            <div className='roominfo'>
-                {mySessionId}
-                <br />
-                {myUserName}
-            </div>
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className='multicontainer'>
-                    {/* <div className="gameContainerWaiting">
-                        {<UserVideoComponent streamManager={publisher} /> }
-                    </div> */}
-                    {/* <div className='subContainer'>
-                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
-                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
-                    </div> */}
-                    <div className='bigbox'>
-                    <div id="video-container" className="col-md-6" style={{ display:'flex'}}>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
-                            <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                            {/* <UserVideoComponent streamManager={publisher} /> */}
-                            {/* {subscribers[0] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[0]} />
-                            : null } */}
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[0] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
-                            : null }
-                        </div>
-                    </div>
-                    <div style={{display:'flex'}}>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
-                            : null }
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[2] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
-                            : null }
-                        </div>
-                    </div>
-                    </div>
-
-                    </div>
-                    <Websocket userName={myUserName} sessionId={mySessionId}  />
+        <>
+            {isVideoLoading ? <Loading/> : <></>}
+            <div className="containerMultiplay">
+                <TitleMultiplay />
+                <div className='roominfo'>
+                    {mySessionId}
+                    <br />
+                    {myUserName}
                 </div>
-                {isGamePlayingState ? (
-              <ScoreBox
-                perfectScore={perfectScore}
-                goodScore={goodScore}
-                failedScore={failedScore}
-                highestCombo={highestCombo}
-                comboScore={comboScore}
-                stopGame={stopGame}
-                isGamePlayingState={isGamePlayingState}
-                isGameEnd={isGameEnd}
-                userName={userName}
-                redirectToSinglePlayResult={redirectToSinglePlayResult}
-                pic_url={selectedMusic.pic_url}
-              />
-            ) : (
-              <div className="subContainer">
-                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbutton" onClick={playGame}>
-                  START
-                </button>
-              </div>
-            )} 
+                <div className='camandmessagebox' style={{display:'flex'}}>
+                    <div className='mainSection'>
+                        <div className='multicontainer'>
+                        {/* <div className="gameContainerWaiting">
+                            {<UserVideoComponent streamManager={publisher} /> }
+                        </div> */}
+                        {/* <div className='subContainer'>
+                            <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                            <button type="submit" className="startbutton" onClick={playGame}>START</button>
+                        </div> */}
+                        <div className='bigbox'>
+                        <div id="video-container" className="col-md-6" style={{ display:'flex'}}>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
+                                <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
+                                {/* <UserVideoComponent streamManager={publisher} /> */}
+                                {/* {subscribers[0] !== undefined ?
+                                <UserVideoComponent streamManager={subscribers[0]} />
+                                : null } */}
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[0] !== undefined ?
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
+                                : null }
+                            </div>
+                        </div>
+                        <div style={{display:'flex'}}>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[1] !== undefined ?
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
+                                : null }
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[2] !== undefined ?
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
+                                : null }
+                            </div>
+                        </div>
+                        </div>
+
+                        </div>
+                        <Websocket userName={myUserName} sessionId={mySessionId}  />
+                    </div>
+                    {isGamePlayingState ? (
+                <ScoreBox
+                    perfectScore={perfectScore}
+                    goodScore={goodScore}
+                    failedScore={failedScore}
+                    highestCombo={highestCombo}
+                    comboScore={comboScore}
+                    stopGame={stopGame}
+                    isGamePlayingState={isGamePlayingState}
+                    isGameEnd={isGameEnd}
+                    userName={userName}
+                    redirectToSinglePlayResult={redirectToSinglePlayResult}
+                    pic_url={selectedMusic.pic_url}
+                />
+                ) : (
+                <div className="subContainer">
+                    <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
+                    <button type="submit" className="startbutton" onClick={playGame}>
+                    START
+                    </button>
+                </div>
+                )} 
+                </div>
             </div>
-        </div>
+        </>
 
     )
     
