@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import './client.css';
 import { io } from "socket.io-client";
 
 const Client = (props) => {
-  const [nickname, setNickname] = useState('');
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   // const ws = useRef(null);
@@ -12,7 +11,7 @@ const Client = (props) => {
   const messageInputRef = useRef(null);
 
   console.log('props: ',props);
-const userName = props.userName;
+  const userName = props.userName;
   const roomId = props.sessionId;
   console.log('roomId : ', roomId)
 

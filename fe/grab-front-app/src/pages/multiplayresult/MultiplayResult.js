@@ -1,20 +1,23 @@
 import './MultiplayResult.css'
 import { Link, useLocation } from 'react-router-dom';
+import {useRef} from 'react';
 
 function MultiplayResult() {
     const location = useLocation();
     const resultData = location.state;
-    console.log(resultData.userName);
 
     const goodScore = parseInt(resultData.goodScore, 10);
     const perfectScore = parseInt(resultData.perfectScore, 10);
     const highestCombo = parseInt(resultData.highestCombo, 10);
     const comboScore = parseInt(resultData.comboScore, 10);
+    const playerName = resultData.userName;
+    console.log(playerName);
+
+    const nameRef = useRef(null);
+    nameRef.current = resultData.userName;
+    
 
     const totalScore = goodScore * 100 + perfectScore * 1000 + highestCombo * 1000 + comboScore * 100;
-    
-    console.log(resultData.pic_url);
-
 
 
     return (
@@ -22,20 +25,21 @@ function MultiplayResult() {
             <div className="resulttitlemulti">RESULT</div>
             <div className="scoreboardmulti">
             <div className="scoreinfomulti" style={{ display: "flex", textAlign:'center' }}>
-                <div className="rankmulti">rank</div>
+                <div className="rankmulti">player</div>
                 <div className="usernamemulti">username</div>
                 <div className="scoremulti">score</div>
                 <div className="pointmulti">point</div>
             </div>
 
-            {resultData.scores.map((score, index) => (
+            {resultData.scores.map((scoreObj, index) => (
                 <div key={index} className="gameinfomulti" style={{ display: "flex", textAlign: "center" }}>
-                    <div className="rankmulti">{index + 1}</div>
-                    <div className="usernamemulti">{score.clientId}</div>
-                    <div className="scoremulti">{score.score}</div>
-                    <div className="pointmulti"></div>
-                </div>
+                <div className="rankmulti">{index + 1}</div>
+                <div className="usernamemulti">{scoreObj.userNmae}</div>
+                <div className="scoremulti">{scoreObj.score}</div>
+                <div className="pointmulti"></div>
+            </div>
             ))}
+
 
 
                 
@@ -49,7 +53,6 @@ function MultiplayResult() {
                     <div className='s'>GOOD {resultData.goodScore}</div>
                     <div className='s'>FAIL {resultData.failedScore}</div>
                     <div className='s'>MAX COMBO {resultData.highestCombo}</div>
-                    <div className='s'>LAST COMBO {resultData.comboScore}</div>
                     </div>
                 </div>
                 </div>
