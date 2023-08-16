@@ -27,7 +27,7 @@ function Auth(SpecificComponent, option, adminRoute = null) {
             // access_token이 있으면?
             if (access_token) {
                 // access_token으로 사용자 인증 요청
-                axios.post('http://localhost:8080/api/auth', {
+                axios.post(process.env.REACT_APP_SPRING_URL + '/api/auth', {
                     accessToken: access_token
                 })
                     .then(response => {
@@ -41,7 +41,7 @@ function Auth(SpecificComponent, option, adminRoute = null) {
 
                         if (refresh_token) {
                             if (error.response.status === 401 && refresh_token) {
-                                axios.post('http://localhost:8080/api/token', {
+                                axios.post(process.env.REACT_APP_SPRING_URL + '/api/token', {
                                     refreshToken: refresh_token
                                 })
                                     .then(result => {
@@ -58,7 +58,7 @@ function Auth(SpecificComponent, option, adminRoute = null) {
                 const refresh_token = getRefreshToken();
 
                 if (refresh_token) {
-                    axios.post('http://localhost:8080/api/token', {
+                    axios.post(process.env.REACT_APP_SPRING_URL + '/api/token', {
                         refreshToken: refresh_token
                     })
                         .then(result => {
