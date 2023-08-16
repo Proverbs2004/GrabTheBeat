@@ -9,7 +9,6 @@ import {
     FilesetResolver,
     DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import Slider from "react-slick";
 import './MultiplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
@@ -18,10 +17,8 @@ import '../../util/effect.css';
 import MusicCard from 'components/MusicCard'
 
 import Websocket from 'components/webSocket/client/WebSocketClient'
-import { Carousel } from 'react-responsive-carousel';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 
 import musicListData from '../../data/musicListData.json';
 
@@ -31,14 +28,11 @@ import {createEffect} from "../../util/effect.js";
 import drum from '../../data/drum.mp3';
 
 import redBone from '../../data/DonaldGlover_RedBone.mp3';
-import redBoneData from '../../data/DonaldGlover_RedBone.json';
 import UserVideoComponent from '../../components/openVidu2/UserVideoComponent';
-import jsonData from '../../data/DonaldGlover_RedBone.json';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
 
 import { io } from "socket.io-client";
-import { log } from 'util/util';
 
 const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
@@ -88,8 +82,6 @@ function MultiplayWaiting(){
     const scoreSocket = useRef(null);
     const scoreRef = useRef(0);
 
-
-
     let drawingUtils = null;
     let handLandmarker = null;
     let faceLandmarker = null;
@@ -99,7 +91,6 @@ function MultiplayWaiting(){
     const canvasElementRef = useRef(null);
     const videoRef = useRef(null);
 
-
     const prevInside = [false, false];
     const inside = [false, false];
 
@@ -107,7 +98,6 @@ function MultiplayWaiting(){
     const root = useRef(document.getElementById('root'));
 
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
-    const [isVideoLoading, setIsVideoLoading] = useState(true);
     const queryParams = new URLSearchParams(location.search);
     const userName = queryParams.get('userName');
 
@@ -208,7 +198,6 @@ function MultiplayWaiting(){
             if(audio.current.ended){
                 nowTime.current=-2;
                 isGamePlaying.current = false;
-                // setIsGamePlayingState(false);
                 setIsGameEnd(true);
                 audio.current.currentTime=0;
             }
@@ -337,14 +326,11 @@ function MultiplayWaiting(){
                     }
 
                 })
-                }
-
-        // 기존 주먹 여부 변경
-        prevInside[i] = inside[i];
             }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////
+            // 기존 주먹 여부 변경
+            prevInside[i] = inside[i];
+            }
+        
         }
 
         window.requestAnimationFrame(predictWebcam);
@@ -403,25 +389,9 @@ function MultiplayWaiting(){
         targets.current = [];
     }
         
-    // }
-    // function playGame() {
-    //     if (audio.current && !isGamePlaying.current) {
-
-    //         gameStartTime.current = performance.now();
-    //         arrayIdx.current=0;
-
-    //         setIsGamePlayingState(true);
-    //         isGamePlaying.current=true;
-
-    //     };
-    // }
   // 이 함수는 개선해야됨
   async function updateTimePosArraysAndAudio() {
-    // const jsonData = await import(selectedMusic.json_url);
-    // const objectsData = jsonData.hitObjects;
-    // console.log(objectsData);
-    // fillTimePositionArray(objectsData);
-    // audio.current = new Audio(selectedMusic.music_url);
+
 
     let musicData = null;
     if(selectedMusicRef.current.id===0){
@@ -451,8 +421,6 @@ function playGame() {
         gameStartTime.current = performance.now();
         arrayIdx.current=0;
 
-        // fillTimePositionArray();
-
         setPerfectScore(0);
         setGoodScore(0);
         setFailedScore(0);
@@ -461,7 +429,6 @@ function playGame() {
 
         setIsGamePlayingState(true);
         isGamePlaying.current=true;
-
     };
 }
 function playDrum() {
@@ -472,79 +439,6 @@ function playDrum() {
         drumSound.play();
     }
 }
-
-useEffect(()=>{
-    const video = videoRef.current;
-    const canvasElement = canvasElementRef.current;
-    canvasCtx = canvasElement.getContext("2d");
-    drawingUtils = new DrawingUtils(canvasCtx);
-
-    async function initializeData () {
-        try{
-            const vision = await FilesetResolver.forVisionTasks(
-                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-            );
-
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                baseOptions: {
-                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-                    delegate: "GPU"
-                },
-                runningMode: 'VIDEO',
-                numHands: 2
-            });
-            faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-                baseOptions: {
-                  modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`,
-                  delegate: "GPU"
-                },
-                outputFaceBlendshapes: true,
-                runningMode: 'VIDEO',
-                numFaces: 1
-            });
-
-            if(hasGetUserMedia){
-               
-                const constraints = {video: true};
-                
-                // Activate the webcam stream.
-                navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-                    // video.srcObject = stream;
-                    video.addEventListener("loadeddata", predictWebcam);
-                            
-                        
-                    // 웹캠 켜지면 캔버스 위치 고정
-                    video.addEventListener('canplay', ()=>{
-                        
-                        video.width = video.videoWidth;
-                        video.height = video.videoHeight;
-                        canvasElement.width = video.videoWidth;
-                        canvasElement.height = video.videoHeight;
-                        canvasElement.style.width = video.videoWidth+'px';
-                        canvasElement.style.height = video.videoHeight+'px';
-                        
-                    });
-                    
-                });
-            }
-            return handLandmarker;
-            
-            
-        } catch(error) {
-            console.error("Error loading hand landmarkers", error);
-        }
-        
-    };
-    setTimeout(() => {
-        const handleVideoLoaded = () => {
-            setIsVideoLoading(false);
-          };
-        handleVideoLoaded(); 
-    }, 5000);
-    initializeData();
-
-
-},[])
 
 useEffect(()=>{
     if(comboScore>highestCombo){
@@ -682,10 +576,6 @@ function resultGame(){
       
           handleFunctionCall();
           console.log('소켓 객체 만들기 실행 전 : ', mySessionId);
-        //   musicSocket.current = io("ws://localhost:8000/music?roomId=" + mySessionId, {
-        //         reconnectionDelayMax: 10000,
-        //         });
-        //   console.log('musicSocket.current  : ', musicSocket.current);
     }, [from]);
 
     const onBeforeUnload = () => {
@@ -717,14 +607,12 @@ function resultGame(){
     }
 
     const joinSession = async () => {
-        // event.preventDefault(); // Prevent the default form submission behavior
-    
+
         const ov = new OpenVidu();
         console.log("조인세션 되는 중");
         try {
             const mySession = ov.initSession();
             const FRAME_RATE = 10;
-            // const myHtmlTarget = document.getElementById("video-container");
 
             mySession.on('streamCreated', (event) => {
                 const subscriber = mySession.subscribe(event.stream, undefined);
@@ -817,32 +705,21 @@ function resultGame(){
 
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
-                    // const mediaStream = await ov.getUserMedia({
-                    //     audioSource: false,
-                    //     videoSource: undefined,
-                    //     resolution: '320x180',
-                    //     frameRate: 10000
-                    // });
-            
-                    // let videoTrack = mediaStream.getVideoTracks()[0];
-                    // let video = document.createElement('video');
+
                     let video = document.getElementById('videoZone');
-                    // video.srcObject = new MediaStream([videoTrack]);
                     
                     let canvas = canvasElementRef.current;
-                    // let canvas = document.createElement('canvas');
+
                     let ctx = canvas.getContext('2d');
-                    // ctx.filter = 'grayscale(100%)';
+
                     video.addEventListener('play', () => {
                         let loop = () => {
                             if (!video.paused && !video.ended) {
-                                // ctx.drawImage(video, 0, 0, 300, 170);
                                 setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
                             }
                         };
                         loop();
                     });
-                    // video.play();
             
                     let grayVideoTrack = canvas.captureStream(FRAME_RATE).getVideoTracks()[0];
                     let publisher = ov.initPublisher(
@@ -856,7 +733,7 @@ function resultGame(){
                     mySession.publish(publisher);
                     setSession(mySession);
                     setMyUserName(name);
-                    // setMainStreamManager(publisher);
+
                     setPublisher(publisher);
 
                 })
@@ -917,15 +794,13 @@ function resultGame(){
     };
     
     const enterSession = async () => {
-        // event.preventDefault(); // Prevent the default form submission behavior
-    
+
         const ov = new OpenVidu();
         console.log("엔터세션 되는 중");
         try {
             const mySession = ov.initSession();
             const FRAME_RATE = 10;
-            // const myHtmlTarget = document.getElementById("video-container");
-            
+
             mySession.on('streamCreated', (event) => {
                 const subscriber = mySession.subscribe(event.stream, undefined);
                 setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
@@ -936,7 +811,6 @@ function resultGame(){
                 deleteSubscriber(event.stream.streamManager);
             });
     
-            // const sessionId = document.getElementById('sessionCode').value;
             const sessionId = code;
             console.log('code ', code)
             console.log('enter session id', sessionId);
@@ -1005,32 +879,9 @@ function resultGame(){
 
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
-                    // const mediaStream = await ov.getUserMedia({
-                    //     audioSource: false,
-                    //     videoSource: undefined,
-                    //     resolution: '320x180',
-                    //     frameRate: FRAME_RATE
-                    // });
-            
-                    // let videoTrack = mediaStream.getVideoTracks()[0];
                     let video = document.getElementById('videoZone');
-                    // video.srcObject = new MediaStream([videoTrack]);
-                    
+
                     let canvas = canvasElementRef.current;
-                    // let canvas = document.createElement('canvas');
-                    // let ctx = canvas.getContext('2d');
-                    // // ctx.filter = 'grayscale(100%)';
-                    // video.addEventListener('play', () => {
-                    //     let loop = () => {
-                    //         if (!video.paused && !video.ended) {
-                    //             // ctx.drawImage(video, 0, 0, 300, 170);
-                    //             setTimeout(loop, 1000 / FRAME_RATE); // Drawing at 10 fps
-                    //         }
-                    //     };
-                    //     loop();
-                    // });
-                    // video.play();
-            
                     let grayVideoTrack = canvas.captureStream(FRAME_RATE).getVideoTracks()[0];
                     let publisher = ov.initPublisher(
                         undefined,
@@ -1042,7 +893,6 @@ function resultGame(){
 
                     mySession.publish(publisher);
                     setSession(mySession);
-                    // setMainStreamManager(publisher);
                     setPublisher(publisher);
                     setMyUserName(name);
                     console.log('name ', name)
@@ -1052,52 +902,6 @@ function resultGame(){
                     console.log('There was an error connecting to the session:', error.code, error.message);
                 });
 
-
-            // mySession.connect(token.token, { clientData: name })
-            //     .then(async () => {
-            //         let publisher = await ov.initPublisherAsync(undefined, {
-            //             audioSource: false, 
-            //             videoSource: undefined,
-            //             publishAudio: true, 
-            //             publishVideo: true, 
-            //             resolution: '640x480',
-            //             frameRate: 30,
-            //             insertMode: 'APPEND', 
-            //             mirror: false,
-            //         });
-
-            //         mySession.publish(publisher);
-            //         setSession(mySession);
-            //         // setMainStreamManager(publisher);
-            //         setPublisher(publisher);
-            //     })
-            //     .catch((error) => {
-            //         console.log('There was an error connecting to the session:', error.code, error.message);
-            //     });
-            // mySession.connect(token.token, { clientData: name });
-    
-            // const publisher = await ov.initPublisherAsync(undefined, {
-            //     audioSource: false,
-            //     videoSource: undefined,
-            //     publishAudio: true,
-            //     publishVideo: true,
-            //     resolution: '640x480',
-            //     frameRate: 30,
-            //     insertMode: 'APPEND',
-            //     mirror: false,
-            // });
-
-            // console.log('mySession')
-            // console.log(mySession)
-    
-            // mySession.publish(publisher);
-    
-            // setMyUserName(name);
-            // setMySessionId(sessionId);
-            // // 여기서 세션 연결 후 상태 업데이트 및 UI 렌더링을 진행
-            // setSession(mySession);
-            // // setMainStreamManager(publisher);
-            // setPublisher(publisher);
         } catch (error) {
             console.log('There was an error:', error);
         }
@@ -1167,37 +971,26 @@ function resultGame(){
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
-                    {/* <div className="gameContainerWaiting">
-                        {<UserVideoComponent streamManager={publisher} /> }
-                    </div> */}
-                    {/* <div className='subContainer'>
-                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
-                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
-                    </div> */}
                     <div className='bigbox'>
                     <div id="video-container" className="col-md-6" style={{ display:'flex'}}>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
                             <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
                             <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                            {/* <UserVideoComponent streamManager={publisher} /> */}
-                            {/* {subscribers[0] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[0]} />
-                            : null } */}
                         </div>
 
                     </div>
                     {isGamePlayingState ? (
                         
                       <div style={{display:'flex'}}>
-{scoreRef.current.map((client, index) => (
-  <div key={index} className='cambox'>
-    <div className='camboxNumber'></div>
-    <div>
-      {client.score}
-    </div>
-  </div>
-))}
+                        {scoreRef.current.map((client, index) => (
+                            <div key={index} className='cambox'>
+                            <div className='camboxNumber'></div>
+                            <div>
+                            {client.score}
+                            </div>
+                            </div>
+                        ))}
                    
                     </div>
                     ) : (
@@ -1285,22 +1078,6 @@ function ScoreBox({
         {isGamePlayingState && isGameEnd ? (
             <div>
             <button id="gamequit" onClick={resultGame}>Result</button>
-          {/* <Link
-            to={
-              '/multiplayresult'
-            }
-            state={{
-                perfectScore: perfectScore,
-                goodScore: goodScore,
-                failedScore: failedScore,
-                highestCombo: highestCombo,
-                comboScore: comboScore,
-                userName: userName,
-                pic_url: pic_url
-            }}
-          >
-            <button id="gamequit">Result</button>
-          </Link> */}
           </div>
         ) : (
           <button id="gamequit" onClick={stopGame}>
@@ -1309,6 +1086,6 @@ function ScoreBox({
         )}
       </div>
     );
-  }
+}
 
 export default MultiplayWaiting;
