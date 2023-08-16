@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import './Home.css';
-import Header from 'pages/header/Header';
+// import Header from 'pages/header/Header';
 
 
 function TitleGame() {
@@ -72,7 +72,6 @@ function Home() {
   return (
 
     <div className="containerHome">
-      <Header />
       <TitleGame />
       <ButtonCreateJoinContainer />
       <ButtonGoogle />
