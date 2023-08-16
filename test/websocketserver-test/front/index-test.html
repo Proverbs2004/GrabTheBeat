@@ -7,7 +7,7 @@
     <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
       // import { io } from 'socket.io-client';
-      const socket = io("http://localhost:3000/chat?roomId=bar");
+      const socket = io("http://localhost:8000/chat?roomId=bar");
 
       function sendMsg() {
         const name = document.getElementById("name").value;

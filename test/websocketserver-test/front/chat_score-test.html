@@ -6,12 +6,12 @@
     <title>Websocket 실습</title>
     <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
     <script>
-      const chatSocket = io("http://localhost:3000/chat", {
+      const chatSocket = io("http://localhost:8000/chat", {
         query: {
           roomId: "foo",
         },
       });
-      const scoreSocket = io("http://localhost:3000/score", {
+      const scoreSocket = io("http://localhost:8000/score", {
         query: {
           roomId: "foo",
         },

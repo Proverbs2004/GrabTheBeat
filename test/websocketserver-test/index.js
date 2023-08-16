@@ -23,7 +23,7 @@ const musicServer = io.of('/music');    // 해당 '/score' Path로 연결
 const syncServer = io.of('/sync');      // 해당 '/score' Path로 연결
 
 // Http Server 포트 3000번 사용
-httpServer.listen(3000, () => {
+httpServer.listen(8000, () => {
     console.log("Listening on port 3000");
 })
 
