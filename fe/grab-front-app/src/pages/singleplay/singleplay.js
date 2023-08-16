@@ -389,19 +389,21 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         // fillTimePositionArray(objectsData);
         // audio.current = new Audio(selectedMusic.music_url);
 
-        let fuck = null;
+        let musicData = null;
         if(selectedMusicRef.current.id===0){
-            fuck = await import("../../data/JanJi_HeroesTonight.json");        
+            musicData = await import("../../data/JanJi_HeroesTonight.json");        
         } else if(selectedMusicRef.current.id===1) {
-            fuck = await import("../../data/DonaldGlover_RedBone.json");  
+            musicData = await import("../../data/DonaldGlover_RedBone.json");  
         } else if(selectedMusicRef.current.id===2) {
-            fuck = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
+            musicData = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
         } else if(selectedMusicRef.current.id===3) {
-            fuck = await import("../../data/Coolio_GangstasParadise.json");  
+            musicData = await import("../../data/Coolio_GangstasParadise.json");  
         } else if(selectedMusicRef.current.id===4) {
-            fuck = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
+            musicData = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
+        } else if(selectedMusicRef.current.id===5) {
+            musicData = await import("../../data/Test4.json");  
         }
-        fillTimePositionArray(fuck.hitObjects);
+        fillTimePositionArray(musicData.hitObjects);
 
         audio.current = new Audio(selectedMusicRef.current.music_url);
 
@@ -510,8 +512,6 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         }
         startCamera();
 
-
-        
 
         return ()=>{
             // 컴포넌트 디스마운트 시 타겟들 없애기
