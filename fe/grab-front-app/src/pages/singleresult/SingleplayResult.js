@@ -18,46 +18,42 @@ function SingleplayResult() {
 
 
     return (
-        <div className='resultcontainer'>
-            <div className="resulttitle">RESULT</div>
-            <div className="scoreboard">
-            <div className="scoreinfo" style={{ display: "flex", justifyContent: "space-between" }}>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <div className="rank">rank</div>
-                <div className="username">username</div>
-                <div className="score">score</div>
-                <div className="point">point</div>
+        <div className='resultcontainersingle'>
+            <div className="resulttitlesingle">RESULT</div>
+            <div className="scoreboardsingle">
+            <div className="scoreinfosingle" style={{ display: "flex", textAlign:'center' }}>
+                <div className="ranksingle">rank</div>
+                <div className="usernamesingle">username</div>
+                <div className="scoresingle">score</div>
+                <div className="pointsingle">point</div>
             </div>
 
-            <div className="scoreinfo" style={{ display: "flex", justifyContent: "space-between" }}>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <div className="rank">1</div>
-                <div className="username">{resultData.userName}</div>
-                <div className="score">{totalScore}</div>
-                <div className="point"></div>
+            <div className="gameinfosingle" style={{ display: "flex", textAlign:'center' }}>
+                <div className="ranksingle">1</div>
+                <div className="usernamesingle">{resultData.userName}</div>
+                <div className="scoresingle">{totalScore}</div>
+                <div className="pointsingle"></div>
   
                     
             </div>
                 
-                <div className="comboinfo">
-                    <div className="imagearea">
-                        <img src={ resultData.pic_url} alt="사진" style={{width:250, height:250}}/>
+                <div className="comboinfosingle">
+                    <div className="imageareasingle">
+                        <img src={ resultData.pic_url} alt="사진" style={{width:300, height:300, borderRadius:'7.5px', marginLeft:'0px'}}/>
                     </div>
-                    <div className="comboarea">
-                    <br />
-                    <br />
-                    
-                    <div>&nbsp;PERFECT {resultData.perfectScore}</div><br />  
-                    <div>&nbsp;GOOD: {resultData.goodScore}</div><br />
-                    <div>&nbsp;FAIL: {resultData.failedScore}</div><br />
-                    <div>&nbsp;HIGHEST COMBO: {resultData.highestCombo}</div><br />
-                    <div>&nbsp;LAST COMBO: {resultData.comboScore}</div><br />
-            
+                    <div className="comboareasingle">
+                    <div className='PGFH'>
+                    <div className='p'>PERFECT {resultData.perfectScore}</div> 
+                    <div className='p'>GOOD {resultData.goodScore}</div>
+                    <div className='p'>FAIL {resultData.failedScore}</div>
+                    <div className='p'>MAX COMBO {resultData.highestCombo}</div>
+                    <div className='p'>LAST COMBO {resultData.comboScore}</div>
+                    </div>
                 </div>
                 </div>
 
             <Link to='/'>
-                <input type="submit" value="QUIT" id="quit" class="quitbutton" />
+                <input type="submit" value="QUIT" id="quit" class="quitbuttonsingle" />
             </Link>    
         </div>
 
