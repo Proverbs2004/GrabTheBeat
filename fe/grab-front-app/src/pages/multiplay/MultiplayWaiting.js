@@ -755,7 +755,7 @@ function MultiplayWaiting(){
                 
             }, 1000);
 
-            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+            musicSocket.current = io(process.env.REACT_APP_WS_URL + "/music?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             console.log('musicSocket.current  : ', musicSocket.current);
@@ -901,7 +901,7 @@ function MultiplayWaiting(){
             console.log('enter session id', sessionId);
             const token = await createToken(sessionId);
 
-            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+            musicSocket.current = io(process.env.REACT_APP_WS_URL + "/music?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             console.log('musicSocket.current  : ', musicSocket.current);
