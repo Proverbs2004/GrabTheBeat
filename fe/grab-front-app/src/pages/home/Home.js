@@ -44,7 +44,7 @@ function ButtonJoinGame() {
 }
 
 function loginGoogle() {
-  document.location.href = "http://localhost:8080/oauth2/authorization/google"
+  document.location.href = "http://localhost:5000/oauth2/authorization/google"
 }
 
 function ButtonGoogle() {
@@ -60,7 +60,7 @@ function Home() {
   const token = searchParam('token')
 
   window.history.replaceState({}, null, window.location.pathname);
-
+ 
   if (token) {
       localStorage.setItem("access_token", token)
   }

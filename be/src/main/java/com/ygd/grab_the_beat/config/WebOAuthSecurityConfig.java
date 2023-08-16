@@ -57,7 +57,7 @@ public class WebOAuthSecurityConfig {
                 .anyRequest().permitAll();
 
         http.oauth2Login()
-                .loginPage("/login")
+                .loginPage("/api/login")
                 .authorizationEndpoint()
                 // Authoriztion 요청과 관련된 상태 저장
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())

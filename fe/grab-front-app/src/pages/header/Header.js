@@ -4,7 +4,6 @@ import './Header.css'; // 스타일링을 위한 CSS 파일을 import
 import axios from 'axios';
 
 // const SERVER_URL = 'https://i9a607.p.ssafy.io/'
-const SERVER_URL = 'http://localhost:8080/'
 const ACCESS_TOKEN = 'access_token';
 
 function Header() {
@@ -18,8 +17,8 @@ function Header() {
   
   // async function logout() {
   function logout() {
-    // const response = await axios.get(SERVER_URL + 'logout', {}, {
-    const response = axios.get(SERVER_URL + 'logout', {}, {
+    console.log(process.env.REACT_APP_SPRING_URL)
+    const response = axios.get(process.env.REACT_APP_SPRING_URL + '/api/logout', {}, {
       headers: { Authorization: token }
     })
     .then(res => {
