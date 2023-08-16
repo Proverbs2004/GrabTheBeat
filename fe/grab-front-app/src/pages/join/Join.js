@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Join.css';
 import { Link } from 'react-router-dom';
+import Header from 'pages/header/Header';
 
 function Join () {
     return (
         <div>
+            <div style={{ 
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '1rem'
+            }}>
             <ButtonBack />    
+            <Header />
+            </div>
             <div className="containerJoin">
                 <JoinTitle />
                 <div>
