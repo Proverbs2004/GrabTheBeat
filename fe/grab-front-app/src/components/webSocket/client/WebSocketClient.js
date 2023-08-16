@@ -18,7 +18,7 @@ const userName = props.userName;
 
   useEffect(() => {
 
-    socket.current = io("ws://localhost:8000/chat?roomId=" + roomId, {
+    socket.current = io(process.env.REACT_APP_SOCKET_URL + "/chat?roomId=" + roomId, {
       reconnectionDelayMax: 10000,
     });
     console.log('socket.current  : ', socket.current);
