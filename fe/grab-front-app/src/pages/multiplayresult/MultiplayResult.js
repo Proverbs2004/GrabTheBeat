@@ -28,14 +28,16 @@ function MultiplayResult() {
                 <div className="pointmulti">point</div>
             </div>
 
-            <div className="gameinfomulti" style={{ display: "flex", textAlign:'center' }}>
-                <div className="rankmulti">1</div>
-                <div className="usernamemulti">{resultData.userName}</div>
-                <div className="scoremulti">{totalScore}</div>
-                <div className="pointmulti"></div>
-  
-                    
-            </div>
+            {resultData.scores.map((score, index) => (
+                <div key={index} className="gameinfomulti" style={{ display: "flex", textAlign: "center" }}>
+                    <div className="rankmulti">{index + 1}</div>
+                    <div className="usernamemulti">{score.clientId}</div>
+                    <div className="scoremulti">{score.score}</div>
+                    <div className="pointmulti"></div>
+                </div>
+            ))}
+
+
                 
                 <div className="comboinfomulti">
                     <div className="imageareamulti">
