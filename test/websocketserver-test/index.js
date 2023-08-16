@@ -7,7 +7,7 @@ import { dispatchMusicEvent } from "./socketserver_io_music.js";
 import { dispatchSyncEvent } from "./socketserver_io_sync.js";
 
 // 서버 설정 및 생성
-const WEB_URL = "http://127.0.0.1:5500";    // CORS Origins URL
+const WEB_URL = "http://127.0.0.1:3000";    // CORS Origins URL
 const httpServer = createServer();
 const io = new Server(httpServer, {
     cors: {
@@ -23,8 +23,8 @@ const musicServer = io.of('/music');    // 해당 '/score' Path로 연결
 const syncServer = io.of('/sync');      // 해당 '/score' Path로 연결
 
 // Http Server 포트 3000번 사용
-httpServer.listen(3000, () => {
-    console.log("Listening on port 3000");
+httpServer.listen(8000, () => {
+    console.log("Listening on port 8000");
 })
 
 // Socket.io Server(Main Server) connection 발생 시,

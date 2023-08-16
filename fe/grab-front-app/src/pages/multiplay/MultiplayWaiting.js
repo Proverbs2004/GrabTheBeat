@@ -37,6 +37,9 @@ import jsonData from '../../data/DonaldGlover_RedBone.json';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
 
+import { io } from "socket.io-client";
+import { log } from 'util/util';
+
 const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
 function TitleMultiplay() {
@@ -78,6 +81,8 @@ function MultiplayWaiting(){
     let drumSound = new Audio(drum);
     const startTimeArray = useRef([]);
     const positionArray = useRef([]);
+
+    const musicSocket = useRef(null);
 
 
     let drawingUtils = null;
@@ -546,6 +551,10 @@ const handleMusicSelect = (music) => {
 
     setSelectedMusic(music);
     selectedMusicRef.current=music;
+    
+    // socket 서버에 바꾼 음악 인덱스 전달
+    musicSocket.current.emit('music', music.id);
+    console.log('emit music : ', music.id);
 
 };
     function MusicBox({playGame}){
@@ -644,15 +653,22 @@ const handleMusicSelect = (music) => {
             if (from === 'create') {
               // 'a' 페이지에서 왔을 경우 실행할 함수
               console.log('from에 따라 joinsession')
-              joinSession();
+               joinSession();
+              
             } else if (from === 'join') {
               // 'b' 페이지에서 왔을 경우 실행할 함수
               console.log('from에 따라 entersession')
-              enterSession();
+               enterSession();
             }
+            console.log('구기현기구 : ', mySessionId);
           };
       
           handleFunctionCall();
+          console.log('소켓 객체 만들기 실행 전 : ', mySessionId);
+        //   musicSocket.current = io("ws://localhost:8000/music?roomId=" + mySessionId, {
+        //         reconnectionDelayMax: 10000,
+        //         });
+        //   console.log('musicSocket.current  : ', musicSocket.current);
     }, [from]);
 
     const onBeforeUnload = () => {
@@ -711,6 +727,29 @@ const handleMusicSelect = (music) => {
             const token = await createToken(sessionId);
             setMySessionId(sessionId);
 
+            setTimeout(() => {
+                
+            }, 1000);
+
+            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+                reconnectionDelayMax: 10000,
+                });
+            console.log('musicSocket.current  : ', musicSocket.current);
+
+            musicSocket.current.on('music', (idx) => {
+                console.log('musicSocket on idx : ', idx);
+                musicList.forEach((music) => {
+                    if(music.id === idx) {
+                        
+                        setSelectedMusic(music);
+                        selectedMusicRef.current=music;
+            
+                        return ;
+                    }
+                });
+            
+            })
+
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
                     // const mediaStream = await ov.getUserMedia({
@@ -754,6 +793,7 @@ const handleMusicSelect = (music) => {
                     setMyUserName(name);
                     // setMainStreamManager(publisher);
                     setPublisher(publisher);
+
                 })
                 .catch((error) => {
                     console.log('There was an error connecting to the session:', error.code, error.message);
@@ -836,6 +876,25 @@ const handleMusicSelect = (music) => {
             console.log('code ', code)
             console.log('enter session id', sessionId);
             const token = await createToken(sessionId);
+
+            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+                reconnectionDelayMax: 10000,
+                });
+            console.log('musicSocket.current  : ', musicSocket.current);
+
+            musicSocket.current.on('music', (idx) => {
+                console.log('musicSocket on idx : ', idx);
+                musicList.forEach((music) => {
+                    if(music.id === idx) {
+                        
+                        setSelectedMusic(music);
+                        selectedMusicRef.current=music;
+            
+                        return ;
+                    }
+                });
+            
+            })
     
 
             mySession.connect(token.token, { clientData: name })
