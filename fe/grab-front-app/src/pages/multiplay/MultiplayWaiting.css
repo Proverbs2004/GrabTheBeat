@@ -22,7 +22,6 @@ body{
 }
   
 .containerMultiplay {
-    
     /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
     max-width: 1536px; /* 최대 너비를 1536px로 제한 */
     max-height: 864px;
@@ -86,10 +85,9 @@ body{
 } */
 
 .userVideo {
-	transform: rotateY(180deg);
+    /* transform: rotateY(180deg);
 	-webkit-transform: rotateY(180deg);
-	-moz-transform: rotateY(180deg);
-	z-index: -2;
+	-moz-transform: rotateY(180deg); */
 	/* filter: contrast(100.0) brightness(0.0) grayscale(100%); 이미 필터링 해서 오면 필요없음*/
 	/* position: absolute; 이거하면 다른 요소랑 위치 충돌 안함. 나란히 놓으려면 필요없음*/
   
