@@ -4,8 +4,10 @@ import com.ygd.grab_the_beat.config.jwt.TokenProvider;
 import com.ygd.grab_the_beat.user.request.AuthUserByAccessTokenRequest;
 import com.ygd.grab_the_beat.user.request.CreateAccessTokenRequest;
 import com.ygd.grab_the_beat.user.response.AuthUserByAccessTokenResponse;
+import com.ygd.grab_the_beat.user.response.AuthUserResponse;
 import com.ygd.grab_the_beat.user.response.CreateAccessTokenResponse;
 import com.ygd.grab_the_beat.user.service.TokenService;
+import com.ygd.grab_the_beat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class TokenApiController {
 
     private final TokenService tokenService;
     private final TokenProvider tokenProvider;
+    private final UserService userService;
 
     @PostMapping("/api/token")
     public ResponseEntity<CreateAccessTokenResponse> createNewAccessToken(@RequestBody CreateAccessTokenRequest request) {
@@ -34,15 +37,16 @@ public class TokenApiController {
     }
 
     @PostMapping("/api/auth")
-    public ResponseEntity<AuthUserByAccessTokenResponse> authUserByAccessToken(@RequestBody AuthUserByAccessTokenRequest request) {
+    public ResponseEntity<AuthUserResponse> authUserByAccessToken(@RequestBody AuthUserByAccessTokenRequest request) {
         String accessToken = request.getAccessToken();
 
         AuthUserByAccessTokenResponse authUserId = new AuthUserByAccessTokenResponse();
         if (tokenProvider.validToken(accessToken)) {
             Long userId = tokenProvider.getUserId(accessToken);
             authUserId.setUserId(userId);
+            AuthUserResponse authUserResponse = userService.getEmailAndNicknameByUserId(userId);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(authUserId);
+                    .body(authUserResponse);
         } else {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }

@@ -18,9 +18,14 @@ import Multiplay from './pages/multiplay/MultiplayWaiting';
 import Multiplayw from './pages/multiplay/Multiplaywait';
 import MultiplayResult from './pages/multiplayresult/MultiplayResult';
 import Loading from './pages/loading/Loading';
+import Auth from 'hoc/auth';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const AuthJoin = Auth(Join, null);
+  const AuthMultiplayJoin = Auth(MultiplayJoin, null);
+  const AuthSingleplayResult = Auth(SingleplayResult, null);
+  const AuthMultiplayResult = Auth(MultiplayResult, null);
 
   useEffect(() => {
     // 초기 로딩 작업
@@ -44,14 +49,18 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<Create />} />
-            <Route path="/join" element={<Join />} />
+            {/* <Route path="/join" element={<Join />} /> */}
+            <Route path="/join" element={<AuthJoin />} />
             <Route path="/singleplayJoin" element={<SingleplayJoin />} />
             <Route path="/singleplay" element={<Singleplay />} />
-            <Route path="/singleplayresult" element={<SingleplayResult />} />
-            <Route path="/multiplayJoin" element={<MultiplayJoin />} />
+            {/* <Route path="/singleplayresult" element={<SingleplayResult />} /> */}
+            <Route path="/singleplayresult" element={<AuthSingleplayResult />} />
+            {/* <Route path="/multiplayJoin" element={<MultiplayJoin />} /> */}
+            <Route path="/multiplayJoin" element={<AuthMultiplayJoin />} />
             <Route path="/multiplaywaiting" element={<Multiplay />} />
             <Route path="/multiplaywaitingw" element={<Multiplayw />} />
-            <Route path="/multiplayresult" element={<MultiplayResult />} />
+            {/* <Route path="/multiplayresult" element={<MultiplayResult />} /> */}
+            <Route path="/multiplayresult" element={<AuthMultiplayResult />} />
             {/* Fallback route for unknown paths */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

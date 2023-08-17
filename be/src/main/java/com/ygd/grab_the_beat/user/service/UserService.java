@@ -3,6 +3,7 @@ package com.ygd.grab_the_beat.user.service;
 import com.ygd.grab_the_beat.user.request.AddUserRequest;
 import com.ygd.grab_the_beat.user.entity.User;
 import com.ygd.grab_the_beat.user.repository.UserRepository;
+import com.ygd.grab_the_beat.user.response.AuthUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,4 +37,12 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
     }
 
+    public AuthUserResponse getEmailAndNicknameByUserId(Long userId) {
+        User user =  userRepository.findByUserId(userId);
+        System.out.println(userId + " " + user);
+        return AuthUserResponse.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .build();
+    }
 }
