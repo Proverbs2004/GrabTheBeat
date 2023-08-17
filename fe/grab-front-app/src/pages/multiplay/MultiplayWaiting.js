@@ -13,6 +13,7 @@ import './MultiplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
+import Loading from 'pages/loading/Loading'
 
 import MusicCard from 'components/MusicCard'
 
@@ -46,9 +47,9 @@ function MultiplayWaiting(){
     const navigate = useNavigate();
 
     const generateRandomAlphaNumeric = (length) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let result = '';
-    
+
         for (let i = 0; i < length; i++) {
             const randomIndex = Math.floor(Math.random() * characters.length);
             result += characters.charAt(randomIndex);
@@ -72,6 +73,7 @@ function MultiplayWaiting(){
     const musicList = musicListData.musicList;
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
     const selectedMusicRef = useRef(musicListData.musicList[0]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isGamePlayingState, setIsGamePlayingState] = useState(false);
     const [isGameEnd, setIsGameEnd] = useState(false);
     const [goodScore, setGoodScore] = useState(0);
@@ -173,8 +175,18 @@ function MultiplayWaiting(){
             
     
             syncSocket.current.on('end', (data) => {
+
                 if(data.end){
+                    scoreRef.current.sort(function(a, b) {
+                        const scoreA = a.score;
+                        const scoreB = b.score;
+                        
+                        if(scoreA < scoreB) return 1;
+                        if(scoreA > scoreB) return -1;
+                        if(scoreA === scoreB) return 0;
+                      });                    
                     navigate('/multiplayresult', {
+
                     state:{
                         perfectScore: perfectRef.current,
                         goodScore: goodRef.current,
@@ -187,10 +199,17 @@ function MultiplayWaiting(){
                 });
                 }
             });
-    
-    
+
+
             scoreSocket.current.on('score', (data) => {
                 scoreRef.current = data;
+                let idx = 0;
+                scoreRef.current.map((client, index) => {
+                    if (client.clientId !== userIdRef.current) {
+                        playerScoresRef.current[idx] = client.score;
+                        idx++;
+                    }
+                });
             });
     
             scoreSocket.current.on("connect", () => {
@@ -200,6 +219,8 @@ function MultiplayWaiting(){
 
       }, [mySessionId]); // count 상태값이 변경될 때마다 이펙트가 실행됩니다.
     
+    const playerScoresRef = useRef([0,0,0]);
+
     
 
     function redirectToSinglePlayResult() {
@@ -433,11 +454,11 @@ function MultiplayWaiting(){
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
-                            }
                                 obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
                                 obj.done = true;
                                 obj.elemBack.remove();
                                 setTimeout(()=>{obj.elem.remove()},500); 
+                            }
                                 
 
                         }
@@ -652,6 +673,8 @@ function resultGame(){
                             canvasElement.style.height = video.videoHeight+'px';
                             
                         });
+
+                        setIsLoading(false);
                         
                     });
                 }
@@ -671,6 +694,8 @@ function resultGame(){
         console.log('useEffect')
         return () => {
             window.removeEventListener('beforeunload', onBeforeUnload);
+            targets.current.forEach((t)=>t.elem.remove());
+            audio.current.pause();
         };
 
     },[])
@@ -718,7 +743,7 @@ function resultGame(){
     };
 
     // const generateRandomAlphaNumeric = (length) => {
-    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     //     let result = '';
 
     //     for (let i = 0; i < length; i++) {
@@ -803,11 +828,23 @@ function resultGame(){
             // });
 
 
+
+
             
 
             // syncSocket.current.on('end', (data) => {
+
             //     if(data.end){
+            //         scoreRef.current.sort(function(a, b) {
+            //             const scoreA = a.score;
+            //             const scoreB = b.score;
+                        
+            //             if(scoreA < scoreB) return 1;
+            //             if(scoreA > scoreB) return -1;
+            //             if(scoreA === scoreB) return 0;
+            //           });                    
             //         navigate('/multiplayresult', {
+
             //         state:{
             //             perfectScore: perfectRef.current,
             //             goodScore: goodRef.current,
@@ -824,7 +861,15 @@ function resultGame(){
 
             // scoreSocket.current.on('score', (data) => {
             //     scoreRef.current = data;
+            //     let idx = 0;
+            //     scoreRef.current.map((client, index) => {
+            //         if (client.clientId !== userIdRef.current) {
+            //             playerScoresRef.current[idx] = client.score;
+            //             idx++;
+            //         }
+            //     });
             // });
+            
 
             // scoreSocket.current.on("connect", () => {
             //     userIdRef.current = scoreSocket.current.id;
@@ -958,6 +1003,17 @@ function resultGame(){
             //     score: 0,
             // });
 
+            // scoreSocket.current.on('score', (data) => {
+            //     scoreRef.current = data;
+            //     let idx = 0;
+            //     scoreRef.current.map((client, index) => {
+            //         if (client.clientId !== userIdRef.current) {
+            //             playerScoresRef.current[idx] = client.score;
+            //             idx++;
+            //         }
+            //     });
+            // });
+
 
             // scoreSocket.current.on('score', (data) => {
             //     scoreRef.current = data;
@@ -1048,98 +1104,103 @@ function resultGame(){
 
 
     return(
-        <div className="containerMultiplay">
-            <div className='roominfo'>
-                {mySessionId}
-                <br />
-                {myUserName}
-            </div>
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className='multicontainer'>
-                    <div className='bigbox'>
-                    <div id="video-container" className="col-md-6">
+        <>
+            {isLoading ? <Loading/> : null}
+            <div className="containerMultiplay">
+                <div className='roominfo'>
+                    {mySessionId}
+                    <br />
+                    {myUserName}
+                </div>
+                <div className='camandmessagebox' style={{display:'flex'}}>
+                    <div className='mainSection'>
+                        <div className='multicontainer'>
+                        <div className='bigbox'>
+                        <div id="video-container" className="col-md-6">
+                        </div>
+                        
+                            <div style={{display:'flex'}}>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[0] !== undefined ?(
+                                <div> 
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[0]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[1] !== undefined ?(
+                                <div>
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[1]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[2] !== undefined ?(
+                                <div>    
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[2]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                        </div>
+                        
+                            <div>
+                                <div className='camboxNumber'></div>
+                                <div className='containermulti'>
+                                <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
+                                <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
+                                </div>
+                                {isGamePlayingState && scoreRef.current.map((client, index) => (
+                                client.clientId === userIdRef.current ? (
+                                    <div key={index}>
+                                    <div>
+                                        {client.userName}<br />
+                                        {client.score}
+                                    </div>
+                                    </div>
+                                ) : null
+                                ))}
+                        </div>
+                        </div>
+
+                        </div>
                     </div>
                     {isGamePlayingState ? (
-                      <div style={{display:'flex'}}>
-                    {scoreRef.current.map((client, index) => (
-                        client.clientId !== userIdRef.current ? (
-                            <div key={index} className='cambox'>
-                                <div className='camboxNumber'></div>
-                                <div>
-                                    {client.userName}<br />
-                                    {client.score}
-                                </div>
-                            </div>
-                        ) : null
-                    ))}
-
-                    </div>
-                    ) : (                       
-                       
-                        <div style={{display:'flex'}}>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[0] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
-                            : null }
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
-                            : null }
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[2] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
-                            : null }
-                        </div>
-                    </div>
-                    )}
-                        <div>
-                            <div className='camboxNumber'></div>
-                            <div className='containermulti'>
-                            <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
-                            <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                            </div>
-
-                    </div>
-                    </div>
-
+                        
+                <ScoreBox
+                    perfectScore={perfectScore}
+                    goodScore={goodScore}
+                    failedScore={failedScore}
+                    highestCombo={highestCombo}
+                    comboScore={comboScore}
+                    stopGame={stopGame}
+                    isGamePlayingState={isGamePlayingState}
+                    isGameEnd={isGameEnd}
+                    userName={userName}
+                    redirectToSinglePlayResult={redirectToSinglePlayResult}
+                    pic_url={selectedMusic.pic_url}
+                    resultGame={resultGame}    
+                />
+                ) : (
+                <div className="subContainermulti">
+                    <TitleMultiplay />
+                    <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
+                    <button type="submit" className="startbuttonmulti" onClick={readyGame}>
+                    START
+                    </button>
+                    <div style={{marginTop:'41px'}}>
+                    <Websocket userName={myUserName} sessionId={mySessionId}  />
                     </div>
                 </div>
-                {isGamePlayingState ? (
-                    
-              <ScoreBox
-                perfectScore={perfectScore}
-                goodScore={goodScore}
-                failedScore={failedScore}
-                highestCombo={highestCombo}
-                comboScore={comboScore}
-                stopGame={stopGame}
-                isGamePlayingState={isGamePlayingState}
-                isGameEnd={isGameEnd}
-                userName={userName}
-                redirectToSinglePlayResult={redirectToSinglePlayResult}
-                pic_url={selectedMusic.pic_url}
-                resultGame={resultGame}    
-              />
-            ) : (
-              <div className="subContainermulti">
-                <TitleMultiplay />
-                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbuttonmulti" onClick={readyGame}>
-                  START
-                </button>
-                <div style={{marginTop:'41px'}}>
-                <Websocket userName={myUserName} sessionId={mySessionId}  />
+                )} 
                 </div>
-              </div>
-            )} 
             </div>
-        </div>
+        </>
 
     )
     

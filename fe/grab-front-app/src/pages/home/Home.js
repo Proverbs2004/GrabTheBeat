@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import './Home.css';
 import Header from 'pages/header/Header';
+import { useCallback, useState } from 'react';
+import axios from 'axios';
+import { removeRefreshToken } from 'storage/Cookie';
 
 
 function TitleGame() {
@@ -55,7 +58,13 @@ function ButtonGoogle() {
   )
 }
 
+const ACCESS_TOKEN = 'access_token';
+const EMAIL = 'email';
+const NICKNAME = 'nickname';
+const EMAIL_ALIAS = 'email_alias';
+
 function Home() {
+  const navigate = useNavigate();
 
   const token = searchParam('token')
 
@@ -69,13 +78,40 @@ function Home() {
       return new URLSearchParams(window.location.search).get(key);
   }
 
+  function logout() {
+    console.log(process.env.REACT_APP_SPRING_URL)
+    const response = axios.get(process.env.REACT_APP_SPRING_URL + '/api/logout', {}, {
+      headers: { Authorization: token }
+    })
+    .then(res => {
+      console.log('logout success:', res);
+      localStorage.removeItem(ACCESS_TOKEN);
+      localStorage.removeItem(EMAIL);
+      localStorage.removeItem(NICKNAME);
+      localStorage.removeItem(EMAIL_ALIAS);
+      removeRefreshToken();
+      // setToken(undefined, () => {
+      //   window.location.reload();
+      //   console.log('reload')
+      // });
+      navigate("/");
+      // window.location.reload();
+    })
+    .catch(err => {
+      console.log('logout failed:', err);
+    });
+  }
+
   return (
 
     <div className="containerHome">
-      <Header />
+      {/* <Header /> */}
       <TitleGame />
       <ButtonCreateJoinContainer />
-      <ButtonGoogle />
+      {localStorage.getItem('access_token') ? 
+          <button className="backbuttonCreate" onClick={logout}>
+              LOGOUT
+          </button> : <ButtonGoogle /> }
     </div>
 
   );
