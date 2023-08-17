@@ -6,23 +6,22 @@ import { io } from "socket.io-client";
 const Client = (props) => {
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  // const [roomId, setRoomId] = useState(props.sessionId);
   // const ws = useRef(null);
   const socket = useRef(null);
   const messageInputRef = useRef(null);
+  const roomIdRef = useRef();
 
   console.log('props: ',props);
-  const userName = props.userName;
   const roomId = props.sessionId;
+  const userName = props.userName;
   console.log('roomId : ', roomId)
 
   useEffect(() => {
-
     socket.current = io(process.env.REACT_APP_SOCKET_URL + "/chat?roomId=" + roomId, {
       reconnectionDelayMax: 10000,
     });
     console.log('socket.current  : ', socket.current);
-
-
 
     // 메시지 받았을 때
     socket.current.on('message', data => {
@@ -33,7 +32,7 @@ const Client = (props) => {
 
 return () => {
 };
-}, []);
+}, [roomId]);
 
 // 메세지 전송
 const sendMessage = () => {

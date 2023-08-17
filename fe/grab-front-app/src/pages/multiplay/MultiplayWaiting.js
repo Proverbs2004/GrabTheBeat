@@ -45,11 +45,12 @@ function TitleMultiplay() {
 function MultiplayWaiting(){
     const navigate = useNavigate();
 
-    const [mySessionId, setMySessionId] = useState('qwer'); // 추후 이곳에 방 만들기 일때는 랜덤코드를 방 참가 일 때는 입력된 코드를 넣기
+    const [mySessionId, setMySessionId] = useState(); // 추후 이곳에 방 만들기 일때는 랜덤코드를 방 참가 일 때는 입력된 코드를 넣기
     const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100)); // 방 만들기와 방 참가를 구분하는 변수로 사용하기
     const [session, setSession] = useState(undefined);
     const [publisher, setPublisher] = useState(undefined);
     const [subscribers, setSubscribers] = useState([]);
+    const mySessionIdRef = useRef();
 
     const location = useLocation();
     const from = location.state.from;
@@ -68,6 +69,7 @@ function MultiplayWaiting(){
     const [comboScore, setComboScore] = useState(0);
     const targets = useRef([]);
     const [totalScore, setTotalScore] = useState(0);
+    const [token, setToken] = useState();
 
     const audio = useRef(new Audio(redBone));
     const isGamePlaying = useRef(false);
@@ -109,6 +111,43 @@ function MultiplayWaiting(){
     const nameRef = useRef(name);
 
     
+    const createSession = async (sessionId) => {
+        try {
+            const response = await axios.post(
+                APPLICATION_SERVER_URL + 'openvidu/api/sessions',
+                { customSessionId: sessionId },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic T1BFTlZJRFVBUFA6YTYwNw==',
+                    }
+                }
+            );
+            return response.data.sessionId;
+        } catch (error) {
+            if (error.response && error.response.status === 409) {
+                return sessionId;
+            }
+            throw error;
+        }
+    };
+
+    const generateRandomAlphaNumeric = (length) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters.charAt(randomIndex);
+        }
+        console.log('generate ', result)
+        return result;
+    }
+
+    if (!mySessionIdRef.current) {
+        createAndSetSessionId();
+    }
+
 
     function redirectToSinglePlayResult() {
         // '/singleplayresult' 경로로 이동
@@ -475,7 +514,19 @@ useEffect(()=>{
     
 },[comboScore]);
 
+async function createAndSetSessionId() {
+    // const sessionId = await createSession(mySessionId);
+    const sessionId = await createSession(generateRandomAlphaNumeric(6));
+    console.log(new Date());
+    console.log('join session id', sessionId);
+    // const token = await createToken(sessionId);
+    setToken(await createToken(sessionId));
+    setMySessionId(sessionId);
+    mySessionIdRef.current = sessionId;
+    console.log('mysessionid : ', mySessionId);
 
+    console.log('sessionId below set timeout : ', sessionId);
+}
 
 const handleMusicSelect = (music) => {
 
@@ -578,23 +629,25 @@ function resultGame(){
         drawingUtils = new DrawingUtils(canvasCtx);
 
         console.log('from useeffect from ', from)
-        const handleFunctionCall = () => {
+        const handleFunctionCall = async () => {
             if (from === 'create') {
               // 'a' 페이지에서 왔을 경우 실행할 함수
               console.log('from에 따라 joinsession')
-               joinSession();
+               await joinSession();
               
             } else if (from === 'join') {
               // 'b' 페이지에서 왔을 경우 실행할 함수
               console.log('from에 따라 entersession')
-               enterSession();
+               await enterSession();
+            } else {
+                console.log("from이 create도 아니고, join도 아님!!");
             }
             console.log('구기현기구 : ', mySessionId);
           };
       
           handleFunctionCall();
           console.log('소켓 객체 만들기 실행 전 : ', mySessionId);
-    }, [from]);
+    }, [mySessionId]);
 
     const onBeforeUnload = () => {
         leaveSession();
@@ -611,18 +664,6 @@ function resultGame(){
     const deleteSubscriber = (streamManager) => {
         setSubscribers(prevSubscribers => prevSubscribers.filter(sub => sub !== streamManager));
     };
-
-    const generateRandomAlphaNumeric = (length) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
-
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            result += characters.charAt(randomIndex);
-        }
-        console.log('generate ', result)
-        return result;
-    }
 
     const joinSession = async () => {
 
@@ -645,86 +686,86 @@ function resultGame(){
             });
             
             // const sessionId = await createSession(mySessionId);
-            const sessionId = await createSession(generateRandomAlphaNumeric(6));
-            console.log('join session id', sessionId);
-            const token = await createToken(sessionId);
-            setMySessionId(sessionId);
+            // const sessionId = await createSession(generateRandomAlphaNumeric(6));
+            // console.log(new Date());
+            // console.log('join session id', sessionId);
+            // const token = await createToken(sessionId);
+            // setMySessionId(sessionId);
+            // console.log('mysessionid : ', mySessionId);
 
-            setTimeout(() => {
-                
-            }, 1000);
-
-            musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
+            if (mySessionId !== undefined) {
+                musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music", {
+                    query: {
+                        roomId: mySessionId,
+                    },
                 });
-            console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
 
-            musicSocket.current.on('music', (idx) => {
-                console.log('musicSocket on idx : ', idx);
-                musicList.forEach((music) => {
-                    if(music.id === idx) {
-                        
-                        setSelectedMusic(music);
-                        selectedMusicRef.current=music;
-            
-                        return ;
+                musicSocket.current.on('music', (idx) => {
+                    console.log('musicSocket on idx : ', idx);
+                    musicList.forEach((music) => {
+                        if(music.id === idx) {
+                            
+                            setSelectedMusic(music);
+                            selectedMusicRef.current=music;
+                
+                            return ;
+                        }
+                    });
+                
+                });
+
+                syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + mySessionId, {
+                    reconnectionDelayMax: 10000,
+                });
+    
+                syncSocket.current.on('start', (data) => {
+                    if(data.start){
+                        playGame();
                     }
                 });
-            
-            })
-
-            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
+    
+    
+                scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + mySessionId, {
+                    reconnectionDelayMax: 10000,
                 });
-            syncSocket.current.on('start', (data) => {
-                if(data.start){
-                    playGame();
-                }
-            });
-
-
-            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
+    
+                scoreSocket.current.emit('score', {
+                    // score: scoreRef2,
+                    userName: nameRef.current,
+                    score: 0,
+    
                 });
-
-            scoreSocket.current.emit('score', {
-                // score: scoreRef2,
-                userName: nameRef.current,
-                score: 0,
-
-            });
-
-            
-
-            syncSocket.current.on('end', (data) => {
-                if(data.end){
-                    navigate('/multiplayresult', {
-                    state:{
-                        perfectScore: perfectRef.current,
-                        goodScore: goodRef.current,
-                        failedScore: failRef.current,
-                        highestCombo: highestRef.current,
-                        userName: nameRef.current,
-                        pic_url: selectedMusic.pic_url,
-                        scores: scoreRef.current
-                    }    
+    
+                
+    
+                syncSocket.current.on('end', (data) => {
+                    if(data.end){
+                        navigate('/multiplayresult', {
+                        state:{
+                            perfectScore: perfectRef.current,
+                            goodScore: goodRef.current,
+                            failedScore: failRef.current,
+                            highestCombo: highestRef.current,
+                            userName: nameRef.current,
+                            pic_url: selectedMusic.pic_url,
+                            scores: scoreRef.current
+                        }    
+                    });
+                    }
                 });
-                }
-            });
-            console.log(nameRef.current);
-            console.log("여기 정말로 유저 네임");
+                console.log(nameRef.current);
+                console.log("여기 정말로 유저 네임");
+    
+    
+                scoreSocket.current.on('score', (data) => {
+                    scoreRef.current = data;
+                    console.log(scoreRef.current);
+                    console.log(scoreRef.current[0].score);
+                    console.log("스코어레프");
+                });
+            }
 
-
-            scoreSocket.current.on('score', (data) => {
-                scoreRef.current = data;
-                console.log(scoreRef.current);
-                console.log(scoreRef.current[0].score);
-                console.log("스코어레프");
-            });
-
-
-
-            
+            console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
 
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
@@ -791,67 +832,79 @@ function resultGame(){
             console.log('enter session id', sessionId);
             const token = await createToken(sessionId);
 
-            musicSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            console.log('musicSocket.current  : ', musicSocket.current);
+            // musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music", {
+            //     query: {
+            //         roomId: sessionId,
+            //     },
+            //     reconnectionDelayMax: 10000,
+            // });
 
-            musicSocket.current.on('music', (idx) => {
-                console.log('musicSocket on idx : ', idx);
-                musicList.forEach((music) => {
-                    if(music.id === idx) {
-                        
-                        setSelectedMusic(music);
-                        selectedMusicRef.current=music;
-            
-                        return ;
+            if (!mySessionId) {
+                musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music", {
+                    query: {
+                        roomId: sessionId,
+                    },
+                    reconnectionDelayMax: 10000,
+                });
+                console.log('musicSocket.current  : ', musicSocket.current);
+
+                musicSocket.current.on('music', (idx) => {
+                    console.log('musicSocket on idx : ', idx);
+                    musicList.forEach((music) => {
+                        if(music.id === idx) {
+                            
+                            setSelectedMusic(music);
+                            selectedMusicRef.current=music;
+                
+                            return ;
+                        }
+                    });
+                
+                });
+
+                syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
+                    reconnectionDelayMax: 10000,
+                    });
+                syncSocket.current.on('start', (data) => {
+                    if(data.start){
+                        playGame();
                     }
                 });
-            
-            });
 
-            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            syncSocket.current.on('start', (data) => {
-                if(data.start){
-                    playGame();
-                }
-            });
-
-            syncSocket.current.on('end', (data) => {
-                if(data.end){
-                    navigate('/multiplayresult', {
-                    state:{
-                        perfectScore: perfectRef.current,
-                        goodScore: goodRef.current,
-                        failedScore: failRef.current,
-                        highestCombo: highestRef.current,
-                        userName: nameRef.current,
-                        pic_url: selectedMusic.pic_url,
-                        scores: scoreRef.current
-                    }    
-                });
-                }
-            });
-
-            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
+                syncSocket.current.on('end', (data) => {
+                    if(data.end){
+                        navigate('/multiplayresult', {
+                        state:{
+                            perfectScore: perfectRef.current,
+                            goodScore: goodRef.current,
+                            failedScore: failRef.current,
+                            highestCombo: highestRef.current,
+                            userName: nameRef.current,
+                            pic_url: selectedMusic.pic_url,
+                            scores: scoreRef.current
+                        }    
+                    });
+                    }
                 });
 
-            scoreSocket.current.emit('score', {
-                // score: scoreRef2.current,
-                userName: nameRef.current,
-                score: 0,
+                scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
+                    reconnectionDelayMax: 10000,
+                    });
 
-            });
+                scoreSocket.current.emit('score', {
+                    // score: scoreRef2.current,
+                    userName: nameRef.current,
+                    score: 0,
 
-            scoreSocket.current.on('score', (data) => {
-                scoreRef.current = data;
-                console.log(scoreRef.current);
-                console.log(scoreRef.current[0]);
-                console.log("스코어레프");
-            });
+                });
+
+                scoreSocket.current.on('score', (data) => {
+                    scoreRef.current = data;
+                    console.log(scoreRef.current);
+                    console.log(scoreRef.current[0]);
+                    console.log("스코어레프");
+                });
+            }
 
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
@@ -894,29 +947,6 @@ function resultGame(){
         setMySessionId('SessionA');
         setMyUserName('Participant' + Math.floor(Math.random() * 100));
         setPublisher(undefined);
-    };
-
-    
-
-    const createSession = async (sessionId) => {
-        try {
-            const response = await axios.post(
-                APPLICATION_SERVER_URL + 'openvidu/api/sessions',
-                { customSessionId: sessionId },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic T1BFTlZJRFVBUFA6YTYwNw==',
-                    }
-                }
-            );
-            return response.data.sessionId;
-        } catch (error) {
-            if (error.response && error.response.status === 409) {
-                return sessionId;
-            }
-            throw error;
-        }
     };
 
     const createToken = async (sessionId) => {
@@ -994,7 +1024,7 @@ function resultGame(){
                     </div>
 
                     </div>
-                    <Websocket userName={myUserName} sessionId={mySessionId}  />
+                    <Websocket userName={myUserName} sessionId={mySessionIdRef.current}  />
                 </div>
                 {isGamePlayingState ? (
               <ScoreBox
