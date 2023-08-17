@@ -67,6 +67,7 @@ function MultiplayWaiting(){
     const [highestCombo, setHighestCombo] = useState(0);
     const [comboScore, setComboScore] = useState(0);
     const targets = useRef([]);
+    const [totalScore, setTotalScore] = useState(0);
 
     const audio = useRef(new Audio(redBone));
     const isGamePlaying = useRef(false);
@@ -80,7 +81,12 @@ function MultiplayWaiting(){
     const musicSocket = useRef(null);
     const syncSocket = useRef(null);
     const scoreSocket = useRef(null);
-    const scoreRef = useRef(0);
+    const scoreRef = useRef(null);
+    const scoreRef2 = useRef(0);
+    const goodRef = useRef(0);
+    const perfectRef = useRef(0);
+    const failRef = useRef(0);
+    const highestRef = useRef(0);
 
     let drawingUtils = null;
     let handLandmarker = null;
@@ -100,6 +106,9 @@ function MultiplayWaiting(){
     const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
     const queryParams = new URLSearchParams(location.search);
     const userName = queryParams.get('userName');
+    const nameRef = useRef(name);
+
+    
 
     function redirectToSinglePlayResult() {
         // '/singleplayresult' 경로로 이동
@@ -300,6 +309,8 @@ function MultiplayWaiting(){
                                 obj.elemBack.remove();
                                 setTimeout(()=>{obj.elem.remove()},500);
 
+                                failRef.current = failRef.current+1; 
+
                             } else if(nowTime.current > obj.createdTime/1000 + 0.900 && nowTime.current < obj.createdTime/1000 + 1.100){
 
                                 setPerfectScore((prev)=>prev+1);
@@ -310,6 +321,13 @@ function MultiplayWaiting(){
                                 obj.elemBack.remove();
                                 setTimeout(()=>{obj.elem.remove()},500);
 
+                                perfectRef.current = perfectRef.current+1;
+                                scoreRef2.current = scoreRef2.current + perfectRef.current * 1000; 
+                                scoreSocket.current.emit('score', {
+                                    score: scoreRef2.current,
+                                });
+                                console.log(scoreRef2.current);
+                                console.log("레프레프레프");
                             } 
                             else {
 
@@ -319,7 +337,15 @@ function MultiplayWaiting(){
                                 obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
                                 obj.done = true;
                                 obj.elemBack.remove();
-                                setTimeout(()=>{obj.elem.remove()},500);
+                                setTimeout(()=>{obj.elem.remove()},500); 
+                                
+                                goodRef.current = goodRef.current+1;
+                                scoreRef2.current = scoreRef2.current + goodScore * 300;
+                                scoreSocket.current.emit('score', {
+                                    score: scoreRef2.current,
+                                });
+                                console.log(scoreRef2.current);
+                                console.log("레프레프레프");
                             }
                         }
 
@@ -414,6 +440,7 @@ function MultiplayWaiting(){
 }
 
 function playGame() {
+
     if (audio.current && !isGamePlaying.current) {
 
         updateTimePosArraysAndAudio();
@@ -443,6 +470,7 @@ function playDrum() {
 useEffect(()=>{
     if(comboScore>highestCombo){
         setHighestCombo(comboScore);
+        highestRef.current=comboScore;
     }
     
 },[comboScore]);
@@ -467,16 +495,6 @@ function readyGame(){
 function resultGame(){
     syncSocket.current.emit('end');
 };
-
-    function MusicBox({playGame}){
-        return(
-            <div className="songTitle">
-                <div className="songTitle">song title: AAA</div>
-                <button id="gameStart" onClick={playGame}>게임시작</button>
-            </div>
-        )
-    
-    }
 
 
     useEffect(()=>{
@@ -636,7 +654,7 @@ function resultGame(){
                 
             }, 1000);
 
-            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+            musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
@@ -655,7 +673,7 @@ function resultGame(){
             
             })
 
-            syncSocket.current = io("ws://localhost:8000/sync?roomId=" + sessionId, {
+            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             syncSocket.current.on('start', (data) => {
@@ -665,31 +683,36 @@ function resultGame(){
             });
 
 
-            scoreSocket.current = io("ws://localhost:8000/score?roomId=" + sessionId, {
+            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
 
             scoreSocket.current.emit('score', {
-                score: 100,
+                // score: scoreRef2,
+                userName: nameRef.current,
+                score: 0,
+
             });
+
+            
 
             syncSocket.current.on('end', (data) => {
                 if(data.end){
                     navigate('/multiplayresult', {
                     state:{
-                        perfectScore: perfectScore,
-                        goodScore: goodScore,
-                        failedScore: failedScore,
-                        highestCombo: highestCombo,
-                        comboScore: comboScore,
-                        userName: userName,
+                        perfectScore: perfectRef.current,
+                        goodScore: goodRef.current,
+                        failedScore: failRef.current,
+                        highestCombo: highestRef.current,
+                        userName: nameRef.current,
                         pic_url: selectedMusic.pic_url,
                         scores: scoreRef.current
-                    }
-                    
+                    }    
                 });
                 }
             });
+            console.log(nameRef.current);
+            console.log("여기 정말로 유저 네임");
 
 
             scoreSocket.current.on('score', (data) => {
@@ -740,54 +763,6 @@ function resultGame(){
                 .catch((error) => {
                     console.log('There was an error connecting to the session:', error.code, error.message);
                 });
-
-            // mySession.connect(token.token, { clientData: myUserName })
-            //     .then(async () => {
-            //         let publisher = await ov.initPublisherAsync(undefined, {
-            //             audioSource: false, 
-            //             videoSource: undefined,
-            //             publishAudio: true, 
-            //             publishVideo: true, 
-            //             resolution: '640x480',
-            //             frameRate: 30,
-            //             insertMode: 'APPEND', 
-            //             mirror: false,
-            //         });
-
-            //         mySession.publish(publisher);
-            //         setSession(mySession);
-            //         // setMainStreamManager(publisher);
-            //         setPublisher(publisher);
-            //     })
-            //     .catch((error) => {
-            //         console.log('There was an error connecting to the session:', error.code, error.message);
-            //     });
-
-
-
-
-            // mySession.connect(token.token, { clientData: myUserName });
-    
-            // const publisher = await ov.initPublisherAsync(undefined, {
-            //     audioSource: false,
-            //     videoSource: undefined,
-            //     publishAudio: true,
-            //     publishVideo: true,
-            //     resolution: '640x480',
-            //     frameRate: 30,
-            //     insertMode: 'APPEND',
-            //     mirror: false,
-            // });
-    
-            // console.log('mySession')
-            // console.log(mySession)
-
-            // mySession.publish(publisher);
-    
-            // // 여기서 세션 연결 후 상태 업데이트 및 UI 렌더링을 진행
-            // setSession(mySession);
-            // // setMainStreamManager(publisher);
-            // setPublisher(publisher);
         } catch (error) {
             console.log('There was an error:', error);
         }
@@ -816,7 +791,7 @@ function resultGame(){
             console.log('enter session id', sessionId);
             const token = await createToken(sessionId);
 
-            musicSocket.current = io("ws://localhost:8000/music?roomId=" + sessionId, {
+            musicSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             console.log('musicSocket.current  : ', musicSocket.current);
@@ -835,7 +810,7 @@ function resultGame(){
             
             });
 
-            syncSocket.current = io("ws://localhost:8000/sync?roomId=" + sessionId, {
+            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
             syncSocket.current.on('start', (data) => {
@@ -848,26 +823,27 @@ function resultGame(){
                 if(data.end){
                     navigate('/multiplayresult', {
                     state:{
-                        perfectScore: perfectScore,
-                        goodScore: goodScore,
-                        failedScore: failedScore,
-                        highestCombo: highestCombo,
-                        comboScore: comboScore,
-                        userName: userName,
+                        perfectScore: perfectRef.current,
+                        goodScore: goodRef.current,
+                        failedScore: failRef.current,
+                        highestCombo: highestRef.current,
+                        userName: nameRef.current,
                         pic_url: selectedMusic.pic_url,
                         scores: scoreRef.current
-                    }
-                    
+                    }    
                 });
                 }
             });
 
-            scoreSocket.current = io("ws://localhost:8000/score?roomId=" + sessionId, {
+            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
                 reconnectionDelayMax: 10000,
                 });
 
             scoreSocket.current.emit('score', {
-                score: 100,
+                // score: scoreRef2.current,
+                userName: nameRef.current,
+                score: 0,
+
             });
 
             scoreSocket.current.on('score', (data) => {
@@ -906,7 +882,6 @@ function resultGame(){
             console.log('There was an error:', error);
         }
     };
-
 
     const leaveSession = () => {
         console.log('리브 세션 집입');
@@ -957,7 +932,6 @@ function resultGame(){
         );
         return response.data;
     };
-
 
 
     return(
