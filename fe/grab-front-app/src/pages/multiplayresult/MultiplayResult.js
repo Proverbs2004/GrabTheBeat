@@ -25,7 +25,7 @@ function MultiplayResult() {
             <div className="resulttitlemulti">RESULT</div>
             <div className="scoreboardmulti">
             <div className="scoreinfomulti" style={{ display: "flex", textAlign:'center' }}>
-                <div className="rankmulti">player</div>
+                <div className="rankmulti">rank</div>
                 <div className="usernamemulti">username</div>
                 <div className="scoremulti">score</div>
                 <div className="pointmulti">point</div>
