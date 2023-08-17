@@ -37,7 +37,7 @@ function ButtonHome() {
 function JoinForm() {
     const [values, setValues] = useState({
         code: "",
-        userName: "",
+        userName: localStorage.getItem("email_alias") || "",
     });
 
     const [errors, setErrors] = useState({
