@@ -936,7 +936,6 @@ function resultGame(){
 
     return(
         <div className="containerMultiplay">
-            <TitleMultiplay />
             <div className='roominfo'>
                 {mySessionId}
                 <br />
@@ -945,29 +944,16 @@ function resultGame(){
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
+                    {/* <div className="gameContainerWaiting">
+                        {<UserVideoComponent streamManager={publisher} /> }
+                    </div> */}
+                    {/* <div className='subContainer'>
+                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
+                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
+                    </div> */}
                     <div className='bigbox'>
-                    <div id="video-container" className="col-md-6" style={{ display:'flex'}}>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
-                            <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                        </div>
-
+                    <div id="video-container" className="col-md-6">
                     </div>
-                    {isGamePlayingState ? (
-                        
-                      <div style={{display:'flex'}}>
-                        {scoreRef.current.map((client, index) => (
-                            <div key={index} className='cambox'>
-                            <div className='camboxNumber'></div>
-                            <div>
-                            {client.score}
-                            </div>
-                            </div>
-                        ))}
-                   
-                    </div>
-                    ) : (
                         <div style={{display:'flex'}}>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
@@ -975,6 +961,11 @@ function resultGame(){
                             <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
                             : null }
                         </div>
+                    
+
+
+                    
+
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
                             {subscribers[1] !== undefined ?
@@ -988,15 +979,24 @@ function resultGame(){
                             : null }
                         </div>
                     </div>
-                    )
-                    }
-                   
+                        <div>
+                            <div className='camboxNumber'></div>
+                            <div className='containermulti'>
+                            <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
+                            <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
+                            {/* <UserVideoComponent streamManager={publisher} /> */}
+                            {/* {subscribers[0] !== undefined ?
+                            <UserVideoComponent streamManager={subscribers[0]} />
+                            : null } */}
+                            </div>
+
+                    </div>
                     </div>
 
                     </div>
-                    <Websocket userName={myUserName} sessionId={mySessionId}  />
                 </div>
                 {isGamePlayingState ? (
+                    
               <ScoreBox
                 perfectScore={perfectScore}
                 goodScore={goodScore}
@@ -1009,14 +1009,17 @@ function resultGame(){
                 userName={userName}
                 redirectToSinglePlayResult={redirectToSinglePlayResult}
                 pic_url={selectedMusic.pic_url}
-                resultGame={resultGame}
               />
             ) : (
-              <div className="subContainer">
+              <div className="subContainermulti">
+                <TitleMultiplay />
                 <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbutton" onClick={readyGame}>
+                <button type="submit" className="startbuttonmulti" onClick={playGame}>
                   START
                 </button>
+                <div style={{marginTop:'41px'}}>
+                <Websocket userName={myUserName} sessionId={mySessionId}  />
+                </div>
               </div>
             )} 
             </div>
@@ -1042,7 +1045,7 @@ function ScoreBox({
 
     
     return (
-      <div className="scoreBox">
+      <div className="scoreBoxmulti">
         <div className="perfect">perfect: {perfectScore}</div>
         <div className="good">good: {goodScore}</div>
         <div className="failed">failed: {failedScore}</div>
@@ -1051,10 +1054,10 @@ function ScoreBox({
   
         {isGamePlayingState && isGameEnd ? (
             <div>
-            <button id="gamequit" onClick={resultGame}>Result</button>
+            <button id="gamequitmulti" onClick={resultGame}>Result</button>
           </div>
         ) : (
-          <button id="gamequit" onClick={stopGame}>
+          <button id="gamequitmulti" onClick={stopGame}>
             QUIT
           </button>
         )}

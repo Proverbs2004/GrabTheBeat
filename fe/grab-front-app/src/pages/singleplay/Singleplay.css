@@ -55,9 +55,10 @@ body{
 transform: rotateY(180deg);
 -webkit-transform: rotateY(180deg);
 -moz-transform: rotateY(180deg);
-filter: contrast(100.0) brightness(0.0) grayscale(100%);
+filter: contrast(100.0) brightness(0.2) grayscale(100%);
 z-index: -2;
 position: absolute;
+height: 0px;
 }
 
 #canvasZoneWaiting {
