@@ -36,9 +36,9 @@ import { io } from "socket.io-client";
 
 const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
-function TitleMultiplay() {
+function TitleMultiplay({handleCopyToClipboard}) {
     return (
-        <div className="TitleMultiplay">MULTIPLAY</div>
+        <div className="TitleMultiplay" onClick={handleCopyToClipboard}>MULTIPLAY</div>
     )
 }
 
@@ -943,13 +943,24 @@ function resultGame(){
         return response.data;
     };
 
+    function copyToClipboard() {
+        navigator.clipboard.writeText(mySessionId)
+            .then(() => {
+            console.log('Text copied to clipboard:', mySessionId);
+            })
+            .catch((err) => {
+            console.error('Failed to copy text: ', err);
+            });
+    }
+
+    function handleCopyToClipboard() {
+        console.log('copy')
+        copyToClipboard(mySessionId);
+    }
 
     return(
         <div className="containerMultiplay">
             <div className='roominfo'>
-                {mySessionId}
-                <br />
-                {myUserName}
             </div>
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
@@ -1025,7 +1036,7 @@ function resultGame(){
               />
             ) : (
               <div className="subContainermulti">
-                <TitleMultiplay />
+                <TitleMultiplay handleCopyToClipboard={handleCopyToClipboard}/>
                 <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
                 <button type="submit" className="startbuttonmulti" onClick={readyGame}>
                   START
