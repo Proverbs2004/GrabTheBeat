@@ -22,6 +22,8 @@ import Auth from 'hoc/auth';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const AuthHome = Auth(Home, null);
+  const AuthCreate = Auth(Create, null);
   const AuthJoin = Auth(Join, null);
   const AuthMultiplayJoin = Auth(MultiplayJoin, null);
   const AuthSingleplayResult = Auth(SingleplayResult, null);
@@ -47,8 +49,10 @@ function App() {
           <Loading />
         ) : (
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create" element={<Create />} />
+            {/* <Route path="/" element={<Home />} /> */}
+            <Route path="/" element={<AuthHome />} />
+            {/* <Route path="/create" element={<Create />} /> */
+            <Route path="/create" element={<AuthCreate />} />}
             {/* <Route path="/join" element={<Join />} /> */}
             <Route path="/join" element={<AuthJoin />} />
             <Route path="/singleplayJoin" element={<SingleplayJoin />} />
