@@ -109,6 +109,8 @@ function MultiplayWaiting(){
     const userName = queryParams.get('userName');
     const nameRef = useRef(name);
 
+    const playerScoresRef = useRef([0,0,0]);
+
     
 
     function redirectToSinglePlayResult() {
@@ -700,11 +702,23 @@ function resultGame(){
             });
 
 
+
+
             
 
             syncSocket.current.on('end', (data) => {
+
                 if(data.end){
+                    scoreRef.current.sort(function(a, b) {
+                        const scoreA = a.score;
+                        const scoreB = b.score;
+                        
+                        if(scoreA < scoreB) return 1;
+                        if(scoreA > scoreB) return -1;
+                        if(scoreA === scoreB) return 0;
+                      });                    
                     navigate('/multiplayresult', {
+
                     state:{
                         perfectScore: perfectRef.current,
                         goodScore: goodRef.current,
@@ -721,7 +735,15 @@ function resultGame(){
 
             scoreSocket.current.on('score', (data) => {
                 scoreRef.current = data;
+                let idx = 0;
+                scoreRef.current.map((client, index) => {
+                    if (client.clientId !== userIdRef.current) {
+                        playerScoresRef.current[idx] = client.score;
+                        idx++;
+                    }
+                });
             });
+            
 
             scoreSocket.current.on("connect", () => {
                 userIdRef.current = scoreSocket.current.id;
@@ -855,6 +877,17 @@ function resultGame(){
                 score: 0,
             });
 
+            scoreSocket.current.on('score', (data) => {
+                scoreRef.current = data;
+                let idx = 0;
+                scoreRef.current.map((client, index) => {
+                    if (client.clientId !== userIdRef.current) {
+                        playerScoresRef.current[idx] = client.score;
+                        idx++;
+                    }
+                });
+            });
+
 
             scoreSocket.current.on('score', (data) => {
                 scoreRef.current = data;
@@ -957,51 +990,53 @@ function resultGame(){
                     <div className='bigbox'>
                     <div id="video-container" className="col-md-6">
                     </div>
-                    {isGamePlayingState ? (
-                      <div style={{display:'flex'}}>
-                    {scoreRef.current.map((client, index) => (
-                        client.clientId !== userIdRef.current ? (
-                            <div key={index} className='cambox'>
-                                <div className='camboxNumber'></div>
-                                <div>
-                                    {client.userName}<br />
-                                    {client.score}
-                                </div>
-                            </div>
-                        ) : null
-                    ))}
-
-                    </div>
-                    ) : (                       
                        
                         <div style={{display:'flex'}}>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
-                            {subscribers[0] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
-                            : null }
+                            {subscribers[0] !== undefined ?(
+                            <div> 
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
+                                <div className='playerScores'>{playerScoresRef.current[0]}</div>
+                            </div>
+                            ): null }
                         </div>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
-                            : null }
+                            {subscribers[1] !== undefined ?(
+                            <div>
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
+                                <div className='playerScores'>{playerScoresRef.current[1]}</div>
+                            </div>
+                            ): null }
                         </div>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
-                            {subscribers[2] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
-                            : null }
+                            {subscribers[2] !== undefined ?(
+                            <div>    
+                                <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
+                                <div className='playerScores'>{playerScoresRef.current[2]}</div>
+                            </div>
+                            ): null }
                         </div>
                     </div>
-                    )}
+                    
                         <div>
                             <div className='camboxNumber'></div>
                             <div className='containermulti'>
                             <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
                             <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
                             </div>
-
+                            {isGamePlayingState && scoreRef.current.map((client, index) => (
+                            client.clientId === userIdRef.current ? (
+                                <div key={index}>
+                                <div>
+                                    {client.userName}<br />
+                                    {client.score}
+                                </div>
+                                </div>
+                            ) : null
+                            ))}
                     </div>
                     </div>
 
