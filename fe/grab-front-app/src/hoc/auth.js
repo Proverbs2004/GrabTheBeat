@@ -31,8 +31,12 @@ function Auth(SpecificComponent, option, adminRoute = null) {
                     accessToken: access_token
                 })
                     .then(response => {
-                        const userId = response.data.userId;
-                        localStorage.setItem('user_id', userId);
+                        const email = response.data.email;
+                        const nickname = response.data.nickname;
+                        const email_alias = email.split('@')[0];
+                        localStorage.setItem('email', email);
+                        localStorage.setItem('nickname', nickname);
+                        localStorage.setItem('email_alias', email_alias);
                         return;
                     })
                     .catch(error => {
