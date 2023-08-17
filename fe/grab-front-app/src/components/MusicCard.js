@@ -24,7 +24,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
         justifyContent: 'center',  
         fontSize: 'xxx-large',
         width: 450,
-        height: 600,
+        height: 380,
         position: 'absolute',
         backgroundColor: 'black',
         opacity: 0.8,
@@ -90,8 +90,9 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     }
     return (
         <>
-        <div style={divStyle} onClick={handleClick}>CLICK?</div>
         <div className="sliderContainer">
+        <div style={divStyle} onClick={handleClick}>CLICK?</div>
+
             <Slider
                 slidesToShow={1}
                 infinite={true}
