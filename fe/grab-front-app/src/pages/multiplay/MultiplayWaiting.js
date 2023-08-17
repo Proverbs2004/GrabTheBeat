@@ -13,6 +13,7 @@ import './MultiplayWaiting.css';
 import '../../util/node.css';
 import '../../util/effect.css';
 
+import Loading from 'pages/loading/Loading'
 
 import MusicCard from 'components/MusicCard'
 
@@ -45,20 +46,34 @@ function TitleMultiplay({handleCopyToClipboard}) {
 function MultiplayWaiting(){
     const navigate = useNavigate();
 
-    const [mySessionId, setMySessionId] = useState('qwer'); // 추후 이곳에 방 만들기 일때는 랜덤코드를 방 참가 일 때는 입력된 코드를 넣기
-    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100)); // 방 만들기와 방 참가를 구분하는 변수로 사용하기
-    const [session, setSession] = useState(undefined);
-    const [publisher, setPublisher] = useState(undefined);
-    const [subscribers, setSubscribers] = useState([]);
+    const generateRandomAlphaNumeric = (length) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
 
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters.charAt(randomIndex);
+        }
+        console.log('generate ', result)
+        return result;
+    }
+
+    
     const location = useLocation();
     const from = location.state.from;
     const code = location.state.code;
     const name = location.state.name;
 
+    const [mySessionId, setMySessionId] = useState(code === undefined? generateRandomAlphaNumeric(6) : code); // 추후 이곳에 방 만들기 일때는 랜덤코드를 방 참가 일 때는 입력된 코드를 넣기
+    const [myUserName, setMyUserName] = useState('Participant' + Math.floor(Math.random() * 100)); // 방 만들기와 방 참가를 구분하는 변수로 사용하기
+    const [session, setSession] = useState(undefined);
+    const [publisher, setPublisher] = useState(undefined);
+    const [subscribers, setSubscribers] = useState([]);
+    
     const musicList = musicListData.musicList;
     const [selectedMusic, setSelectedMusic] = useState(musicListData.musicList[0]);
     const selectedMusicRef = useRef(musicListData.musicList[0]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isGamePlayingState, setIsGamePlayingState] = useState(false);
     const [isGameEnd, setIsGameEnd] = useState(false);
     const [goodScore, setGoodScore] = useState(0);
@@ -108,6 +123,103 @@ function MultiplayWaiting(){
     const queryParams = new URLSearchParams(location.search);
     const userName = queryParams.get('userName');
     const nameRef = useRef(name);
+
+    useEffect(() => {
+        // 이 곳에 상태값이 변경될 때 실행하고자 하는 코드를 작성합니다.
+        console.log("mySessionId 바뀜 => ", mySessionId);
+        if(typeof mySessionId !== 'undefined') {
+
+            musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + mySessionId, {
+                reconnectionDelayMax: 10000,
+                });
+            console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
+    
+            musicSocket.current.on('music', (idx) => {
+                console.log('musicSocket on idx : ', idx);
+                musicList.forEach((music) => {
+                    if(music.id === idx) {
+                        
+                        setSelectedMusic(music);
+                        selectedMusicRef.current=music;
+            
+                        return ;
+                    }
+                });
+            
+            })
+    
+            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + mySessionId, {
+                reconnectionDelayMax: 10000,
+                });
+            syncSocket.current.on('start', (data) => {
+                if(data.start){
+                    playGame();
+                }
+            });
+    
+    
+            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + mySessionId, {
+                reconnectionDelayMax: 10000,
+                });
+    
+            scoreSocket.current.emit('join',{
+                userName: nameRef.current,
+            });
+    
+            scoreSocket.current.emit('score',{
+                
+                score: 0,
+            });
+    
+    
+            
+    
+            syncSocket.current.on('end', (data) => {
+
+                if(data.end){
+                    scoreRef.current.sort(function(a, b) {
+                        const scoreA = a.score;
+                        const scoreB = b.score;
+                        
+                        if(scoreA < scoreB) return 1;
+                        if(scoreA > scoreB) return -1;
+                        if(scoreA === scoreB) return 0;
+                      });                    
+                    navigate('/multiplayresult', {
+
+                    state:{
+                        perfectScore: perfectRef.current,
+                        goodScore: goodRef.current,
+                        failedScore: failRef.current,
+                        highestCombo: highestRef.current,
+                        userName: nameRef.current,
+                        pic_url: selectedMusic.pic_url,
+                        scores: scoreRef.current
+                    }    
+                });
+                }
+            });
+
+
+            scoreSocket.current.on('score', (data) => {
+                scoreRef.current = data;
+                let idx = 0;
+                scoreRef.current.map((client, index) => {
+                    if (client.clientId !== userIdRef.current) {
+                        playerScoresRef.current[idx] = client.score;
+                        idx++;
+                    }
+                });
+            });
+    
+            scoreSocket.current.on("connect", () => {
+                userIdRef.current = scoreSocket.current.id;
+            });
+        }
+
+      }, [mySessionId]); // count 상태값이 변경될 때마다 이펙트가 실행됩니다.
+    
+    const playerScoresRef = useRef([0,0,0]);
 
     
 
@@ -342,11 +454,11 @@ function MultiplayWaiting(){
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
-                            }
                                 obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
                                 obj.done = true;
                                 obj.elemBack.remove();
                                 setTimeout(()=>{obj.elem.remove()},500); 
+                            }
                                 
 
                         }
@@ -498,6 +610,18 @@ function resultGame(){
     syncSocket.current.emit('end');
 };
 
+// const generateRandomAlphaNumeric = (length) => {
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     let result = '';
+
+//     for (let i = 0; i < length; i++) {
+//         const randomIndex = Math.floor(Math.random() * characters.length);
+//         result += characters.charAt(randomIndex);
+//     }
+//     console.log('generate ', result)
+//     return result;
+// }
+
 
     useEffect(()=>{
         const video = videoRef.current;
@@ -549,6 +673,8 @@ function resultGame(){
                             canvasElement.style.height = video.videoHeight+'px';
                             
                         });
+
+                        setIsLoading(false);
                         
                     });
                 }
@@ -568,6 +694,8 @@ function resultGame(){
         console.log('useEffect')
         return () => {
             window.removeEventListener('beforeunload', onBeforeUnload);
+            targets.current.forEach((t)=>t.elem.remove());
+            audio.current.pause();
         };
 
     },[])
@@ -614,17 +742,17 @@ function resultGame(){
         setSubscribers(prevSubscribers => prevSubscribers.filter(sub => sub !== streamManager));
     };
 
-    const generateRandomAlphaNumeric = (length) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
+    // const generateRandomAlphaNumeric = (length) => {
+    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    //     let result = '';
 
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            result += characters.charAt(randomIndex);
-        }
-        console.log('generate ', result)
-        return result;
-    }
+    //     for (let i = 0; i < length; i++) {
+    //         const randomIndex = Math.floor(Math.random() * characters.length);
+    //         result += characters.charAt(randomIndex);
+    //     }
+    //     console.log('generate ', result)
+    //     return result;
+    // }
 
     const joinSession = async () => {
 
@@ -647,85 +775,105 @@ function resultGame(){
                 deleteSubscriber(event.stream.streamManager);
             });
             
-            // const sessionId = await createSession(mySessionId);
-            const sessionId = await createSession(generateRandomAlphaNumeric(6));
-            console.log('join session id', sessionId);
-            const token = await createToken(sessionId);
-            setMySessionId(sessionId);
+            const sessionId = await createSession(mySessionId);
+            // const sessionId = await createSession(generateRandomAlphaNumeric(6));
+            console.log('join session id', mySessionId);
+            const token = await createToken(mySessionId);
+            // setMySessionId(sessionId);
 
             setTimeout(() => {
                 
             }, 1000);
 
-            musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
+            // musicSocket.current = io( process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
+            // console.log('musicSocket.current 왜 다시 qwer인 것인가 : ', musicSocket.current);
 
-            musicSocket.current.on('music', (idx) => {
-                console.log('musicSocket on idx : ', idx);
-                musicList.forEach((music) => {
-                    if(music.id === idx) {
+            // musicSocket.current.on('music', (idx) => {
+            //     console.log('musicSocket on idx : ', idx);
+            //     musicList.forEach((music) => {
+            //         if(music.id === idx) {
                         
-                        setSelectedMusic(music);
-                        selectedMusicRef.current=music;
+            //             setSelectedMusic(music);
+            //             selectedMusicRef.current=music;
             
-                        return ;
-                    }
-                });
+            //             return ;
+            //         }
+            //     });
             
-            })
+            // })
 
-            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            syncSocket.current.on('start', (data) => {
-                if(data.start){
-                    playGame();
-                }
-            });
+            // syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
+            // syncSocket.current.on('start', (data) => {
+            //     if(data.start){
+            //         playGame();
+            //     }
+            // });
 
 
-            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
+            // scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
 
-            scoreSocket.current.emit('join',{
-                userName: nameRef.current,
-            });
+            // scoreSocket.current.emit('join',{
+            //     userName: nameRef.current,
+            // });
 
-            scoreSocket.current.emit('score',{
+            // scoreSocket.current.emit('score',{
                 
-                score: 0,
-            });
+            //     score: 0,
+            // });
+
+
 
 
             
 
-            syncSocket.current.on('end', (data) => {
-                if(data.end){
-                    navigate('/multiplayresult', {
-                    state:{
-                        perfectScore: perfectRef.current,
-                        goodScore: goodRef.current,
-                        failedScore: failRef.current,
-                        highestCombo: highestRef.current,
-                        userName: nameRef.current,
-                        pic_url: selectedMusic.pic_url,
-                        scores: scoreRef.current
-                    }    
-                });
-                }
-            });
+            // syncSocket.current.on('end', (data) => {
+
+            //     if(data.end){
+            //         scoreRef.current.sort(function(a, b) {
+            //             const scoreA = a.score;
+            //             const scoreB = b.score;
+                        
+            //             if(scoreA < scoreB) return 1;
+            //             if(scoreA > scoreB) return -1;
+            //             if(scoreA === scoreB) return 0;
+            //           });                    
+            //         navigate('/multiplayresult', {
+
+            //         state:{
+            //             perfectScore: perfectRef.current,
+            //             goodScore: goodRef.current,
+            //             failedScore: failRef.current,
+            //             highestCombo: highestRef.current,
+            //             userName: nameRef.current,
+            //             pic_url: selectedMusic.pic_url,
+            //             scores: scoreRef.current
+            //         }    
+            //     });
+            //     }
+            // });
 
 
-            scoreSocket.current.on('score', (data) => {
-                scoreRef.current = data;
-            });
+            // scoreSocket.current.on('score', (data) => {
+            //     scoreRef.current = data;
+            //     let idx = 0;
+            //     scoreRef.current.map((client, index) => {
+            //         if (client.clientId !== userIdRef.current) {
+            //             playerScoresRef.current[idx] = client.score;
+            //             idx++;
+            //         }
+            //     });
+            // });
+            
 
-            scoreSocket.current.on("connect", () => {
-                userIdRef.current = scoreSocket.current.id;
-            });
+            // scoreSocket.current.on("connect", () => {
+            //     userIdRef.current = scoreSocket.current.id;
+            // });
 
             
 
@@ -792,76 +940,87 @@ function resultGame(){
             const sessionId = code;
             console.log('code ', code)
             console.log('enter session id', sessionId);
-            const token = await createToken(sessionId);
+            const token = await createToken(mySessionId);
 
-            musicSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            console.log('musicSocket.current  : ', musicSocket.current);
+            // musicSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/music?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
+            // console.log('musicSocket.current  : ', musicSocket.current);
 
-            musicSocket.current.on('music', (idx) => {
-                console.log('musicSocket on idx : ', idx);
-                musicList.forEach((music) => {
-                    if(music.id === idx) {
+            // musicSocket.current.on('music', (idx) => {
+            //     console.log('musicSocket on idx : ', idx);
+            //     musicList.forEach((music) => {
+            //         if(music.id === idx) {
                         
-                        setSelectedMusic(music);
-                        selectedMusicRef.current=music;
+            //             setSelectedMusic(music);
+            //             selectedMusicRef.current=music;
             
-                        return ;
-                    }
-                });
+            //             return ;
+            //         }
+            //     });
             
-            });
+            // });
 
-            syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
-            syncSocket.current.on('start', (data) => {
-                if(data.start){
-                    playGame();
-                }
-            });
+            // syncSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/sync?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
+            // syncSocket.current.on('start', (data) => {
+            //     if(data.start){
+            //         playGame();
+            //     }
+            // });
 
-            syncSocket.current.on('end', (data) => {
-                if(data.end){
-                    navigate('/multiplayresult', {
-                    state:{
-                        perfectScore: perfectRef.current,
-                        goodScore: goodRef.current,
-                        failedScore: failRef.current,
-                        highestCombo: highestRef.current,
-                        userName: nameRef.current,
-                        pic_url: selectedMusic.pic_url,
-                        scores: scoreRef.current
-                    }    
-                });
-                }
-            });
+            // syncSocket.current.on('end', (data) => {
+            //     if(data.end){
+            //         navigate('/multiplayresult', {
+            //         state:{
+            //             perfectScore: perfectRef.current,
+            //             goodScore: goodRef.current,
+            //             failedScore: failRef.current,
+            //             highestCombo: highestRef.current,
+            //             userName: nameRef.current,
+            //             pic_url: selectedMusic.pic_url,
+            //             scores: scoreRef.current
+            //         }    
+            //     });
+            //     }
+            // });
 
-            scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
-                reconnectionDelayMax: 10000,
-                });
+            // scoreSocket.current = io(process.env.REACT_APP_SOCKET_URL + "/score?roomId=" + sessionId, {
+            //     reconnectionDelayMax: 10000,
+            //     });
 
-            scoreSocket.current.emit('join',{
-                userName: nameRef.current,
-            });
+            // scoreSocket.current.emit('join',{
+            //     userName: nameRef.current,
+            // });
 
-            scoreSocket.current.on("connect", () => {
-                userIdRef.current = scoreSocket.current.id;
-            });
+            // scoreSocket.current.on("connect", () => {
+            //     userIdRef.current = scoreSocket.current.id;
+            // });
 
-            scoreSocket.current.emit('score',{
+            // scoreSocket.current.emit('score',{
                 
-                score: 0,
-            });
+            //     score: 0,
+            // });
+
+            // scoreSocket.current.on('score', (data) => {
+            //     scoreRef.current = data;
+            //     let idx = 0;
+            //     scoreRef.current.map((client, index) => {
+            //         if (client.clientId !== userIdRef.current) {
+            //             playerScoresRef.current[idx] = client.score;
+            //             idx++;
+            //         }
+            //     });
+            // });
 
 
-            scoreSocket.current.on('score', (data) => {
-                scoreRef.current = data;
-                console.log(scoreRef.current);
-                console.log(scoreRef.current[0]);
-                console.log("스코어레프");
-            });
+            // scoreSocket.current.on('score', (data) => {
+            //     scoreRef.current = data;
+            //     console.log(scoreRef.current);
+            //     console.log(scoreRef.current[0]);
+            //     console.log("스코어레프");
+            // });
 
             mySession.connect(token.token, { clientData: name })
                 .then(async () => {
@@ -959,95 +1118,100 @@ function resultGame(){
     }
 
     return(
-        <div className="containerMultiplay">
-            <div className='roominfo'>
-            </div>
-            <div className='camandmessagebox' style={{display:'flex'}}>
-                <div className='mainSection'>
-                    <div className='multicontainer'>
-                    <div className='bigbox'>
-                    <div id="video-container" className="col-md-6">
+        <>
+            {isLoading ? <Loading/> : null}
+            <div className="containerMultiplay">
+                <div className='roominfo'>
+                </div>
+                <div className='camandmessagebox' style={{display:'flex'}}>
+                    <div className='mainSection'>
+                        <div className='multicontainer'>
+                        <div className='bigbox'>
+                        <div id="video-container" className="col-md-6">
+                        </div>
+                        
+                            <div style={{display:'flex'}}>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[0] !== undefined ?(
+                                <div> 
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[0]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[1] !== undefined ?(
+                                <div>
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[1]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                            <div className='cambox'>
+                                <div className='camboxNumber'></div>
+                                {subscribers[2] !== undefined ?(
+                                <div>    
+                                    <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
+                                    <div className='playerScores'>{playerScoresRef.current[2]}</div>
+                                </div>
+                                ): null }
+                            </div>
+                        </div>
+                        
+                            <div>
+                                <div className='camboxNumber'></div>
+                                <div className='containermulti'>
+                                <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
+                                <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
+                                </div>
+                                {isGamePlayingState && scoreRef.current.map((client, index) => (
+                                client.clientId === userIdRef.current ? (
+                                    <div key={index}>
+                                    <div>
+                                        {client.userName}<br />
+                                        {client.score}
+                                    </div>
+                                    </div>
+                                ) : null
+                                ))}
+                        </div>
+                        </div>
+
+                        </div>
                     </div>
                     {isGamePlayingState ? (
-                      <div style={{display:'flex'}}>
-                    {scoreRef.current.map((client, index) => (
-                        client.clientId !== userIdRef.current ? (
-                            <div key={index} className='cambox'>
-                                <div className='camboxNumber'></div>
-                                <div>
-                                    {client.userName}<br />
-                                    {client.score}
-                                </div>
-                            </div>
-                        ) : null
-                    ))}
-
-                    </div>
-                    ) : (                       
-                       
-                        <div style={{display:'flex'}}>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[0] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
-                            : null }
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[1] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[1]}/>
-                            : null }
-                        </div>
-                        <div className='cambox'>
-                            <div className='camboxNumber'></div>
-                            {subscribers[2] !== undefined ?
-                            <UserVideoComponent className="userVideo" streamManager={subscribers[2]}/>
-                            : null }
-                        </div>
-                    </div>
-                    )}
-                        <div>
-                            <div className='camboxNumber'></div>
-                            <div className='containermulti'>
-                            <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
-                            <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                            </div>
-
-                    </div>
-                    </div>
-
+                        
+                <ScoreBox
+                    perfectScore={perfectScore}
+                    goodScore={goodScore}
+                    failedScore={failedScore}
+                    highestCombo={highestCombo}
+                    comboScore={comboScore}
+                    stopGame={stopGame}
+                    isGamePlayingState={isGamePlayingState}
+                    isGameEnd={isGameEnd}
+                    userName={userName}
+                    redirectToSinglePlayResult={redirectToSinglePlayResult}
+                    pic_url={selectedMusic.pic_url}
+                    resultGame={resultGame}    
+                />
+                ) : (
+                <div className="subContainermulti">
+                    <TitleMultiplay handleCopyToClipboard={handleCopyToClipboard}/>
+                    <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
+                    <button type="submit" className="startbuttonmulti" onClick={readyGame}>
+                    START
+                    </button>
+                    <div style={{marginTop:'41px'}}>
+                    <Websocket userName={myUserName} sessionId={mySessionId}  />
                     </div>
                 </div>
-                {isGamePlayingState ? (
-                    
-              <ScoreBox
-                perfectScore={perfectScore}
-                goodScore={goodScore}
-                failedScore={failedScore}
-                highestCombo={highestCombo}
-                comboScore={comboScore}
-                stopGame={stopGame}
-                isGamePlayingState={isGamePlayingState}
-                isGameEnd={isGameEnd}
-                userName={userName}
-                redirectToSinglePlayResult={redirectToSinglePlayResult}
-                pic_url={selectedMusic.pic_url}
-                resultGame={resultGame}    
-              />
-            ) : (
-              <div className="subContainermulti">
-                <TitleMultiplay handleCopyToClipboard={handleCopyToClipboard}/>
-                <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbuttonmulti" onClick={readyGame}>
-                  START
-                </button>
-                <div style={{marginTop:'41px'}}>
-                <Websocket userName={myUserName} sessionId={mySessionId}  />
+                )} 
                 </div>
-              </div>
-            )} 
             </div>
-        </div>
+        </>
 
     )
     

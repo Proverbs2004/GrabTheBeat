@@ -92,6 +92,7 @@ color: white;
 @keyframes perfectCircleFill {
   0% {
   background: radial-gradient(circle, rgba(0, 200, 0, 0.5), rgb(0, 200, 0));
+
   width: 180px;
     height: 180px;
 }
@@ -101,6 +102,8 @@ color: white;
 }
 100% {
   background: radial-gradient(circle, rgba(0, 200, 0, 0.5), rgb(0, 200, 0));
+
+
   width: 0px;
     height: 0px;
   
