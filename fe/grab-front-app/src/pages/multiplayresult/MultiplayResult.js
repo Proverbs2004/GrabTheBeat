@@ -34,7 +34,7 @@ function MultiplayResult() {
             {resultData.scores.map((scoreObj, index) => (
                 <div key={index} className="gameinfomulti" style={{ display: "flex", textAlign: "center" }}>
                 <div className="rankmulti">{index + 1}</div>
-                <div className="usernamemulti">{scoreObj.userNmae}</div>
+                <div className="usernamemulti">{scoreObj.userName}</div>
                 <div className="scoremulti">{scoreObj.score}</div>
                 <div className="pointmulti"></div>
             </div>

@@ -316,11 +316,6 @@ function MultiplayWaiting(){
                                 setPerfectScore((prev)=>prev+1);
                                 setComboScore((prev)=>prev+1);
                                 createPerfect(obj.elem);
-                                obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
-                                obj.done = true;
-                                obj.elemBack.remove();
-                                setTimeout(()=>{obj.elem.remove()},500);
-
                                 perfectRef.current = perfectRef.current+1;
                                 scoreRef2.current = scoreRef2.current + perfectRef.current * 1000; 
                                 scoreSocket.current.emit('score', {
@@ -328,25 +323,31 @@ function MultiplayWaiting(){
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
+                                obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500);
+
                             } 
                             else {
 
                                 setGoodScore((prev)=>prev+1);
                                 setComboScore((prev)=>prev+1);
                                 createGood(obj.elem);
-                                obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
-                                obj.done = true;
-                                obj.elemBack.remove();
-                                setTimeout(()=>{obj.elem.remove()},500); 
-                                
                                 goodRef.current = goodRef.current+1;
-                                scoreRef2.current = scoreRef2.current + goodScore * 300;
+                                scoreRef2.current = scoreRef2.current + goodRef.current * 300;
                                 scoreSocket.current.emit('score', {
                                     score: scoreRef2.current,
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
                             }
+                                obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500); 
+                                
+
                         }
 
                     }
