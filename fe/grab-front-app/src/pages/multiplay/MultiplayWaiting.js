@@ -87,6 +87,7 @@ function MultiplayWaiting(){
     const perfectRef = useRef(0);
     const failRef = useRef(0);
     const highestRef = useRef(0);
+    const userIdRef = useRef(null);
 
     let drawingUtils = null;
     let handLandmarker = null;
@@ -316,11 +317,6 @@ function MultiplayWaiting(){
                                 setPerfectScore((prev)=>prev+1);
                                 setComboScore((prev)=>prev+1);
                                 createPerfect(obj.elem);
-                                obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
-                                obj.done = true;
-                                obj.elemBack.remove();
-                                setTimeout(()=>{obj.elem.remove()},500);
-
                                 perfectRef.current = perfectRef.current+1;
                                 scoreRef2.current = scoreRef2.current + perfectRef.current * 1000; 
                                 scoreSocket.current.emit('score', {
@@ -328,25 +324,31 @@ function MultiplayWaiting(){
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
+                                obj.elemFill.style.animation =  'perfectCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500);
+
                             } 
                             else {
 
                                 setGoodScore((prev)=>prev+1);
                                 setComboScore((prev)=>prev+1);
                                 createGood(obj.elem);
-                                obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
-                                obj.done = true;
-                                obj.elemBack.remove();
-                                setTimeout(()=>{obj.elem.remove()},500); 
-                                
                                 goodRef.current = goodRef.current+1;
-                                scoreRef2.current = scoreRef2.current + goodScore * 300;
+                                scoreRef2.current = scoreRef2.current + goodRef.current * 300;
                                 scoreSocket.current.emit('score', {
                                     score: scoreRef2.current,
                                 });
                                 console.log(scoreRef2.current);
                                 console.log("레프레프레프");
                             }
+                                obj.elemFill.style.animation =  'goodCircleFill 0.5s forwards';
+                                obj.done = true;
+                                obj.elemBack.remove();
+                                setTimeout(()=>{obj.elem.remove()},500); 
+                                
+
                         }
 
                     }
@@ -628,6 +630,7 @@ function resultGame(){
 
         const ov = new OpenVidu();
         console.log("조인세션 되는 중");
+        
         try {
             const mySession = ov.initSession();
             const FRAME_RATE = 10;
@@ -687,12 +690,15 @@ function resultGame(){
                 reconnectionDelayMax: 10000,
                 });
 
-            scoreSocket.current.emit('score', {
-                // score: scoreRef2,
+            scoreSocket.current.emit('join',{
                 userName: nameRef.current,
-                score: 0,
-
             });
+
+            scoreSocket.current.emit('score',{
+                
+                score: 0,
+            });
+
 
             
 
@@ -711,18 +717,15 @@ function resultGame(){
                 });
                 }
             });
-            console.log(nameRef.current);
-            console.log("여기 정말로 유저 네임");
 
 
             scoreSocket.current.on('score', (data) => {
                 scoreRef.current = data;
-                console.log(scoreRef.current);
-                console.log(scoreRef.current[0].score);
-                console.log("스코어레프");
             });
 
-
+            scoreSocket.current.on("connect", () => {
+                userIdRef.current = scoreSocket.current.id;
+            });
 
             
 
@@ -839,12 +842,19 @@ function resultGame(){
                 reconnectionDelayMax: 10000,
                 });
 
-            scoreSocket.current.emit('score', {
-                // score: scoreRef2.current,
+            scoreSocket.current.emit('join',{
                 userName: nameRef.current,
-                score: 0,
-
             });
+
+            scoreSocket.current.on("connect", () => {
+                userIdRef.current = scoreSocket.current.id;
+            });
+
+            scoreSocket.current.emit('score',{
+                
+                score: 0,
+            });
+
 
             scoreSocket.current.on('score', (data) => {
                 scoreRef.current = data;
@@ -944,16 +954,26 @@ function resultGame(){
             <div className='camandmessagebox' style={{display:'flex'}}>
                 <div className='mainSection'>
                     <div className='multicontainer'>
-                    {/* <div className="gameContainerWaiting">
-                        {<UserVideoComponent streamManager={publisher} /> }
-                    </div> */}
-                    {/* <div className='subContainer'>
-                        <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect}  />
-                        <button type="submit" className="startbutton" onClick={playGame}>START</button>
-                    </div> */}
                     <div className='bigbox'>
                     <div id="video-container" className="col-md-6">
                     </div>
+                    {isGamePlayingState ? (
+                      <div style={{display:'flex'}}>
+                    {scoreRef.current.map((client, index) => (
+                        client.clientId !== userIdRef.current ? (
+                            <div key={index} className='cambox'>
+                                <div className='camboxNumber'></div>
+                                <div>
+                                    {client.userName}<br />
+                                    {client.score}
+                                </div>
+                            </div>
+                        ) : null
+                    ))}
+
+                    </div>
+                    ) : (                       
+                       
                         <div style={{display:'flex'}}>
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
@@ -961,11 +981,6 @@ function resultGame(){
                             <UserVideoComponent className="userVideo" streamManager={subscribers[0]}/>
                             : null }
                         </div>
-                    
-
-
-                    
-
                         <div className='cambox'>
                             <div className='camboxNumber'></div>
                             {subscribers[1] !== undefined ?
@@ -979,15 +994,12 @@ function resultGame(){
                             : null }
                         </div>
                     </div>
+                    )}
                         <div>
                             <div className='camboxNumber'></div>
                             <div className='containermulti'>
                             <video id="videoZone" ref={videoRef} autoPlay playsInline style={{ display: 'none' }}></video>
                             <canvas id="canvasZone" ref={canvasElementRef} ></canvas>
-                            {/* <UserVideoComponent streamManager={publisher} /> */}
-                            {/* {subscribers[0] !== undefined ?
-                            <UserVideoComponent streamManager={subscribers[0]} />
-                            : null } */}
                             </div>
 
                     </div>
@@ -1009,12 +1021,13 @@ function resultGame(){
                 userName={userName}
                 redirectToSinglePlayResult={redirectToSinglePlayResult}
                 pic_url={selectedMusic.pic_url}
+                resultGame={resultGame}    
               />
             ) : (
               <div className="subContainermulti">
                 <TitleMultiplay />
                 <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                <button type="submit" className="startbuttonmulti" onClick={playGame}>
+                <button type="submit" className="startbuttonmulti" onClick={readyGame}>
                   START
                 </button>
                 <div style={{marginTop:'41px'}}>
