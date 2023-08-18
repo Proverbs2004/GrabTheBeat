@@ -1,0 +1,199 @@
+@font-face {
+    font-family: "Press Start 2P";
+    font-style: normal;
+    font-weight: normal;
+    src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+}
+  
+@keyframes neon {
+	0%,
+	100% {
+      text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+      color: #FF99FF;
+    }
+    50% {
+      text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+      color: #955d95;
+    }
+}
+body{
+    color: #FF99FF;
+    font-family: 'Press Start 2P';
+}
+  
+.containerMultiplay {
+    
+    /* width: 100%; 원하는 디자인에 맞게 너비 조정 */
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    text-align: center;
+}
+
+.roominfo{
+    position: fixed;
+    top:0px;
+    right: 0px;
+}
+
+.TitleMultiplay{
+    color: #FF99FF;
+    font-family: 'Press Start 2P';
+    font-size: 300%;
+    margin-bottom: 6%; /* 선택 사항: 요소들 사이에 마진 추가 */
+    animation: neon 1s ease infinite;
+    -moz-animation: neon 1s ease infinite;
+    -webkit-animation: neon 1s ease infinite;
+}
+.containermulti{
+    width: 950px;
+	aspect-ratio: 16/9;
+	border: 2.5px solid #ff99ff;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.cambox{
+    border: 2.5px solid #ff99ff;
+    border-radius: 10px;
+    width: 313.4px;
+    aspect-ratio: 16/9;
+}
+
+.camboxNumber{
+    position: absolute;
+}
+
+.camandmessagebox{
+    margin-left: 4%;
+}
+
+.subContainermulti{
+    height: 570px;
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-top: 6%;
+    margin-left: 2%;
+}
+
+.mainSection{
+    display: flex;
+    flex-direction: column;
+}
+    
+/* #videoZoneWaiting {
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	filter: contrast(100.0) brightness(0.0) grayscale(100%);
+	z-index: -2;
+	position: absolute;
+  
+} */
+
+.userVideo {
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -2;
+	/* filter: contrast(100.0) brightness(0.0) grayscale(100%); 이미 필터링 해서 오면 필요없음*/
+	/* position: absolute; 이거하면 다른 요소랑 위치 충돌 안함. 나란히 놓으려면 필요없음*/
+  
+}
+
+/* #canvasZoneWaiting {
+	height: 100%;
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -1;
+	position: absolute;
+	border: 1px solid #FF99FF;
+} */
+
+#canvasZone {
+	height: 100%;
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	z-index: -1;
+	border: 1px solid #FF99FF;
+}
+  
+.gameContainerWaiting {
+	width: 950px;
+	aspect-ratio: 16/9;
+	border: 2.5px solid #ff99ff;
+	border-radius: 10px;
+	align-content: center;
+	display: flex;
+	justify-content: center;
+}
+
+.startbuttonmulti{
+    font-family: 'Press Start 2P';
+    font-size: 300%;
+    color: #FF99FF;
+    background-color: transparent;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-width: 4px;
+    border-radius:10px;
+    width: 300px;
+    height: 2000px;
+    margin: auto;
+}
+
+.startbuttonmulti:hover{
+    color: #6C1F65;
+    background-color: #FF99FF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
+    box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+  
+.scoreBoxmulti{
+    width: 30%;
+    margin-top: 181px;
+}
+
+.perfect,
+.good,
+.failed,
+.highestcombo,
+.currentcombo{
+    padding: 7%;
+}
+  
+#gamequitmulti{
+    font-family: 'Press Start 2P';
+    font-size: 250%;
+    color: #FF99FF;
+    background-color: transparent;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-width: 4px;
+    border-radius:10px;
+    width: 70%;
+    height: 75px;
+    margin-top: 10%;
+}
+#gamequitmulti:hover{
+    color: #6C1F65;
+    background-color: #FF99FF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
+    box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+
+/* .custom-prev-arrow:hover,
+.custom-next-arrow:hover {
+background-color: #f0f0f0;
+} */
+
+.playerScores {
+    position: absolute;
+    z-index: 10;
+    padding-left: 10px;
+    padding-top: 210px;
+}

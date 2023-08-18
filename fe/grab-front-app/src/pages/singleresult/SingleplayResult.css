@@ -1,0 +1,142 @@
+@font-face {
+    font-family: "Press Start 2P";
+    font-style: normal;
+    font-weight: normal;
+    src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+  }
+  @keyframes neon {
+    0%,
+    100% {
+      text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+      color: #FF99FF;
+    }
+    50% {
+      text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+      color: #955d95;
+    }
+  }
+body{
+    background-color: black;
+    color: #FF99FF;
+
+    font-family: 'Press Start 2P';
+
+}
+.resultcontainersingle{
+    margin-left: 6%;
+    margin-right: 6%;
+    height: 650px;
+}
+.resulttitlesingle{
+    color: #FF99FF;
+    font-size: 400%;
+}
+.scoreboardsingle{
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    height: 100%;
+    position: relative; /* Added */
+
+}
+.scoreinfosingle{
+    margin-top: 0.9%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    height: 6%;
+
+    display: flex;
+    align-items: center;
+}
+
+.gameinfosingle{
+    margin-top: 0.9%;
+    margin-left: 1%;
+    margin-right: 1%;
+    height: 6%;
+    display: flex;
+    align-items: center;
+
+}
+.scoreboxsingle{
+    margin-top: 0.9%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-color: #FF99FF;
+    border-style: solid;
+
+}
+.comboinfosingle{
+    display: flex;
+    margin-left: 1.1%;
+    margin-right: 1%;
+    width: 55%;
+    height: 300px;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 1.7%;
+}
+.imageareasingle{
+    border-color: #FF99FF;
+    width: 50%;
+}
+.comboareasingle{
+    font-size: 23px;
+    margin: auto;
+    width: 500px;
+}
+.p{
+    padding: 3%;
+}
+
+.rankareasingle{    
+    border-color: #FF99FF;
+    border-style: solid;
+    position: absolute; /* Added */
+    width: 30%;
+    height: 20%;
+    bottom: 25%; /* Adjusted to move it above the QUIT button */
+    margin: 1%;
+    right: 1.1%; /* Added */
+
+}
+.quitbuttonsingle{
+    font-family: 'Press Start 2P';
+    font-size: 300%;
+    color: #FF99FF;
+    background-color: transparent;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius:10px;
+    border-width: 4px;
+    width: 30%;
+    height: 20%;
+    margin: 1%;
+    position: absolute; /* Added */
+    bottom: 0%; /* Added */
+    right: 1.1%; /* Added */
+}
+.quitbuttonsingle:hover{
+    color: #6C1F65;
+    background-color: #FF99FF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
+    box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+
+.scoreinfosingle {
+    display: flex;
+    justify-content: space-between;
+    /* 추가적인 스타일링을 원하면 여기에 추가 */
+  }
+  
+  .ranksingle, .usernamesingle, .scoresingle, .pointsingle {
+    /* 각 요소들에 대한 스타일링을 설정 */
+    flex: 1; /* 각 요소를 동일한 폭으로 설정 */
+    /* 필요한 스타일을 추가 */
+  }
+  

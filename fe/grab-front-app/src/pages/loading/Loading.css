@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "Press Start 2P";
+  font-style: normal;
+  font-weight: normal;
+  src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+}
+
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+    color: #FF99FF;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+    color: #FF99FF;
+  }
+}
+.LoadingBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    margin: 0;
+    z-index: 10;
+  }
+  
+    #outer {
+      stroke: white;
+    }
+    .loader {
+      width: 200px;
+    }
+    h3 {
+      font-family: Press Start 2P;
+      color: #ff99ff;
+      text-align: center;
+    }
+    svg {
+      filter: drop-shadow(  -1px -1px 5px #ff99ff);
+    }
+    
+    h3 {
+      text-shadow: 1px 1px 5px #ff99ff;
+    }
+  
+    .cls-1 {
+      fill: #ff99ff;
+    }
+    
+    .cls-2 {
+      fill: #ff99ff;
+    }
+  
+    .cls-3 {
+      fill:#ff99ff;
+    }
+

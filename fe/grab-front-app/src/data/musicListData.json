@@ -1,0 +1,52 @@
+{
+    "musicList": [
+        {
+          "id": 0,
+          "title": "Heroes Tonight",
+          "artist": "Janji",
+          "music_url": "data/JanJi_HeroesTonight.mp3",
+          "json_url": "data/JanJi_HeroesTonight.json",
+          "pic_url": "/pic/면도킁.png"
+        },
+        {
+          "id": 1,
+          "title": "Red Bone",
+          "artist": "Donald Glover",
+          "music_url": "data/DonaldGlover_RedBone.mp3",
+          "json_url": "data/JanJi_HeroesTonight.json",
+          "pic_url": "/pic/redbone.jpg"
+        },
+        {
+          "id": 2,
+          "title": "Leave the Door Open",
+          "artist": "Silk Sonic",
+          "music_url": "data/SilkSonic_LeaveTheDoorOpen.mp3",
+          "json_url": "data/SilkSonic_LeaveTheDoorOpen.json",
+          "pic_url": "/pic/silksonic.png"
+        },
+        {
+            "id": 3,
+            "title": "Gangsta`s Paradise",
+            "artist": "Coolio",
+            "music_url": "data/Coolio_GangstasParadise.mp3",
+            "json_url": "data/Coolio_GangstasParadise.json",
+            "pic_url": "/pic/coolio.jpg"
+          },
+          {
+            "id": 4,
+            "title": "愛を伝えたいだとか",
+            "artist": "Aimyon",
+            "music_url": "data/Aimyon_AiWoTsutaetaidatoka.mp3",
+            "json_url": "data/Aimyon_AiWoTsutaetaidatoka.json",
+            "pic_url": "/pic/aimyon.jpg"
+          },
+          {
+            "id": 5,
+            "title": "test",
+            "artist": "test",
+            "music_url": "data/Test4.mp3",
+            "json_url": "data/Test4.json",
+            "pic_url": "/pic/면도킁.png"
+          }
+      ]
+  }

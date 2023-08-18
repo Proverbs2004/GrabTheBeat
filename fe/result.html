@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="resultcontainer">
+        <div class="resulttitle">RESULT</div>
+        <div class="scoreboard">
+            <div class="scoreinfo">
+                rank username score point
+            </div>
+            <div class="scorebox">THIS IS FOR SCOREBOX</div>
+            <div class="comboinfo">
+                <div class="imagearea">imagebox</div>
+                <div class="comboarea">comboarea</div>
+            </div>
+            <div class="rankarea">rankarea</div>
+
+            <input type="submit" value="QUIT" id="quit" class="quitbutton">
+        </div>
+    </div>
+    
+</body>
+</html>
+<style>
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url(./assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
+}
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+    color: #FF99FF;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+    color: #955d95;
+  }
+}
+
+body{
+    background-color: black;
+    color: #FF99FF;
+
+    font-family: 'Press Start 2P';
+
+}
+.resultcontainer{
+    margin-left: 6%;
+    margin-right: 6%;
+    height: 650px;
+}
+.resulttitle{
+    color: #FF99FF;
+    font-size: 400%;
+    -moz-animation: neon 1s ease infinite;
+    -webkit-animation: neon 1s ease infinite;
+}
+.scoreboard{
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    height: 100%;
+    position: relative; /* Added */
+
+}
+.scoreinfo{
+    margin-top: 0.9%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    height: 6%;
+
+    display: flex;
+    align-items: center;
+}
+.scorebox{
+    margin-top: 0.9%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-color: #FF99FF;
+    border-style: solid;
+
+}
+.comboinfo{
+    display: flex;
+    margin-left: 1.1%;
+    margin-right: 1%;
+    width: 55%;
+    height: 40%;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 1.7%;
+}
+.imagearea{
+    width: 250px;
+    height: 250px;
+    border-color: #FF99FF;
+    border-style: solid;
+
+
+}
+.comboarea{
+    border-color: #FF99FF;
+    border-style: solid;
+    margin-left: 1.1%;
+    margin-top: 1%;
+    width: 50%;
+
+}
+.rankarea{    
+    border-color: #FF99FF;
+    border-style: solid;
+    position: absolute; /* Added */
+    width: 30%;
+    height: 20%;
+    bottom: 25%; /* Adjusted to move it above the QUIT button */
+    margin: 1%;
+    right: 1.1%; /* Added */
+
+}
+.quitbutton{
+    font-family: 'Press Start 2P';
+    font-size: 300%;
+    color: #FF99FF;
+    background-color: transparent;
+    border-color: #FF99FF;
+    border-style: solid;
+    border-radius:10px;
+    width: 30%;
+    height: 20%;
+    margin: 1%;
+    position: absolute; /* Added */
+    bottom: 1.7%; /* Added */
+    right: 1.1%; /* Added */
+}
+.quitbutton:hover{
+    color: #6C1F65;
+    background-color: #FF99FF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 4536px #FF99FF, 0px 0px 2592px #FF99FF, 0px 0px 1512px #FF99FF, 0px 0px 756px #FF99FF, 0px 0px 216px #FF99FF, 0px 0px 108px #FF99FF;
+    box-shadow: 0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+
+</style>

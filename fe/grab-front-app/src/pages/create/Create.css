@@ -1,0 +1,78 @@
+@font-face {
+    font-family: "Press Start 2P";
+    font-style: normal;
+    font-weight: normal;
+    src: url("Fonts/PressStart2P-Regular.ttf") format("truetype"); 
+  }
+  body{
+    background-color: black
+  }
+  @keyframes neon {
+    0%,
+    100% {
+      text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+      color: #FF99FF;
+    }
+    50% {
+      text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+      color: #955d95;
+    }
+  }
+.containerCreate {
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+    text-align: center;
+
+}
+.titleCreate {
+    font-family: 'Press Start 2P';
+    font-size: 80px;
+    line-height: 100px;
+    margin: 20px;
+    margin-top: 30px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    padding: 20px;
+    animation: neon 1s ease infinite;
+    -moz-animation: neon 1s ease infinite;
+    -webkit-animation: neon 1s ease infinite;
+}
+.backbuttonCreate,
+.playsingle,
+.playmulti{
+    font-family: 'Press Start 2P';
+    font-size: 40px;
+    padding: 20px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    margin: 20px;
+    background-color: transparent;
+    border-color: transparent;
+    /* 텍스트의 테두리 색상 설정 */
+    -webkit-text-stroke: 1px #FF99FF;
+}
+.backbuttonCreate{
+    display: inline-flex; /* 가운데 정렬을 위해 inline-flex로 변경 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+}
+.backbuttonCreate:hover,
+.playsingle:hover,
+.playmulti:hover{
+    fill: #FF99FF;
+    color: #FF99FF;
+    filter: drop-shadow(0px 0px 10px #FF99FF);
+    text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+}
+
+.button-containerCreate{
+    display: flex; /* create game과 join game을 수평으로 배치하기 위해 flex 레이아웃 사용 */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경 */
+}
+
+input {
+  cursor: pointer; /* 마우스 커서를 포인터 모양으로 변경 */
+  border: 1px solid #ccc; /* 테두리 설정 */
+  padding: 8px; /* 내부 여백 설정 */
+}

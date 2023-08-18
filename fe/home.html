@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: black;">
+    <div class="container">
+    <div class="title">GRAB THE BEAT</div>
+    <div class="button-container">
+    <button class="creategame" style="margin-right:200px" onClick="location.href='create.html'">CREATE<br>GAME</button>
+    <button class="joingame" style="margin-left:200px"onClick="location.href='join.html'">JOIN<br>GAME</button>
+    </div>
+    <button class="google">continue with google</button>
+</body>
+</html>
+<style>
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url(./assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
+}
+@keyframes blink-effect {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #6C1F65, 0 0 3vw #6C1F65, 0 0 10vw #6C1F65, 0 0 10vw #6C1F65, 0 0 .4vw #6C1F65, .5vw .5vw .1vw #6C1F65;
+    color: #FF99FF;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #391035, 0 0 1.5vw #391035, 0 0 5vw #391035, 0 0 5vw #391035, 0 0 .2vw #391035, .5vw .5vw .1vw #391035;
+    color: #955d95;
+  }
+}
+
+.container {
+    width: 100%; /* 원하는 디자인에 맞게 너비 조정 */
+    max-width: 1536px; /* 최대 너비를 1536px로 제한 */
+    max-height: 864px;
+    color: #FF99FF;
+    text-align: center;
+}
+
+.title,
+.creategame,
+.joingame,
+.google {
+    font-family: 'Press Start 2P';
+    font-size: 230%;
+    padding: 20px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    margin: 20px;
+}
+
+.title {
+    font-size: 500%;
+    line-height: 100px;
+    margin-top: 200px; /* 선택 사항: 요소들 사이에 마진 추가 */
+    text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+    animation: neon 1s ease infinite;
+  -moz-animation: neon 1s ease infinite;
+  -webkit-animation: neon 1s ease infinite;
+}
+
+.creategame,
+.joingame,
+.google {
+    background-color: transparent;
+    /* 텍스트의 테두리 색상 설정 */
+    -webkit-text-stroke: 1px #FF99FF;
+    border-color: transparent;
+}
+
+.creategame:hover,
+.joingame:hover,
+.google:hover {
+    color: #FF99FF;
+    text-shadow:  0px 0px 75.6px #FF99FF, 0px 0px 43.2px #FF99FF, 0px 0px 25.2px #FF99FF, 0px 0px 12.6px #FF99FF, 0px 0px 3.6px #FF99FF, 0px 0px 1.8px #FF99FF;
+
+}
+.button-container{
+    display: flex; /* create game과 join game을 수평으로 배치하기 위해 flex 레이아웃 사용 */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+
+</style>
