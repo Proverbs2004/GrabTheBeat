@@ -1,7 +1,90 @@
 # 양구동의 에코스텝
 
-# 그랩 더 비트
+## 프로젝트 기간
+- 2023.7.3 ~ 2023.08.18
 
+## 그랩 더 비트 서비스 화면 
+- 멀티 대기방
+	![](exec/images/chat1.gif)
+	- 실시간 채팅
+		![](exec/images/chat2.gif)
+- 게임 시작
+	![](exec/images/gamestart.gif)
+- 게임 플레이
+	![](exec/images/realtimeupdatescore.gif)
+- 게임 결과
+	![](/exec/images/playresult.png)
+
+## 프로젝트 소개
+[시연 영상](https://youtu.be/QDowEmInfag)
+
+**모션 인식을 이용한 멀티 플레이 리듬 게임**
+
+주요 기능
+- MediaPipe를 사용한 얼굴과 손 인식 후 Canvas처리
+- OpenVidu를 사용한 화상 기능 
+- Socket.io를 사용한 멀티 플레이 채팅, 곡 선택, 게임 시작, 결과 보기  
+- OAuth2를 사용한 구글 로그인
+
+
+## 특장점
+- 노트 최적화
+- 오픈비두 커스터마이징
+	- 웹 캠 화면을 가공하여 서버에 가공된 이미지를 전송  
+- 화상 기능
+	- 내 웹 캠 화면에 추가적으로 CSS 작업을 수행
+- 실시간 통신 기능
+	- 모든 플레이어의 점수를 실시간으로 공유
+
+---
+## 개발환경
+
+* Backend
+- IntelliJ IDEA 2023.1.3
+- opendk 11.0.20
+- Gradle 7.1.1
+- Spring Boot 2.7.14
+- MySQL  Ver 8.0.34-0ubuntu0.20.04.1 for Linux on x86_64 ((Ubuntu))
+- Node.js v16.13.0
+- npm 8.1.0
+
+* Frontend
+- React.js v18.2.0
+- Visual Studio Code
+- redux v8.1.2
+
+* Web RTC
+- OpenVidu 2.28.0
+- MediaPipe v0.10.3, hands v0.4.1675469240
+- Socket.io v4.7.2
+
+* CI/CD
+- aws ec2
+- nginx
+- jenkins
+
+---
+## 시연 순서
+
+0. 홈 화면에서 시작
+1. `Continue to Google`을 눌러 로그인
+2. `CREATE GAME` 버튼을 눌러 페이지 이동
+3. `PLAY MULTI` 버튼을 눌러 페이지 이동
+4. 이름 입력
+5. `CLICK?`, 노래 변경 버튼 `>>`을 눌러 노래 재생
+6. 플레이어들의 화면, 노래 변경 재생, 채팅 확인
+7. `START`를 눌러 게임 시작
+8. 게임 플레이
+9. 게임이 종료되고 `RESULT` 버튼을 눌러 결과창으로 이동
+10. 결과 확인
+11. `QUIT` 버튼을 눌러 홈으로 이동
+
+## 팀원 역할 
+|이지승|이우석|양을필|박종민|김동준|구기현|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|BE/INFRA/OpenVidu|BE/WebSocket/Auth|FE/GameClient/Mediapipe/UCC|FE/OpenVidu/WebSocket|FE/UI/UX/Design|BE/WebSocket/INFRA|
+
+---
 ## Frontend
 ```
 git clone https://lab.ssafy.com/s09-webmobile2-sub2/S09P12A607.git
@@ -194,7 +277,7 @@ http {
 3306
 3478 TCP+UDP
 5000
-8000
+8000 
 8442
 8443
 8800
@@ -202,29 +285,3 @@ http {
 57001 - 65535 TCP+UDP
 ```
 
-## 정보
-
-- IntelliJ IDEA 2023.1.3
-- openjdk 11.0.20
-- Gradle 7.1.1
-- Spring Boot 2.7.14
-- MySQL  Ver 8.0.34-0ubuntu0.20.04.1 for Linux on x86_64 ((Ubuntu))
-- node v16.13.0
-- npm 8.1.0
-- React v18.2.0
-- OpenVidu 2.28.0
-
-## 시연 순서
-
-0. 홈 화면에서 시작
-1. `Continue to Google`을 눌러 로그인
-2. `CREATE GAME` 버튼을 눌러 페이지 이동
-3. `PLAY MULTI` 버튼을 눌러 페이지 이동
-4. 이름 입력
-5. `CLICK?`, 노래 변경 버튼 `>>`을 눌러 노래 재생
-6. 플레이어들의 화면, 노래 변경 재생, 채팅 확인
-7. `START`를 눌러 게임 시작
-8. 게임 플레이
-9. 게임이 종료되고 `RESULT` 버튼을 눌러 결과창으로 이동
-10. 결과 확인
-11. `QUIT` 버튼을 눌러 홈으로 이동
