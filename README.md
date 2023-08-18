@@ -5,15 +5,15 @@
 
 ## 그랩 더 비트 서비스 화면 
 - 멀티 대기방
-	[](exec/images/chat1.gif)
+	![](exec/images/chat1.gif)
 	- 실시간 채팅
-		[](exec/images/chat2.gif)
+		![](exec/images/chat2.gif)
 - 게임 시작
-	[](exec/images/playstart.gif)
+	![](exec/images/gamestart.gif)
 - 게임 플레이
-	[](exec/images/realtimeupdatescore.gif)
+	![](exec/images/realtimeupdatescore.gif)
 - 게임 결과
-	[](/exec/images/playresult.png)
+	![](/exec/images/playresult.png)
 
 ## 프로젝트 소개
 [시연 영상](https://youtu.be/QDowEmInfag)
