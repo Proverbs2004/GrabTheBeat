@@ -50,7 +50,7 @@ function App() {
         ) : (
           <Routes>
             {/* <Route path="/" element={<Home />} /> */}
-            <Route path="/" element={<AuthHome />} />
+            <Route path="/" element={<Home />} />
             {/* <Route path="/create" element={<Create />} /> */
             <Route path="/create" element={<AuthCreate />} />}
             {/* <Route path="/join" element={<Join />} /> */}

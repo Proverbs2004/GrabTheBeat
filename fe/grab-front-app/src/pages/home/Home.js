@@ -47,7 +47,8 @@ function ButtonJoinGame() {
 }
 
 function loginGoogle() {
-  document.location.href = "http://localhost:5000/oauth2/authorization/google"
+  //document.location.href = "http://localhost:5000/oauth2/authorization/google"
+  document.location.href = "https://i9a607.p.ssafy.io/oauth2/authorization/google"
 }
 
 function ButtonGoogle() {
