@@ -31,6 +31,14 @@
             "music_url": "data/DeafKev_Invincible.mp3",
             "json_url": "data/DeafKev_Invincible.json",
             "pic_url": "/pic/invincible.jpg"
+          },
+          {
+            "id": 4,
+            "title": "Test",
+            "artist": "Test",
+            "music_url": "data/Test.mp3",
+            "json_url": "data/DeafKev_Invincible.json",
+            "pic_url": "/pic/invincible.jpg"
           }
       ]
   }
