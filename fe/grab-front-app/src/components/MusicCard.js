@@ -8,11 +8,10 @@ import './MusicCard.css';
 
 function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Initialize with 0 or the appropriate value
-    const canPlayMusic = useRef(false);
-
+    
     const [hidden, setHidden] = useState(false);
     
-    const audioElementRef = useRef(new Audio(selectedMusic.music_url));
+    const audioElementRef = useRef(new Audio(selectedMusic.music_url)); 
 
 
     const handleClick = () => {

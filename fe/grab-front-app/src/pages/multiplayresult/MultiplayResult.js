@@ -36,7 +36,16 @@ function MultiplayResult() {
                 <div className="rankmulti">{index + 1}</div>
                 <div className="usernamemulti">{scoreObj.userName}</div>
                 <div className="scoremulti">{scoreObj.score}</div>
-                <div className="pointmulti"></div>
+                <div className="pointmulti">
+                {index === 0
+                    ? 100
+                    : index === 1
+                    ? 50
+                    : index === 2
+                    ? 30
+                    : 10
+                }
+                </div>
             </div>
             ))}
 

@@ -39,7 +39,10 @@ const APPLICATION_SERVER_URL = 'https://i9a607.p.ssafy.io:8443/';
 
 function TitleMultiplay({handleCopyToClipboard}) {
     return (
+        <div>
         <div className="TitleMultiplay" onClick={handleCopyToClipboard}>MULTIPLAY</div>
+        <div>Click above logo <br/>for copy code</div>
+        </div>
     )
 }
 
@@ -123,6 +126,7 @@ function MultiplayWaiting(){
     const queryParams = new URLSearchParams(location.search);
     const userName = queryParams.get('userName');
     const nameRef = useRef(name);
+    const [isReady, setReady] = useState(false);
 
     useEffect(() => {
         // 이 곳에 상태값이 변경될 때 실행하고자 하는 코드를 작성합니다.
@@ -542,6 +546,8 @@ function MultiplayWaiting(){
         musicData = await import("../../data/SubUrban_Cradles.json");  
     } else if(selectedMusicRef.current.id===3) {
         musicData = await import("../../data/DeafKev_Invincible.json");  
+    } else if(selectedMusicRef.current.id===4) {
+        musicData = await import("../../data/DeafKev_Invincible.json");  
     }
     fillTimePositionArray(musicData.hitObjects);
 
@@ -600,6 +606,7 @@ const handleMusicSelect = (music) => {
 
 function readyGame(){
     syncSocket.current.emit('start');
+    setReady(true);
 };
 
 function resultGame(){
@@ -1197,9 +1204,23 @@ function resultGame(){
                 <div className="subContainermulti">
                     <TitleMultiplay handleCopyToClipboard={handleCopyToClipboard}/>
                     <MusicCard musicList={musicList} selectedMusic={selectedMusic} handleMusicSelect={handleMusicSelect} />
-                    <button type="submit" className="startbuttonmulti" onClick={readyGame}>
-                    START
-                    </button>
+                    {/* {readyRef.current === true
+                    ?
+                        (
+                            <button className="startbuttonmulti">READY</button>
+                        )
+                    :
+                        (
+                            <button type="submit" className="startbuttonmulti" onClick={readyGame}>START</button>
+                        )
+                    } */}
+                        <button
+                            type="submit"
+                            className="startbuttonmulti"
+                            onClick={readyGame}
+                        >
+                            {isReady ? "READY" : "START"}
+                        </button>
                     <div style={{marginTop:'41px'}}>
                     <Websocket userName={myUserName} sessionId={mySessionId}  />
                     </div>
