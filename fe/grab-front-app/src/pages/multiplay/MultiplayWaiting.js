@@ -28,7 +28,7 @@ import {createEffect} from "../../util/effect.js";
 
 import drum from '../../data/drum.mp3';
 
-import redBone from '../../data/DonaldGlover_RedBone.mp3';
+import cradles from '../../data/SubUrban_Cradles.mp3';
 import UserVideoComponent from '../../components/openVidu2/UserVideoComponent';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
@@ -84,7 +84,7 @@ function MultiplayWaiting(){
     const targets = useRef([]);
     const [totalScore, setTotalScore] = useState(0);
 
-    const audio = useRef(new Audio(redBone));
+    const audio = useRef(new Audio(cradles));
     const isGamePlaying = useRef(false);
     const gameStartTime = useRef(0);
     const arrayIdx = useRef(0);
@@ -537,15 +537,11 @@ function MultiplayWaiting(){
     if(selectedMusicRef.current.id===0){
         musicData = await import("../../data/JanJi_HeroesTonight.json");        
     } else if(selectedMusicRef.current.id===1) {
-        musicData = await import("../../data/DonaldGlover_RedBone.json");  
+        musicData = await import("../../data/AlanWalker_Fade.json");  
     } else if(selectedMusicRef.current.id===2) {
-        musicData = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
+        musicData = await import("../../data/SubUrban_Cradles.json");  
     } else if(selectedMusicRef.current.id===3) {
-        musicData = await import("../../data/Coolio_GangstasParadise.json");  
-    } else if(selectedMusicRef.current.id===4) {
-        musicData = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
-    } else if(selectedMusicRef.current.id===5) {
-        musicData = await import("../../data/Test4.json");  
+        musicData = await import("../../data/DeafKev_Invincible.json");  
     }
     fillTimePositionArray(musicData.hitObjects);
 
