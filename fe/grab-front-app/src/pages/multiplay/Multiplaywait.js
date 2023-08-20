@@ -27,8 +27,7 @@ import {createEffect} from "util/effect.js";
 
 import drum from 'data/drum.mp3';
 
-import redBone from 'data/DonaldGlover_RedBone.mp3';
-import redBoneData from 'data/DonaldGlover_RedBone.json';
+import cradles from 'data/SubUrban_Cradles.mp3';
 
     function TitleSingleplay() {
         return (
@@ -55,7 +54,7 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
 
 
     const nowTime = useRef(-2);
-    const audio = useRef(new Audio(redBone));
+    const audio = useRef(new Audio(cradles));
 
     let drumSound = new Audio(drum);
     const gameStartTime = useRef(0);
@@ -85,7 +84,6 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         window.location.href = '/singleplayresult';
     }
       
-    // const hitObjects = useRef(redBoneData.hitObjects);
 
     function fillTimePositionArray(objectData){
         console.log('filling arrays');
@@ -381,19 +379,17 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         // fillTimePositionArray(objectsData);
         // audio.current = new Audio(selectedMusic.music_url);
 
-        let fuck = null;
+        let musicData = null;
         if(selectedMusicRef.current.id===0){
-            fuck = await import("../../data/JanJi_HeroesTonight.json");        
+            musicData = await import("../../data/JanJi_HeroesTonight.json");        
         } else if(selectedMusicRef.current.id===1) {
-            fuck = await import("../../data/DonaldGlover_RedBone.json");  
+            musicData = await import("../../data/AlanWalker_Fade.json");  
         } else if(selectedMusicRef.current.id===2) {
-            fuck = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
+            musicData = await import("../../data/SubUrban_Cradles.json");  
         } else if(selectedMusicRef.current.id===3) {
-            fuck = await import("../../data/Coolio_GangstasParadise.json");  
-        } else if(selectedMusicRef.current.id===4) {
-            fuck = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
+            musicData = await import("../../data/DeafKev_Invincible.json");  
         }
-        fillTimePositionArray(fuck.hitObjects);
+        fillTimePositionArray(musicData.hitObjects);
 
         audio.current = new Audio(selectedMusicRef.current.music_url);
 

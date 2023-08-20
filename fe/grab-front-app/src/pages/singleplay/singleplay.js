@@ -26,8 +26,7 @@ import {createEffect} from "util/effect.js";
 import Loading from 'pages/loading/Loading';
 import drum from 'data/drum.mp3';
 
-import redBone from 'data/DonaldGlover_RedBone.mp3';
-import redBoneData from 'data/DonaldGlover_RedBone.json';
+import cradles from 'data/SubUrban_Cradles.mp3';
 
     function TitleSingleplay() {
         return (
@@ -53,7 +52,7 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
     const arrayIdx=useRef(0);
 
     const nowTime = useRef(-2);
-    const audio = useRef(new Audio(redBone));
+    const audio = useRef(new Audio(cradles));
 
     let drumSound = new Audio(drum);
     const gameStartTime = useRef(0);
@@ -87,7 +86,6 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         window.location.href = '/singleplayresult';
     }
       
-    // const hitObjects = useRef(redBoneData.hitObjects);
 
     function fillTimePositionArray(objectData){
         console.log('filling arrays');
@@ -393,15 +391,11 @@ import redBoneData from 'data/DonaldGlover_RedBone.json';
         if(selectedMusicRef.current.id===0){
             musicData = await import("../../data/JanJi_HeroesTonight.json");        
         } else if(selectedMusicRef.current.id===1) {
-            musicData = await import("../../data/DonaldGlover_RedBone.json");  
+            musicData = await import("../../data/AlanWalker_Fade.json");  
         } else if(selectedMusicRef.current.id===2) {
-            musicData = await import("../../data/SilkSonic_LeaveTheDoorOpen.json");  
+            musicData = await import("../../data/SubUrban_Cradles.json");  
         } else if(selectedMusicRef.current.id===3) {
-            musicData = await import("../../data/Coolio_GangstasParadise.json");  
-        } else if(selectedMusicRef.current.id===4) {
-            musicData = await import("../../data/Aimyon_AiWoTsutaetaidatoka.json");  
-        } else if(selectedMusicRef.current.id===5) {
-            musicData = await import("../../data/Test4.json");  
+            musicData = await import("../../data/DeafKev_Invincible.json");  
         }
         fillTimePositionArray(musicData.hitObjects);
 
