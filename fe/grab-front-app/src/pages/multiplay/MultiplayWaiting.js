@@ -41,7 +41,7 @@ function TitleMultiplay({handleCopyToClipboard}) {
     return (
         <div>
         <div className="TitleMultiplay" onClick={handleCopyToClipboard}>MULTIPLAY</div>
-        <div>Click above logo <br/>for copy code</div>
+        <div>Click logo to copy code</div>
         </div>
     )
 }
@@ -1271,3 +1271,4 @@ function ScoreBox({
 }
 
 export default MultiplayWaiting;
+

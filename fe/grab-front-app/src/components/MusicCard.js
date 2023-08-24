@@ -15,7 +15,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
 
 
     const handleClick = () => {
-        audioElementRef.current.volume=0.4;
+        audioElementRef.current.volume=0.1;
         audioElementRef.current.play();
         setHidden(true);
     };
@@ -38,7 +38,7 @@ function MusicCard({ musicList, selectedMusic, handleMusicSelect }) {
         audioElementRef.current.src = selectedMusic.music_url;
         
         if(hidden){
-            audioElementRef.current.volume=0.4;
+            audioElementRef.current.volume=0.1;
             audioElementRef.current.play();
         }
 
